@@ -2,6 +2,8 @@
 
 Day별 영단어 학습 + 다중 Day 선택 시험 앱 (Next.js).
 
+**라이브:** https://temporary-zippy-aspen-fuhixjr.vercel.app
+
 ## 앱 실행
 
 ```bash
@@ -14,26 +16,23 @@ npm run dev
 
 ## Vercel 배포
 
-`vercel.json` 포함. GitHub → Vercel 연동 시 `main` push마다 자동 배포됩니다.
+- Production: https://temporary-zippy-aspen-fuhixjr.vercel.app  
+- `vercel.json` 포함. GitHub 저장소와 연결하면 `main` push마다 자동 배포됩니다.
 
-### 처음 한 번 (대시보드)
+### Git 자동 배포 연결 (권장)
 
-1. https://vercel.com/new 접속 후 GitHub 로그인  
+1. https://vercel.com/dashboard → 해당 프로젝트  
+2. **Settings → Git → Connect Repository**  
+3. `yjhpine/Heelim.ToeicWord` 선택  
+
+원하면 **Settings → Domains** 에서 프로젝트 이름을 바꿔  
+`heelim-toeic.vercel.app` 같은 주소로도 쓸 수 있습니다.
+
+### 새로 Import 할 때
+
+1. https://vercel.com/new  
 2. 저장소 `yjhpine/Heelim.ToeicWord` Import  
-3. Framework: **Next.js** (기본값) → Deploy  
-
-이미 클레임한 임시 배포가 있다면:
-
-1. Vercel Dashboard → 해당 프로젝트  
-2. **Settings → Git → Connect Repository** → 위 저장소 연결  
-3. **Domains** 에서 Production URL 확인  
-
-### CLI (토큰 있을 때)
-
-```bash
-npx vercel login
-npx vercel --prod
-```
+3. Framework: **Next.js** → Deploy  
 
 ## 단어 데이터
 
