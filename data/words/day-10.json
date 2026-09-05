@@ -7,102 +7,122 @@
     {
       "word": "diverse",
       "meaning": "다양한, 여러 가지의",
-      "example": "have a culturally diverse population"
+      "example": "have a culturally diverse population",
+      "exampleMeaning": "문화적으로 다양한 인구를 가지고 있다"
     },
     {
       "word": "excessive",
       "meaning": "매우 많은, 과도한",
-      "example": "receive an excessive amount of mail"
+      "example": "receive an excessive amount of mail",
+      "exampleMeaning": "매우 많은 양의 편지를 받다"
     },
     {
       "word": "prestigious",
       "meaning": "일류의, 명망 있는",
-      "example": "attend a prestigious educational institution"
+      "example": "attend a prestigious educational institution",
+      "exampleMeaning": "일류의 교육 기관에 다니다"
     },
     {
       "word": "comprehensive",
       "meaning": "종합적인, 포괄적인",
-      "example": "create a comprehensive evaluation system"
+      "example": "create a comprehensive evaluation system",
+      "exampleMeaning": "종합적인 평가 시스템을 구축하다"
     },
     {
       "word": "resistant",
       "meaning": "~에 강한, 저항하는",
-      "example": "be resistant to minor climate change"
+      "example": "be resistant to minor climate change",
+      "exampleMeaning": "작은 기후 변화에 강하다"
     },
     {
       "word": "elaborate",
       "meaning": "복잡한, 공을 들인",
-      "example": "follow a long and elaborate procedure"
+      "example": "follow a long and elaborate procedure",
+      "exampleMeaning": "길고 복잡한 절차를 따르다"
     },
     {
       "word": "current",
       "meaning": "현재의",
-      "example": "address current concerns first"
+      "example": "address current concerns first",
+      "exampleMeaning": "현재의 걱정거리들을 먼저 다루다"
     },
     {
       "word": "revised",
       "meaning": "수정된, 변경된",
-      "example": "release a revised price estimate"
+      "example": "release a revised price estimate",
+      "exampleMeaning": "수정된 가격 견적서를 공개하다"
     },
     {
       "word": "affordable",
       "meaning": "가격이 알맞은, 저렴한",
-      "example": "seek affordable housing in the city center"
+      "example": "seek affordable housing in the city center",
+      "exampleMeaning": "도심에서 가격이 알맞은 주택을 찾다"
     },
     {
       "word": "practical",
       "meaning": "실용적인",
-      "example": "offer trainees practical advice"
+      "example": "offer trainees practical advice",
+      "exampleMeaning": "교육생들에게 실용적인 조언을 제공하다"
     },
     {
       "word": "time-consuming",
       "meaning": "시간이 걸리는",
-      "example": "work on a time-consuming task"
+      "example": "work on a time-consuming task",
+      "exampleMeaning": "시간이 걸리는 업무를 하다"
     },
     {
       "word": "relevant",
       "meaning": "관련 있는, 적절한",
-      "example": "discover information relevant to the investigation"
+      "example": "discover information relevant to the investigation",
+      "exampleMeaning": "조사에 관련 있는 정보를 발견하다"
     },
     {
       "word": "adequate",
       "meaning": "충분한, 적절한",
-      "example": "prepare an adequate amount of food"
+      "example": "prepare an adequate amount of food",
+      "exampleMeaning": "충분한 양의 음식을 준비하다"
     },
     {
       "word": "minor",
       "meaning": "가벼운, 중요치 않은",
-      "example": "experience a minor setback"
+      "example": "experience a minor setback",
+      "exampleMeaning": "가벼운 차질을 겪다"
     },
     {
       "word": "productive",
       "meaning": "생산적인",
-      "example": "reward the highly productive team"
+      "example": "reward the highly productive team",
+      "exampleMeaning": "매우 생산적인 팀에게 보상하다"
     },
     {
       "word": "flexible",
       "meaning": "유동적인",
-      "example": "prefer to have flexible working hours"
+      "example": "prefer to have flexible working hours",
+      "exampleMeaning": "유동적인 근무 시간을 선호하다"
     },
     {
       "word": "loyal",
       "meaning": "충성스러운, 충실한",
-      "example": "offer special deals to loyal customers"
+      "example": "offer special deals to loyal customers",
+      "exampleMeaning": "충성스러운 고객들에게 특별한 거래를 제공하다"
     },
     {
       "word": "fertile",
       "meaning": "비옥한, 기름진",
-      "example": "plant crops in fertile soil"
+      "example": "plant crops in fertile soil",
+      "exampleMeaning": "비옥한 토지에 작물을 심다"
     },
     {
       "word": "vacant",
       "meaning": "빈, 사람이 없는",
-      "example": "book a vacant hotel room"
+      "example": "book a vacant hotel room",
+      "exampleMeaning": "빈 호텔 방을 예약하다"
     },
     {
       "word": "hollow",
       "meaning": "속이 빈",
-      "example": "manufacture hollow pipes for plumbing systems"
+      "example": "manufacture hollow pipes for plumbing systems",
+      "exampleMeaning": "배수 설비를 위해 속이 빈 파이프를 제조하다"
     }
   ]
 }

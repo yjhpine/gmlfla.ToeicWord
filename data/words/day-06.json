@@ -7,102 +7,122 @@
     {
       "word": "remain",
       "meaning": "계속 ~이다, 남아 있다",
-      "example": "remain seated until the plane comes to a full stop"
+      "example": "remain seated until the plane comes to a full stop",
+      "exampleMeaning": "비행기가 완전히 멈출 때까지 계속 앉아 있다"
     },
     {
       "word": "address",
       "meaning": "(문제 등을) 다루다",
-      "example": "address any concerns that arise"
+      "example": "address any concerns that arise",
+      "exampleMeaning": "발생하는 모든 문제를 다루다"
     },
     {
       "word": "accelerate",
       "meaning": "가속화하다",
-      "example": "accelerate the growth of the business with investment"
+      "example": "accelerate the growth of the business with investment",
+      "exampleMeaning": "투자로 사업의 성장을 가속화하다"
     },
     {
       "word": "commence",
       "meaning": "시작하다",
-      "example": "wait for the ceremony to commence"
+      "example": "wait for the ceremony to commence",
+      "exampleMeaning": "식이 시작하기를 기다리다"
     },
     {
       "word": "join",
       "meaning": "가입하다, 합류하다",
-      "example": "join a trade union"
+      "example": "join a trade union",
+      "exampleMeaning": "노동 조합에 가입하다"
     },
     {
       "word": "maximize",
       "meaning": "극대화하다",
-      "example": "maximize opportunities for publicity"
+      "example": "maximize opportunities for publicity",
+      "exampleMeaning": "홍보를 위한 기회를 극대화하다"
     },
     {
       "word": "memorize",
       "meaning": "암기하다",
-      "example": "memorize the entrance code for the store's back door"
+      "example": "memorize the entrance code for the store's back door",
+      "exampleMeaning": "상점 뒷문의 출입 암호를 암기하다"
     },
     {
       "word": "prove",
       "meaning": "증명하다, 입증하다",
-      "example": "prove a theory with evidence"
+      "example": "prove a theory with evidence",
+      "exampleMeaning": "증거를 가지고 이론을 증명하다"
     },
     {
       "word": "strive",
       "meaning": "노력하다, 분투하다",
-      "example": "strive to overcome obstacles"
+      "example": "strive to overcome obstacles",
+      "exampleMeaning": "장애물을 극복하기 위해 노력하다"
     },
     {
       "word": "grant",
       "meaning": "승인하다, 수여하다",
-      "example": "grant access to a database"
+      "example": "grant access to a database",
+      "exampleMeaning": "데이터베이스로의 접근을 승인하다"
     },
     {
       "word": "recycle",
       "meaning": "재활용하다, 재사용하다",
-      "example": "recycle all metal and cardboard containers"
+      "example": "recycle all metal and cardboard containers",
+      "exampleMeaning": "모든 금속과 판지 용기들을 재활용하다"
     },
     {
       "word": "acquire",
       "meaning": "획득하다, 얻다",
-      "example": "acquire additional property to develop"
+      "example": "acquire additional property to develop",
+      "exampleMeaning": "개발할 추가적인 토지를 획득하다"
     },
     {
       "word": "alert",
       "meaning": "알리다, 경고하다",
-      "example": "alert the public about the change"
+      "example": "alert the public about the change",
+      "exampleMeaning": "대중에게 변경에 대해 알리다"
     },
     {
       "word": "redeem",
       "meaning": "(상품권 등을) 현금으로 바꾸다",
-      "example": "redeem reward points"
+      "example": "redeem reward points",
+      "exampleMeaning": "보상 포인트를 현금으로 바꾸다"
     },
     {
       "word": "endure",
       "meaning": "견디다",
-      "example": "endure a long meeting"
+      "example": "endure a long meeting",
+      "exampleMeaning": "긴 회의를 견디다"
     },
     {
       "word": "ship",
       "meaning": "운송하다",
-      "example": "ship an item overseas"
+      "example": "ship an item overseas",
+      "exampleMeaning": "물품을 해외로 운송하다"
     },
     {
       "word": "guarantee",
       "meaning": "보장하다",
-      "example": "guarantee a product's quality"
+      "example": "guarantee a product's quality",
+      "exampleMeaning": "제품의 품질을 보장하다"
     },
     {
       "word": "visualize",
       "meaning": "예상하다, 시각화하다",
-      "example": "visualize the future of the area's changing landscape"
+      "example": "visualize the future of the area's changing landscape",
+      "exampleMeaning": "지역의 변화하는 풍경의 미래를 예상하다"
     },
     {
       "word": "purchase",
       "meaning": "구매하다",
-      "example": "purchase the latest model"
+      "example": "purchase the latest model",
+      "exampleMeaning": "최신 모델을 구매하다"
     },
     {
       "word": "renew",
       "meaning": "갱신하다",
-      "example": "renew the lease for another year"
+      "example": "renew the lease for another year",
+      "exampleMeaning": "임대차 계약을 1년 갱신하다"
     }
   ]
 }
