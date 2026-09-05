@@ -7,102 +7,122 @@
     {
       "word": "estimate",
       "meaning": "견적, 추정(액)",
-      "example": "request a price estimate"
+      "example": "request a price estimate",
+      "exampleMeaning": "가격 견적을 요청하다"
     },
     {
       "word": "reminder",
       "meaning": "상기시켜 주는 메모, 독촉장",
-      "example": "receive a reminder about the event via e-mail"
+      "example": "receive a reminder about the event via e-mail",
+      "exampleMeaning": "이메일로 행사에 대해 상기시켜 주는 메모를 받다"
     },
     {
       "word": "procedure",
       "meaning": "절차, 방법",
-      "example": "follow the accounting procedures closely"
+      "example": "follow the accounting procedures closely",
+      "exampleMeaning": "회계 절차를 충실히 따르다"
     },
     {
       "word": "asset",
       "meaning": "자산, 재산",
-      "example": "have cash and other assets worth over $1 million"
+      "example": "have cash and other assets worth over $1 million",
+      "exampleMeaning": "현금과 백만 달러가 넘는 가치의 자산을 갖고 있다"
     },
     {
       "word": "transaction",
       "meaning": "거래, 처리",
-      "example": "record all business transactions carefully"
+      "example": "record all business transactions carefully",
+      "exampleMeaning": "모든 사업 거래를 신중히 기록하다"
     },
     {
       "word": "enhancement",
       "meaning": "향상, 증대",
-      "example": "focus on the enhancement of the customer experience"
+      "example": "focus on the enhancement of the customer experience",
+      "exampleMeaning": "고객 경험의 향상에 주력하다"
     },
     {
       "word": "challenge",
       "meaning": "도전",
-      "example": "present a challenge for inexperienced designers"
+      "example": "present a challenge for inexperienced designers",
+      "exampleMeaning": "경험이 부족한 디자이너에게 도전이 되다"
     },
     {
       "word": "accomplishment",
       "meaning": "성과, 업적",
-      "example": "celebrate a major accomplishment"
+      "example": "celebrate a major accomplishment",
+      "exampleMeaning": "중대한 성과를 축하하다"
     },
     {
       "word": "objection",
       "meaning": "반대",
-      "example": "raise an objection to the policy"
+      "example": "raise an objection to the policy",
+      "exampleMeaning": "정책에 반대하다"
     },
     {
       "word": "convenience",
       "meaning": "편의, 편리",
-      "example": "have several locations for the convenience of customers"
+      "example": "have several locations for the convenience of customers",
+      "exampleMeaning": "고객의 편의를 위해 여러 장소에 소재하다"
     },
     {
       "word": "fee",
       "meaning": "수수료, 요금",
-      "example": "charge a fee for overweight baggage"
+      "example": "charge a fee for overweight baggage",
+      "exampleMeaning": "중량 초과 수하물에 대해 수수료를 부과하다"
     },
     {
       "word": "publicity",
       "meaning": "언론의 주목, 관심",
-      "example": "attract media publicity with an exciting promotion"
+      "example": "attract media publicity with an exciting promotion",
+      "exampleMeaning": "흥미로운 홍보 활동으로 언론의 주목을 끌다"
     },
     {
       "word": "composition",
       "meaning": "구성 (요소)",
-      "example": "change the composition of the committee"
+      "example": "change the composition of the committee",
+      "exampleMeaning": "위원회의 구성을 변경하다"
     },
     {
       "word": "development",
       "meaning": "개발, 발달",
-      "example": "announce the development of a new medicine"
+      "example": "announce the development of a new medicine",
+      "exampleMeaning": "신약의 개발을 발표하다"
     },
     {
       "word": "discretion",
       "meaning": "재량(권), 신중함",
-      "example": "use their discretion to select a candidate"
+      "example": "use their discretion to select a candidate",
+      "exampleMeaning": "재량권을 사용하여 후보자를 선발하다"
     },
     {
       "word": "billing",
       "meaning": "청구서 발송, 거래 총액",
-      "example": "confirm an address for billing"
+      "example": "confirm an address for billing",
+      "exampleMeaning": "청구서 발송을 위해 주소를 확인하다"
     },
     {
       "word": "retention",
       "meaning": "(어떤 것을 잃지 않는) 유지, 보유",
-      "example": "attempt to improve the retention of employees"
+      "example": "attempt to improve the retention of employees",
+      "exampleMeaning": "직원 유지를 개선하는 것을 시도하다"
     },
     {
       "word": "candidate",
       "meaning": "후보자, 지원자",
-      "example": "interview a prospective candidate"
+      "example": "interview a prospective candidate",
+      "exampleMeaning": "유망한 후보자의 면접을 보다"
     },
     {
       "word": "recognition",
       "meaning": "인정",
-      "example": "receive recognition for their work"
+      "example": "receive recognition for their work",
+      "exampleMeaning": "일에 대해 인정을 받다"
     },
     {
       "word": "permission",
       "meaning": "허가, 승인",
-      "example": "obtain permission from authorities"
+      "example": "obtain permission from authorities",
+      "exampleMeaning": "당국으로부터 허가를 받다"
     }
   ]
 }

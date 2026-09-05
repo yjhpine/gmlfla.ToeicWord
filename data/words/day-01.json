@@ -7,102 +7,122 @@
     {
       "word": "promotion",
       "meaning": "승진, 홍보",
-      "example": "earn a promotion to a management position"
+      "example": "earn a promotion to a management position",
+      "exampleMeaning": "관리직으로의 승진을 얻다"
     },
     {
       "word": "personnel",
       "meaning": "직원들, 인원",
-      "example": "create a training program for all personnel"
+      "example": "create a training program for all personnel",
+      "exampleMeaning": "전 직원들을 위한 교육 프로그램을 만들다"
     },
     {
       "word": "subscriber",
       "meaning": "구독자, 가입자",
-      "example": "deliver the magazine to the subscriber"
+      "example": "deliver the magazine to the subscriber",
+      "exampleMeaning": "구독자에게 잡지를 배달하다"
     },
     {
       "word": "retirement",
       "meaning": "은퇴, 퇴직",
-      "example": "consider retirement after 30 years of service"
+      "example": "consider retirement after 30 years of service",
+      "exampleMeaning": "30년의 근무 끝에 은퇴를 고려하다"
     },
     {
       "word": "employment",
       "meaning": "직장, 고용",
-      "example": "look for employment in the engineering field"
+      "example": "look for employment in the engineering field",
+      "exampleMeaning": "공학 분야에서 직장을 구하다"
     },
     {
       "word": "refund",
       "meaning": "환불",
-      "example": "request a refund for a defective item"
+      "example": "request a refund for a defective item",
+      "exampleMeaning": "불량품에 대해 환불을 요청하다"
     },
     {
       "word": "project",
       "meaning": "프로젝트, 계획(기획)된 일",
-      "example": "set a deadline for a project"
+      "example": "set a deadline for a project",
+      "exampleMeaning": "프로젝트를 위한 마감 기한을 설정하다"
     },
     {
       "word": "construction",
       "meaning": "건축, 공사",
-      "example": "visit a construction site"
+      "example": "visit a construction site",
+      "exampleMeaning": "건축 현장을 방문하다"
     },
     {
       "word": "outlook",
       "meaning": "관점, 전망",
-      "example": "share the long-term outlook for growth"
+      "example": "share the long-term outlook for growth",
+      "exampleMeaning": "성장에 대한 장기적인 관점을 공유하다"
     },
     {
       "word": "comparison",
       "meaning": "비교",
-      "example": "make a comparison between the two products"
+      "example": "make a comparison between the two products",
+      "exampleMeaning": "두 제품을 비교하다"
     },
     {
       "word": "relocation",
       "meaning": "이전, 재배치",
-      "example": "prepare for an upcoming office relocation"
+      "example": "prepare for an upcoming office relocation",
+      "exampleMeaning": "다가오는 사무실 이전을 준비하다"
     },
     {
       "word": "career",
       "meaning": "경력, 이력",
-      "example": "advance one's career by taking relevant courses"
+      "example": "advance one's career by taking relevant courses",
+      "exampleMeaning": "관련 강습을 받음으로써 경력을 쌓다"
     },
     {
       "word": "extent",
       "meaning": "정도, 범위",
-      "example": "agree to compromise to a certain extent"
+      "example": "agree to compromise to a certain extent",
+      "exampleMeaning": "어느 정도까지 타협하는 데 동의하다"
     },
     {
       "word": "reception",
       "meaning": "수령",
-      "example": "confirm the reception of the package"
+      "example": "confirm the reception of the package",
+      "exampleMeaning": "소포의 수령을 확인하다"
     },
     {
       "word": "greeting",
       "meaning": "인사, 환영",
-      "example": "receive a warm greeting from hotel staff"
+      "example": "receive a warm greeting from hotel staff",
+      "exampleMeaning": "호텔 직원들로부터 따뜻한 인사를 받다"
     },
     {
       "word": "separation",
       "meaning": "분리",
-      "example": "discuss the separation of duties"
+      "example": "discuss the separation of duties",
+      "exampleMeaning": "직무의 분리에 대해 논의하다"
     },
     {
       "word": "occupation",
       "meaning": "직업",
-      "example": "decide to pursue a different occupation"
+      "example": "decide to pursue a different occupation",
+      "exampleMeaning": "다른 직업에 종사하기로 결정하다"
     },
     {
       "word": "appliance",
       "meaning": "가전기기",
-      "example": "sell refrigerators and other kitchen appliances"
+      "example": "sell refrigerators and other kitchen appliances",
+      "exampleMeaning": "냉장고와 다른 주방 가전기기를 팔다"
     },
     {
       "word": "volume",
       "meaning": "양",
-      "example": "increase the volume of sales"
+      "example": "increase the volume of sales",
+      "exampleMeaning": "판매량을 증가시키다"
     },
     {
       "word": "size",
       "meaning": "크기",
-      "example": "measure the size of the room"
+      "example": "measure the size of the room",
+      "exampleMeaning": "방의 크기를 측정하다"
     }
   ]
 }
