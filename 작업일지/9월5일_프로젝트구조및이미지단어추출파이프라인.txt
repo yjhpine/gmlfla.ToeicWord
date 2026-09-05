@@ -1,0 +1,29 @@
+9월5일 - 프로젝트 구조 + 이미지 단어 추출 파이프라인
+
+[작업 내용]
+1. Next.js(App Router) + Tailwind 기본 앱 골격 생성
+   - / (홈), /words (단어), /quiz (시험) 라우트
+   - AppNav 하단 탭 역할의 상단 네비
+
+2. 날짜(Day)별 데이터 폴더
+   - data/screenshots/inbox/ : 원본 20장 업로드 위치
+   - data/screenshots/day-01 ~ day-20/
+   - data/words/ : OCR 결과 JSON / supabase_seed.json
+
+3. 변환 스크립트
+   - scripts/organize_by_date.py : 파일명·날짜순으로 day 폴더 배치
+   - scripts/extract_words.py : Tesseract(kor+eng)로 영단어/뜻/예문 추출
+   - scripts/upload_to_supabase.py : seed JSON → Supabase upsert
+
+4. Supabase 스키마 초안
+   - supabase/migrations/001_create_wordbooks_and_words.sql
+   - wordbooks(day, date, title) + words(word, meaning, example)
+
+[다음 필요]
+- 로컬 "희림" 폴더 스크린샷 20장을 data/screenshots/inbox/ 에 업로드
+- npm run words:organize && npm run words:extract
+- OCR 결과 검수 후 Supabase 연동/업로드
+
+[비고]
+클라우드 환경에서는 Windows 경로(C:\\Users\\...\\희림)에 접근할 수 없어
+이미지 파일 자체 추출은 업로드 후 진행 가능.

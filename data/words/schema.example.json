@@ -1,0 +1,17 @@
+{
+  "day": 1,
+  "date": "YYYY-MM-DD",
+  "sourceImage": "example.png",
+  "words": [
+    {
+      "word": "abandon",
+      "meaning": "포기하다, 버리다",
+      "example": "He decided to abandon the plan."
+    },
+    {
+      "word": "able",
+      "meaning": "~할 수 있는",
+      "example": "She is able to speak three languages."
+    }
+  ]
+}
