@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 """
-스크린샷을 날짜/일차별로 정리합니다.
+스크린샷을 DAY 순서로 매핑하고 manifest를 만듭니다.
+
+지원 소스:
+  - 단어장/          (KakaoTalk_YYYYMMDD_HHMMSSmmm[_NN].jpg)
+  - data/screenshots/inbox/
 
 사용법:
-  1. 이미지 20장을 data/screenshots/inbox/ 에 넣는다
-  2. python3 scripts/organize_by_date.py
-
-파일명에서 날짜를 추출하거나(수정시각 폴백),
-날짜 오름차순으로 day-01 ~ day-20 폴더에 복사합니다.
+  python3 scripts/organize_by_date.py
+  python3 scripts/organize_by_date.py --source 단어장
 """
 
 from __future__ import annotations
 
 import argparse
+import csv
 import re
 import shutil
 from datetime import datetime
@@ -21,12 +23,22 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SCREENSHOTS = ROOT / "data" / "screenshots"
 INBOX = SCREENSHOTS / "inbox"
+WORDS_DIR = ROOT / "단어장"
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp", ".heic"}
 
-# Screenshot_20240901_123456.png, IMG_20240901_123456.jpg, 2024-09-01 ...
+# KakaoTalk_20260905_142042762.jpg -> day 1
+# KakaoTalk_20260905_142042762_01.jpg -> day 2
+KAKAO_SEQ = re.compile(r"^KakaoTalk_\d+_(\d+)(?:_(\d+))?$", re.I)
 DATE_PATTERNS = [
     re.compile(r"(20\d{2})[-_]?(\d{2})[-_]?(\d{2})"),
 ]
+
+
+def kakao_day(path: Path) -> int | None:
+    m = KAKAO_SEQ.match(path.stem)
+    if not m:
+        return None
+    return 1 if m.group(2) is None else int(m.group(2)) + 1
 
 
 def extract_date(path: Path) -> datetime:
@@ -39,73 +51,85 @@ def extract_date(path: Path) -> datetime:
                 return datetime(y, mo, d)
             except ValueError:
                 pass
-    # EXIF 없이도 mtime으로 대략 정렬
     return datetime.fromtimestamp(path.stat().st_mtime)
 
 
 def list_images(folder: Path) -> list[Path]:
-    return sorted(
-        [p for p in folder.iterdir() if p.is_file() and p.suffix.lower() in IMAGE_EXTS],
-        key=lambda p: (extract_date(p), p.name.lower()),
-    )
+    return [p for p in folder.iterdir() if p.is_file() and p.suffix.lower() in IMAGE_EXTS]
+
+
+def sort_images(images: list[Path]) -> list[Path]:
+    # Prefer KakaoTalk sequence when all files match that pattern
+    if images and all(kakao_day(p) is not None for p in images):
+        return sorted(images, key=lambda p: kakao_day(p) or 0)
+    return sorted(images, key=lambda p: (extract_date(p), p.name.lower()))
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="스크린샷을 day-XX 폴더로 날짜순 정리")
+    parser = argparse.ArgumentParser(description="스크린샷을 day 순서로 정리/매핑")
     parser.add_argument(
         "--source",
         type=Path,
-        default=INBOX,
-        help="원본 이미지 폴더 (기본: data/screenshots/inbox)",
+        default=None,
+        help="원본 폴더 (기본: 단어장/ 있으면 사용, 없으면 inbox)",
     )
     parser.add_argument(
-        "--move",
+        "--copy-to-day-folders",
         action="store_true",
-        help="복사 대신 이동",
+        help="data/screenshots/day-XX 로도 복사 (기본은 manifest만, 원본은 유지)",
     )
-    parser.add_argument(
-        "--max-days",
-        type=int,
-        default=20,
-        help="최대 일차 수 (기본 20)",
-    )
+    parser.add_argument("--max-days", type=int, default=20)
     args = parser.parse_args()
 
-    source: Path = args.source
+    if args.source is not None:
+        source = args.source
+    elif WORDS_DIR.exists() and list_images(WORDS_DIR):
+        source = WORDS_DIR
+    else:
+        source = INBOX
+
     if not source.exists():
         raise SystemExit(f"소스 폴더 없음: {source}")
 
-    images = list_images(source)
+    images = sort_images(list_images(source))
     if not images:
-        raise SystemExit(
-            f"이미지가 없습니다. {source} 에 png샷을 넣은 뒤 다시 실행하세요."
-        )
+        raise SystemExit(f"이미지가 없습니다: {source}")
 
     if len(images) > args.max_days:
-        print(
-            f"경고: 이미지 {len(images)}장이 max-days={args.max_days}보다 많습니다. "
-            f"앞에서 {args.max_days}장만 사용합니다."
-        )
+        print(f"경고: {len(images)}장 중 앞 {args.max_days}장만 사용")
         images = images[: args.max_days]
 
-    manifest_lines: list[str] = ["day,date,filename,source"]
-
+    rows = [["day", "date", "filename", "source", "title"]]
     for idx, path in enumerate(images, start=1):
-        day_dir = SCREENSHOTS / f"day-{idx:02d}"
-        day_dir.mkdir(parents=True, exist_ok=True)
-        dest = day_dir / path.name
-        if args.move:
-            shutil.move(str(path), str(dest))
-        else:
-            shutil.copy2(path, dest)
+        day = kakao_day(path) or idx
+        date_str = extract_date(path).strftime("%Y-%m-%d")
+        title = ""
+        word_json = ROOT / "data" / "words" / f"day-{day:02d}.json"
+        if word_json.exists():
+            try:
+                import json
 
-        dt = extract_date(path)
-        date_str = dt.strftime("%Y-%m-%d")
-        manifest_lines.append(f"{idx},{date_str},{path.name},{path}")
-        print(f"day-{idx:02d}  [{date_str}]  <- {path.name}")
+                title = json.loads(word_json.read_text(encoding="utf-8")).get("title") or ""
+            except Exception:
+                title = ""
 
+        if args.copy_to_day_folders:
+            day_dir = SCREENSHOTS / f"day-{day:02d}"
+            day_dir.mkdir(parents=True, exist_ok=True)
+            for old in day_dir.iterdir():
+                if old.is_file() and old.suffix.lower() in IMAGE_EXTS:
+                    old.unlink()
+            shutil.copy2(path, day_dir / path.name)
+
+        rel = path.relative_to(ROOT) if path.is_relative_to(ROOT) else path
+        rows.append([str(day), date_str, path.name, str(rel).replace("\\", "/"), title])
+        print(f"day-{day:02d}  [{date_str}]  <- {path.name}")
+
+    SCREENSHOTS.mkdir(parents=True, exist_ok=True)
     manifest = SCREENSHOTS / "manifest.csv"
-    manifest.write_text("\n".join(manifest_lines) + "\n", encoding="utf-8")
+    with manifest.open("w", encoding="utf-8", newline="") as f:
+        csv.writer(f).writerows(rows)
+
     print(f"\n정리 완료: {len(images)}장")
     print(f"매니페스트: {manifest}")
 

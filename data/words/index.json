@@ -1,0 +1,166 @@
+{
+  "totalDays": 20,
+  "totalWords": 400,
+  "days": [
+    {
+      "day": 1,
+      "date": null,
+      "title": "DAY 01 [어휘] 명사 1",
+      "wordCount": 20,
+      "file": "day-01.json",
+      "sourceImage": "KakaoTalk_20260905_142042762.jpg"
+    },
+    {
+      "day": 2,
+      "date": null,
+      "title": "DAY 02 [어휘] 명사 2",
+      "wordCount": 20,
+      "file": "day-02.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_01.jpg"
+    },
+    {
+      "day": 3,
+      "date": null,
+      "title": "DAY 03 [어휘] 명사 3",
+      "wordCount": 20,
+      "file": "day-03.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_02.jpg"
+    },
+    {
+      "day": 4,
+      "date": null,
+      "title": "DAY 04 [어휘] 명사 4",
+      "wordCount": 20,
+      "file": "day-04.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_03.jpg"
+    },
+    {
+      "day": 5,
+      "date": null,
+      "title": "DAY 05 [어휘] 명사 5",
+      "wordCount": 20,
+      "file": "day-05.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_04.jpg"
+    },
+    {
+      "day": 6,
+      "date": null,
+      "title": "DAY 06 [어휘] 동사 1",
+      "wordCount": 20,
+      "file": "day-06.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_05.jpg"
+    },
+    {
+      "day": 7,
+      "date": null,
+      "title": "DAY 07 [어휘] 동사 2",
+      "wordCount": 20,
+      "file": "day-07.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_06.jpg"
+    },
+    {
+      "day": 8,
+      "date": null,
+      "title": "DAY 08 [어휘] 동사 3",
+      "wordCount": 20,
+      "file": "day-08.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_07.jpg"
+    },
+    {
+      "day": 9,
+      "date": null,
+      "title": "DAY 09 [어휘] 동사 4",
+      "wordCount": 20,
+      "file": "day-09.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_08.jpg"
+    },
+    {
+      "day": 10,
+      "date": null,
+      "title": "DAY 10 [어휘] 형용사 1",
+      "wordCount": 20,
+      "file": "day-10.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_09.jpg"
+    },
+    {
+      "day": 11,
+      "date": null,
+      "title": "DAY 11 [어휘] 형용사 2",
+      "wordCount": 20,
+      "file": "day-11.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_10.jpg"
+    },
+    {
+      "day": 12,
+      "date": null,
+      "title": "DAY 12 [어휘] 형용사 3",
+      "wordCount": 20,
+      "file": "day-12.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_11.jpg"
+    },
+    {
+      "day": 13,
+      "date": null,
+      "title": "DAY 13 [어휘] 형용사 4",
+      "wordCount": 20,
+      "file": "day-13.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_12.jpg"
+    },
+    {
+      "day": 14,
+      "date": null,
+      "title": "DAY 14 [어휘] 부사 1",
+      "wordCount": 20,
+      "file": "day-14.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_13.jpg"
+    },
+    {
+      "day": 15,
+      "date": null,
+      "title": "DAY 15 [어휘] 부사 2",
+      "wordCount": 20,
+      "file": "day-15.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_14.jpg"
+    },
+    {
+      "day": 16,
+      "date": null,
+      "title": "DAY 16 [어휘] 부사 3",
+      "wordCount": 20,
+      "file": "day-16.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_15.jpg"
+    },
+    {
+      "day": 17,
+      "date": null,
+      "title": "DAY 17 [어구] 형용사 관련 어구",
+      "wordCount": 20,
+      "file": "day-17.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_16.jpg"
+    },
+    {
+      "day": 18,
+      "date": null,
+      "title": "DAY 18 [어구] 동사 관련 어구",
+      "wordCount": 20,
+      "file": "day-18.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_17.jpg"
+    },
+    {
+      "day": 19,
+      "date": null,
+      "title": "DAY 19 [어구] 명사 관련 어구",
+      "wordCount": 20,
+      "file": "day-19.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_18.jpg"
+    },
+    {
+      "day": 20,
+      "date": null,
+      "title": "DAY 20 [어구] 짝을 이루는 표현",
+      "wordCount": 20,
+      "file": "day-20.json",
+      "sourceImage": "KakaoTalk_20260905_142042762_19.jpg"
+    }
+  ]
+}
