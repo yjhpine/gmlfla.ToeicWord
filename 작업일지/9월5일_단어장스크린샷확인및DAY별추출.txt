@@ -1,0 +1,25 @@
+9월5일 - 단어장 스크린샷 확인 및 DAY별 단어 JSON 추출
+
+[확인]
+- main 커밋(7cf185a, "단어 스크린샷")에 단어장/ 폴더 + KakaoTalk 이미지 20장 확인
+- 파일명 시퀀스(_없음=DAY01, _01=DAY02 ... _19=DAY20)로 DAY 매핑
+
+[작업]
+1. 단어장/ 이미지를 feature 브랜치에 반영
+2. DAY 01~20 스크린샷에서 영단어/뜻/예문 추출
+3. data/words/day-01.json ~ day-20.json 생성 (총 400단어)
+4. data/words/index.json, supabase_seed.json 생성
+5. data/screenshots/manifest.csv 로 DAY↔원본 파일 매핑
+6. organize_by_date.py 가 단어장/ KakaoTalk 시퀀스를 인식하도록 수정
+
+[결과 요약]
+- DAY 01~05: 명사
+- DAY 06~09: 동사
+- DAY 10~13: 형용사
+- DAY 14~16: 부사
+- DAY 17~20: 어구
+
+[다음]
+- OCR/추출 결과 샘플 검수
+- Supabase 스키마 적용 후 seed 업로드
+- 단어/시험 탭에 JSON 또는 DB 연동

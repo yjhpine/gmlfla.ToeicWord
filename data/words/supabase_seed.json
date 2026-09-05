@@ -1,0 +1,2542 @@
+[
+  {
+    "day": 1,
+    "date": null,
+    "title": "DAY 01 [어휘] 명사 1",
+    "words": [
+      {
+        "word": "promotion",
+        "meaning": "승진, 홍보",
+        "example": "earn a promotion to a management position",
+        "exampleMeaning": "관리직으로의 승진을 얻다"
+      },
+      {
+        "word": "personnel",
+        "meaning": "직원들, 인원",
+        "example": "create a training program for all personnel",
+        "exampleMeaning": "전 직원들을 위한 교육 프로그램을 만들다"
+      },
+      {
+        "word": "subscriber",
+        "meaning": "구독자, 가입자",
+        "example": "deliver the magazine to the subscriber",
+        "exampleMeaning": "구독자에게 잡지를 배달하다"
+      },
+      {
+        "word": "retirement",
+        "meaning": "은퇴, 퇴직",
+        "example": "consider retirement after 30 years of service",
+        "exampleMeaning": "30년의 근무 끝에 은퇴를 고려하다"
+      },
+      {
+        "word": "employment",
+        "meaning": "직장, 고용",
+        "example": "look for employment in the engineering field",
+        "exampleMeaning": "공학 분야에서 직장을 구하다"
+      },
+      {
+        "word": "refund",
+        "meaning": "환불",
+        "example": "request a refund for a defective item",
+        "exampleMeaning": "불량품에 대해 환불을 요청하다"
+      },
+      {
+        "word": "project",
+        "meaning": "프로젝트, 계획(기획)된 일",
+        "example": "set a deadline for a project",
+        "exampleMeaning": "프로젝트를 위한 마감 기한을 설정하다"
+      },
+      {
+        "word": "construction",
+        "meaning": "건축, 공사",
+        "example": "visit a construction site",
+        "exampleMeaning": "건축 현장을 방문하다"
+      },
+      {
+        "word": "outlook",
+        "meaning": "관점, 전망",
+        "example": "share the long-term outlook for growth",
+        "exampleMeaning": "성장에 대한 장기적인 관점을 공유하다"
+      },
+      {
+        "word": "comparison",
+        "meaning": "비교",
+        "example": "make a comparison between the two products",
+        "exampleMeaning": "두 제품을 비교하다"
+      },
+      {
+        "word": "relocation",
+        "meaning": "이전, 재배치",
+        "example": "prepare for an upcoming office relocation",
+        "exampleMeaning": "다가오는 사무실 이전을 준비하다"
+      },
+      {
+        "word": "career",
+        "meaning": "경력, 이력",
+        "example": "advance one's career by taking relevant courses",
+        "exampleMeaning": "관련 강습을 받음으로써 경력을 쌓다"
+      },
+      {
+        "word": "extent",
+        "meaning": "정도, 범위",
+        "example": "agree to compromise to a certain extent",
+        "exampleMeaning": "어느 정도까지 타협하는 데 동의하다"
+      },
+      {
+        "word": "reception",
+        "meaning": "수령",
+        "example": "confirm the reception of the package",
+        "exampleMeaning": "소포의 수령을 확인하다"
+      },
+      {
+        "word": "greeting",
+        "meaning": "인사, 환영",
+        "example": "receive a warm greeting from hotel staff",
+        "exampleMeaning": "호텔 직원들로부터 따뜻한 인사를 받다"
+      },
+      {
+        "word": "separation",
+        "meaning": "분리",
+        "example": "discuss the separation of duties",
+        "exampleMeaning": "직무의 분리에 대해 논의하다"
+      },
+      {
+        "word": "occupation",
+        "meaning": "직업",
+        "example": "decide to pursue a different occupation",
+        "exampleMeaning": "다른 직업에 종사하기로 결정하다"
+      },
+      {
+        "word": "appliance",
+        "meaning": "가전기기",
+        "example": "sell refrigerators and other kitchen appliances",
+        "exampleMeaning": "냉장고와 다른 주방 가전기기를 팔다"
+      },
+      {
+        "word": "volume",
+        "meaning": "양",
+        "example": "increase the volume of sales",
+        "exampleMeaning": "판매량을 증가시키다"
+      },
+      {
+        "word": "size",
+        "meaning": "크기",
+        "example": "measure the size of the room",
+        "exampleMeaning": "방의 크기를 측정하다"
+      }
+    ]
+  },
+  {
+    "day": 2,
+    "date": null,
+    "title": "DAY 02 [어휘] 명사 2",
+    "words": [
+      {
+        "word": "estimate",
+        "meaning": "견적, 추정(액)",
+        "example": "request a price estimate",
+        "exampleMeaning": "가격 견적을 요청하다"
+      },
+      {
+        "word": "reminder",
+        "meaning": "상기시켜 주는 메모, 독촉장",
+        "example": "receive a reminder about the event via e-mail",
+        "exampleMeaning": "이메일로 행사에 대해 상기시켜 주는 메모를 받다"
+      },
+      {
+        "word": "procedure",
+        "meaning": "절차, 방법",
+        "example": "follow the accounting procedures closely",
+        "exampleMeaning": "회계 절차를 충실히 따르다"
+      },
+      {
+        "word": "asset",
+        "meaning": "자산, 재산",
+        "example": "have cash and other assets worth over $1 million",
+        "exampleMeaning": "현금과 백만 달러가 넘는 가치의 자산을 갖고 있다"
+      },
+      {
+        "word": "transaction",
+        "meaning": "거래, 처리",
+        "example": "record all business transactions carefully",
+        "exampleMeaning": "모든 사업 거래를 신중히 기록하다"
+      },
+      {
+        "word": "enhancement",
+        "meaning": "향상, 증대",
+        "example": "focus on the enhancement of the customer experience",
+        "exampleMeaning": "고객 경험의 향상에 주력하다"
+      },
+      {
+        "word": "challenge",
+        "meaning": "도전",
+        "example": "present a challenge for inexperienced designers",
+        "exampleMeaning": "경험이 부족한 디자이너에게 도전이 되다"
+      },
+      {
+        "word": "accomplishment",
+        "meaning": "성과, 업적",
+        "example": "celebrate a major accomplishment",
+        "exampleMeaning": "중대한 성과를 축하하다"
+      },
+      {
+        "word": "objection",
+        "meaning": "반대",
+        "example": "raise an objection to the policy",
+        "exampleMeaning": "정책에 반대하다"
+      },
+      {
+        "word": "convenience",
+        "meaning": "편의, 편리",
+        "example": "have several locations for the convenience of customers",
+        "exampleMeaning": "고객의 편의를 위해 여러 장소에 소재하다"
+      },
+      {
+        "word": "fee",
+        "meaning": "수수료, 요금",
+        "example": "charge a fee for overweight baggage",
+        "exampleMeaning": "중량 초과 수하물에 대해 수수료를 부과하다"
+      },
+      {
+        "word": "publicity",
+        "meaning": "언론의 주목, 관심",
+        "example": "attract media publicity with an exciting promotion",
+        "exampleMeaning": "흥미로운 홍보 활동으로 언론의 주목을 끌다"
+      },
+      {
+        "word": "composition",
+        "meaning": "구성 (요소)",
+        "example": "change the composition of the committee",
+        "exampleMeaning": "위원회의 구성을 변경하다"
+      },
+      {
+        "word": "development",
+        "meaning": "개발, 발달",
+        "example": "announce the development of a new medicine",
+        "exampleMeaning": "신약의 개발을 발표하다"
+      },
+      {
+        "word": "discretion",
+        "meaning": "재량(권), 신중함",
+        "example": "use their discretion to select a candidate",
+        "exampleMeaning": "재량권을 사용하여 후보자를 선발하다"
+      },
+      {
+        "word": "billing",
+        "meaning": "청구서 발송, 거래 총액",
+        "example": "confirm an address for billing",
+        "exampleMeaning": "청구서 발송을 위해 주소를 확인하다"
+      },
+      {
+        "word": "retention",
+        "meaning": "(어떤 것을 잃지 않는) 유지, 보유",
+        "example": "attempt to improve the retention of employees",
+        "exampleMeaning": "직원 유지를 개선하는 것을 시도하다"
+      },
+      {
+        "word": "candidate",
+        "meaning": "후보자, 지원자",
+        "example": "interview a prospective candidate",
+        "exampleMeaning": "유망한 후보자의 면접을 보다"
+      },
+      {
+        "word": "recognition",
+        "meaning": "인정",
+        "example": "receive recognition for their work",
+        "exampleMeaning": "일에 대해 인정을 받다"
+      },
+      {
+        "word": "permission",
+        "meaning": "허가, 승인",
+        "example": "obtain permission from authorities",
+        "exampleMeaning": "당국으로부터 허가를 받다"
+      }
+    ]
+  },
+  {
+    "day": 3,
+    "date": null,
+    "title": "DAY 03 [어휘] 명사 3",
+    "words": [
+      {
+        "word": "performance",
+        "meaning": "공연, 수행",
+        "example": "attend an award-winning performance",
+        "exampleMeaning": "상을 받은 공연에 참석하다"
+      },
+      {
+        "word": "issue",
+        "meaning": "(출판물의) 호, 발행물",
+        "example": "receive monthly issues of Highlighter Gazette",
+        "exampleMeaning": "Highlighter Gazette지의 월간호를 받다"
+      },
+      {
+        "word": "process",
+        "meaning": "절차, 과정",
+        "example": "begin the candidate selection process",
+        "exampleMeaning": "후보자 선발 절차를 시작하다"
+      },
+      {
+        "word": "transfer",
+        "meaning": "이동, 전근",
+        "example": "make a money transfer from one account to another",
+        "exampleMeaning": "한 계좌에서 다른 계좌로 자금을 이동시키다"
+      },
+      {
+        "word": "feasibility",
+        "meaning": "실행 가능성, 실현 가능성",
+        "example": "assess the project's feasibility",
+        "exampleMeaning": "프로젝트의 실행 가능성을 평가하다"
+      },
+      {
+        "word": "flavor",
+        "meaning": "맛, 풍미",
+        "example": "add a new strawberry flavor to the menu",
+        "exampleMeaning": "메뉴에 새로운 딸기 맛을 추가하다"
+      },
+      {
+        "word": "discrepancy",
+        "meaning": "불일치, 차이",
+        "example": "discover a discrepancy with the sales figures",
+        "exampleMeaning": "매출액에서 불일치를 발견하다"
+      },
+      {
+        "word": "article",
+        "meaning": "기사",
+        "example": "read a business article online",
+        "exampleMeaning": "온라인으로 사업 관련 기사를 읽다"
+      },
+      {
+        "word": "celebration",
+        "meaning": "축하 행사",
+        "example": "hold a celebration of the victory",
+        "exampleMeaning": "우승 축하 행사를 개최하다"
+      },
+      {
+        "word": "priority",
+        "meaning": "우선순위",
+        "example": "give emergency cases a higher priority",
+        "exampleMeaning": "위급 상황들에 더 높은 우선순위를 두다"
+      },
+      {
+        "word": "handbook",
+        "meaning": "안내서",
+        "example": "consult the employee handbook",
+        "exampleMeaning": "직원 안내서를 참고하다"
+      },
+      {
+        "word": "transformation",
+        "meaning": "변화",
+        "example": "witness an incredible transformation",
+        "exampleMeaning": "놀라운 변화를 목격하다"
+      },
+      {
+        "word": "confirmation",
+        "meaning": "확인",
+        "example": "send confirmation of the order within 24 hours",
+        "exampleMeaning": "24시간 내에 주문 확인을 보내다"
+      },
+      {
+        "word": "allowance",
+        "meaning": "수당",
+        "example": "provide a travel allowance for business trips",
+        "exampleMeaning": "출장을 위한 출장 수당을 제공하다"
+      },
+      {
+        "word": "competitor",
+        "meaning": "경쟁사",
+        "example": "beat a tough competitor",
+        "exampleMeaning": "강력한 경쟁사를 이기다"
+      },
+      {
+        "word": "instruction",
+        "meaning": "사용 설명서",
+        "example": "read the easy-to-follow assembly instructions",
+        "exampleMeaning": "따라 하기 쉬운 조립 사용 설명서를 읽다"
+      },
+      {
+        "word": "background",
+        "meaning": "(예비) 지식, 배경",
+        "example": "prefer a candidate with a background in accounting",
+        "exampleMeaning": "회계의 지식을 가지고 있는 지원자를 선호하다"
+      },
+      {
+        "word": "misconception",
+        "meaning": "오해",
+        "example": "correct common myths and misconceptions",
+        "exampleMeaning": "통속적인 미신과 오해를 바로잡다"
+      },
+      {
+        "word": "barrier",
+        "meaning": "장벽, 장애물",
+        "example": "remove all trade barriers",
+        "exampleMeaning": "모든 무역 장벽을 없애다"
+      },
+      {
+        "word": "restraint",
+        "meaning": "규제",
+        "example": "impose restraints on competition",
+        "exampleMeaning": "경쟁에 규제를 가하다"
+      }
+    ]
+  },
+  {
+    "day": 4,
+    "date": null,
+    "title": "DAY 04 [어휘] 명사 4",
+    "words": [
+      {
+        "word": "maintenance",
+        "meaning": "정비, 보수 관리",
+        "example": "conduct maintenance on machinery",
+        "exampleMeaning": "기계에 정비를 실시하다"
+      },
+      {
+        "word": "progress",
+        "meaning": "진행 상황, 진전",
+        "example": "provide an update on the assignment's progress",
+        "exampleMeaning": "업무의 진행 상황에 대한 최신 정보를 제공하다"
+      },
+      {
+        "word": "resolution",
+        "meaning": "결심, 결정, 결단력",
+        "example": "make a resolution to improve performance",
+        "exampleMeaning": "실적을 개선하기로 결심하다"
+      },
+      {
+        "word": "specification",
+        "meaning": "세부 항목, 내역",
+        "example": "list the specifications for the job",
+        "exampleMeaning": "직무에 대한 세부 항목들을 나열하다"
+      },
+      {
+        "word": "variation",
+        "meaning": "차이, 변형(시킨 것)",
+        "example": "notice a slight variation in color",
+        "exampleMeaning": "색깔에 대한 약간의 차이를 알아채다"
+      },
+      {
+        "word": "authority",
+        "meaning": "당국, 권한",
+        "example": "contact the relevant authorities",
+        "exampleMeaning": "관련 당국에 연락을 취하다"
+      },
+      {
+        "word": "disclosure",
+        "meaning": "공개",
+        "example": "demand full disclosure of financial transactions",
+        "exampleMeaning": "금융 거래의 완전한 공개를 요구하다"
+      },
+      {
+        "word": "coverage",
+        "meaning": "보도, 범위",
+        "example": "broadcast live coverage of an awards ceremony",
+        "exampleMeaning": "시상식의 실시간 보도를 방송하다"
+      },
+      {
+        "word": "interruption",
+        "meaning": "중단, 방해",
+        "example": "experience an interruption of services",
+        "exampleMeaning": "서비스의 중단을 겪다"
+      },
+      {
+        "word": "factor",
+        "meaning": "요인, 요소",
+        "example": "consider economic factors before making a decision",
+        "exampleMeaning": "결정을 내리기 전에 경제적인 요인들을 고려하다"
+      },
+      {
+        "word": "premises",
+        "meaning": "구내, 토지",
+        "example": "offer security for the factory's premises",
+        "exampleMeaning": "공장 구내에 대한 안전을 제공하다"
+      },
+      {
+        "word": "collaboration",
+        "meaning": "협력, 공동 작업",
+        "example": "work in collaboration with a famous artist",
+        "exampleMeaning": "유명한 예술가와 협력하여 작업하다"
+      },
+      {
+        "word": "inquiry",
+        "meaning": "문의",
+        "example": "submit an inquiry online",
+        "exampleMeaning": "온라인으로 문의를 제출하다"
+      },
+      {
+        "word": "attendee",
+        "meaning": "참석자",
+        "example": "give handouts to attendees",
+        "exampleMeaning": "참석자들에게 유인물을 주다"
+      },
+      {
+        "word": "timeline",
+        "meaning": "시간표",
+        "example": "develop a timeline for a project",
+        "exampleMeaning": "프로젝트를 위한 시간표를 만들다"
+      },
+      {
+        "word": "reversal",
+        "meaning": "전환, 역전",
+        "example": "cause a reversal of the company's poor sales",
+        "exampleMeaning": "회사의 저조한 판매의 전환을 야기하다"
+      },
+      {
+        "word": "complaint",
+        "meaning": "불평, 불만",
+        "example": "receive complaints about poor service",
+        "exampleMeaning": "나쁜 서비스에 대한 불평을 접수하다"
+      },
+      {
+        "word": "agenda",
+        "meaning": "안건, 의제",
+        "example": "write an agenda for a meeting",
+        "exampleMeaning": "회의를 위한 안건을 작성하다"
+      },
+      {
+        "word": "replacement",
+        "meaning": "대체(품), 교체(품)",
+        "example": "request a replacement",
+        "exampleMeaning": "대체품을 요청하다"
+      },
+      {
+        "word": "renovation",
+        "meaning": "수리, 수선",
+        "example": "pass a lobby under renovation",
+        "exampleMeaning": "수리 중인 로비를 통과하다"
+      }
+    ]
+  },
+  {
+    "day": 5,
+    "date": null,
+    "title": "DAY 05 [어휘] 명사 5",
+    "words": [
+      {
+        "word": "contract",
+        "meaning": "계약(서)",
+        "example": "sign a temporary employment contract",
+        "exampleMeaning": "임시 고용 계약서에 서명하다"
+      },
+      {
+        "word": "submission",
+        "meaning": "제출, 제기",
+        "example": "write a proposal for submission to the board of directors",
+        "exampleMeaning": "이사회에 제출할 제안서를 쓰다"
+      },
+      {
+        "word": "shortage",
+        "meaning": "부족",
+        "example": "deal with a shortage of capital",
+        "exampleMeaning": "자금의 부족에 대처하다"
+      },
+      {
+        "word": "capacity",
+        "meaning": "(생산) 능력, 수용력",
+        "example": "grow beyond its capacity to supply food",
+        "exampleMeaning": "식량을 공급할 능력 이상으로 증대하다"
+      },
+      {
+        "word": "distribution",
+        "meaning": "유통, 배분, 분포",
+        "example": "supervise distribution of the merchandise",
+        "exampleMeaning": "상품의 유통을 감독하다"
+      },
+      {
+        "word": "safety",
+        "meaning": "안전, 치안",
+        "example": "ensure the safety of workers",
+        "exampleMeaning": "직원들의 안전을 보장하다"
+      },
+      {
+        "word": "facility",
+        "meaning": "시설, 기관",
+        "example": "renovate a healthcare facility",
+        "exampleMeaning": "의료 시설을 보수하다"
+      },
+      {
+        "word": "contestant",
+        "meaning": "(대회 등의) 참가자",
+        "example": "introduce this year's contestants for the Bookman Prize",
+        "exampleMeaning": "Bookman 상을 위한 올해의 참가자들을 소개하다"
+      },
+      {
+        "word": "reputation",
+        "meaning": "평판",
+        "example": "establish a reputation for reliable service",
+        "exampleMeaning": "신뢰할 수 있는 서비스로 평판을 쌓다"
+      },
+      {
+        "word": "excellence",
+        "meaning": "우수성, 탁월함",
+        "example": "aim to achieve excellence",
+        "exampleMeaning": "우수성을 성취하는 것을 목표로 하다"
+      },
+      {
+        "word": "assignment",
+        "meaning": "과제, 업무, 임무",
+        "example": "work on a major assignment",
+        "exampleMeaning": "중요한 과제를 하다"
+      },
+      {
+        "word": "proposal",
+        "meaning": "제안(서)",
+        "example": "accept a project proposal",
+        "exampleMeaning": "프로젝트 제안서를 수락하다"
+      },
+      {
+        "word": "entrance",
+        "meaning": "입구",
+        "example": "buy a ticket at the entrance",
+        "exampleMeaning": "입구에서 표를 사다"
+      },
+      {
+        "word": "negotiator",
+        "meaning": "협상가",
+        "example": "require a skilled negotiator",
+        "exampleMeaning": "노련한 협상가를 필요로 하다"
+      },
+      {
+        "word": "shareholder",
+        "meaning": "주주",
+        "example": "meet with shareholders annually",
+        "exampleMeaning": "매년 주주들과 만나다"
+      },
+      {
+        "word": "norm",
+        "meaning": "규범",
+        "example": "go against the norm",
+        "exampleMeaning": "규범에 위배되다"
+      },
+      {
+        "word": "delight",
+        "meaning": "기쁨, 즐거움",
+        "example": "watch the city's firework display with delight",
+        "exampleMeaning": "시의 불꽃놀이를 기쁘게 보다"
+      },
+      {
+        "word": "petition",
+        "meaning": "청원서, 탄원서",
+        "example": "submit a petition to change a policy",
+        "exampleMeaning": "정책을 변경하기 위해 청원서를 제출하다"
+      },
+      {
+        "word": "request",
+        "meaning": "요청",
+        "example": "make a request for time off",
+        "exampleMeaning": "휴가를 위한 요청을 하다"
+      },
+      {
+        "word": "claim",
+        "meaning": "청구, 신청",
+        "example": "file an insurance claim",
+        "exampleMeaning": "보험 청구를 제기하다"
+      }
+    ]
+  },
+  {
+    "day": 6,
+    "date": null,
+    "title": "DAY 06 [어휘] 동사 1",
+    "words": [
+      {
+        "word": "remain",
+        "meaning": "계속 ~이다, 남아 있다",
+        "example": "remain seated until the plane comes to a full stop",
+        "exampleMeaning": "비행기가 완전히 멈출 때까지 계속 앉아 있다"
+      },
+      {
+        "word": "address",
+        "meaning": "(문제 등을) 다루다",
+        "example": "address any concerns that arise",
+        "exampleMeaning": "발생하는 모든 문제를 다루다"
+      },
+      {
+        "word": "accelerate",
+        "meaning": "가속화하다",
+        "example": "accelerate the growth of the business with investment",
+        "exampleMeaning": "투자로 사업의 성장을 가속화하다"
+      },
+      {
+        "word": "commence",
+        "meaning": "시작하다",
+        "example": "wait for the ceremony to commence",
+        "exampleMeaning": "식이 시작하기를 기다리다"
+      },
+      {
+        "word": "join",
+        "meaning": "가입하다, 합류하다",
+        "example": "join a trade union",
+        "exampleMeaning": "노동 조합에 가입하다"
+      },
+      {
+        "word": "maximize",
+        "meaning": "극대화하다",
+        "example": "maximize opportunities for publicity",
+        "exampleMeaning": "홍보를 위한 기회를 극대화하다"
+      },
+      {
+        "word": "memorize",
+        "meaning": "암기하다",
+        "example": "memorize the entrance code for the store's back door",
+        "exampleMeaning": "상점 뒷문의 출입 암호를 암기하다"
+      },
+      {
+        "word": "prove",
+        "meaning": "증명하다, 입증하다",
+        "example": "prove a theory with evidence",
+        "exampleMeaning": "증거를 가지고 이론을 증명하다"
+      },
+      {
+        "word": "strive",
+        "meaning": "노력하다, 분투하다",
+        "example": "strive to overcome obstacles",
+        "exampleMeaning": "장애물을 극복하기 위해 노력하다"
+      },
+      {
+        "word": "grant",
+        "meaning": "승인하다, 수여하다",
+        "example": "grant access to a database",
+        "exampleMeaning": "데이터베이스로의 접근을 승인하다"
+      },
+      {
+        "word": "recycle",
+        "meaning": "재활용하다, 재사용하다",
+        "example": "recycle all metal and cardboard containers",
+        "exampleMeaning": "모든 금속과 판지 용기들을 재활용하다"
+      },
+      {
+        "word": "acquire",
+        "meaning": "획득하다, 얻다",
+        "example": "acquire additional property to develop",
+        "exampleMeaning": "개발할 추가적인 토지를 획득하다"
+      },
+      {
+        "word": "alert",
+        "meaning": "알리다, 경고하다",
+        "example": "alert the public about the change",
+        "exampleMeaning": "대중에게 변경에 대해 알리다"
+      },
+      {
+        "word": "redeem",
+        "meaning": "(상품권 등을) 현금으로 바꾸다",
+        "example": "redeem reward points",
+        "exampleMeaning": "보상 포인트를 현금으로 바꾸다"
+      },
+      {
+        "word": "endure",
+        "meaning": "견디다",
+        "example": "endure a long meeting",
+        "exampleMeaning": "긴 회의를 견디다"
+      },
+      {
+        "word": "ship",
+        "meaning": "운송하다",
+        "example": "ship an item overseas",
+        "exampleMeaning": "물품을 해외로 운송하다"
+      },
+      {
+        "word": "guarantee",
+        "meaning": "보장하다",
+        "example": "guarantee a product's quality",
+        "exampleMeaning": "제품의 품질을 보장하다"
+      },
+      {
+        "word": "visualize",
+        "meaning": "예상하다, 시각화하다",
+        "example": "visualize the future of the area's changing landscape",
+        "exampleMeaning": "지역의 변화하는 풍경의 미래를 예상하다"
+      },
+      {
+        "word": "purchase",
+        "meaning": "구매하다",
+        "example": "purchase the latest model",
+        "exampleMeaning": "최신 모델을 구매하다"
+      },
+      {
+        "word": "renew",
+        "meaning": "갱신하다",
+        "example": "renew the lease for another year",
+        "exampleMeaning": "임대차 계약을 1년 갱신하다"
+      }
+    ]
+  },
+  {
+    "day": 7,
+    "date": null,
+    "title": "DAY 07 [어휘] 동사 2",
+    "words": [
+      {
+        "word": "deliver",
+        "meaning": "배달하다",
+        "example": "deliver the package to the address provided",
+        "exampleMeaning": "제공된 주소로 소포를 배달하다"
+      },
+      {
+        "word": "expire",
+        "meaning": "만료되다",
+        "example": "renew a membership card that is about to expire",
+        "exampleMeaning": "곧 만료될 회원증을 갱신하다"
+      },
+      {
+        "word": "undergo",
+        "meaning": "받다, 경험하다",
+        "example": "undergo a major renovation",
+        "exampleMeaning": "큰 수리를 받다"
+      },
+      {
+        "word": "consent",
+        "meaning": "동의하다, 허락하다",
+        "example": "consent to a thorough background check",
+        "exampleMeaning": "철저한 배경 조사에 동의하다"
+      },
+      {
+        "word": "assure",
+        "meaning": "보장하다, 안심시키다",
+        "example": "assure clients of the product's quality",
+        "exampleMeaning": "고객들에게 제품의 품질을 보장하다"
+      },
+      {
+        "word": "increase",
+        "meaning": "증가시키다, 인상되다",
+        "example": "increase the budget for the new construction project",
+        "exampleMeaning": "새로운 건설 프로젝트의 예산을 증가시키다"
+      },
+      {
+        "word": "indicate",
+        "meaning": "명시하다, 나타내다",
+        "example": "indicate preferences on the form",
+        "exampleMeaning": "양식에 선호도를 명시하다"
+      },
+      {
+        "word": "rate",
+        "meaning": "평가하다",
+        "example": "rate an experience at a hotel",
+        "exampleMeaning": "호텔에서의 경험을 평가하다"
+      },
+      {
+        "word": "reclaim",
+        "meaning": "되찾다",
+        "example": "reclaim a lost item from the Lost and Found Office",
+        "exampleMeaning": "분실물 보관소에서 잃어버린 물품을 되찾다"
+      },
+      {
+        "word": "tolerate",
+        "meaning": "용인하다, 견디다",
+        "example": "tolerate a moderate amount of risk while investing",
+        "exampleMeaning": "투자하는 동안 적당한 정도의 위험을 용인하다"
+      },
+      {
+        "word": "divide",
+        "meaning": "나누다",
+        "example": "divide the participants into groups of four",
+        "exampleMeaning": "참여자들을 4명의 그룹으로 나누다"
+      },
+      {
+        "word": "affect",
+        "meaning": "~에 영향을 미치다",
+        "example": "affect national economy positively",
+        "exampleMeaning": "국가 경제에 긍정적으로 영향을 미치다"
+      },
+      {
+        "word": "depart",
+        "meaning": "출발하다, 떠나다",
+        "example": "depart promptly at 7:30 A.M.",
+        "exampleMeaning": "정확히 오전 7시 30분에 출발하다"
+      },
+      {
+        "word": "eliminate",
+        "meaning": "제거하다, 없애다",
+        "example": "eliminate environmental pollution",
+        "exampleMeaning": "환경 오염을 제거하다"
+      },
+      {
+        "word": "reject",
+        "meaning": "거절하다, 거부하다",
+        "example": "reject a loan application",
+        "exampleMeaning": "대출 신청을 거절하다"
+      },
+      {
+        "word": "attract",
+        "meaning": "끌어모으다, 유인하다",
+        "example": "attract many tourists to the area",
+        "exampleMeaning": "지역에 많은 관광객들을 끌어모으다"
+      },
+      {
+        "word": "classify",
+        "meaning": "분류하다, 구분하다",
+        "example": "classify clothing according to size",
+        "exampleMeaning": "사이즈에 따라 옷을 분류하다"
+      },
+      {
+        "word": "withdraw",
+        "meaning": "(계좌에서 돈을) 인출하다",
+        "example": "withdraw funds from an ATM",
+        "exampleMeaning": "현금 자동 입출금기에서 돈을 인출하다"
+      },
+      {
+        "word": "donate",
+        "meaning": "기부하다",
+        "example": "donate money to a charitable organization",
+        "exampleMeaning": "자선 단체에 돈을 기부하다"
+      },
+      {
+        "word": "support",
+        "meaning": "지지하다, 후원하다",
+        "example": "support the construction project",
+        "exampleMeaning": "건설 프로젝트를 지지하다"
+      }
+    ]
+  },
+  {
+    "day": 8,
+    "date": null,
+    "title": "DAY 08 [어휘] 동사 3",
+    "words": [
+      {
+        "word": "exceed",
+        "meaning": "초과하다, 넘다",
+        "example": "exceed the budget for the construction project",
+        "exampleMeaning": "건축 프로젝트의 예산을 초과하다"
+      },
+      {
+        "word": "finalize",
+        "meaning": "완성하다, 마무리하다",
+        "example": "finalize plans for the reconstruction of the lobby",
+        "exampleMeaning": "로비의 재건축을 위한 설계도를 완성하다"
+      },
+      {
+        "word": "present",
+        "meaning": "수여하다, 주다",
+        "example": "present an award to the winner",
+        "exampleMeaning": "승자에게 상을 수여하다"
+      },
+      {
+        "word": "disrupt",
+        "meaning": "지장을 주다, 방해하다",
+        "example": "disrupt service temporarily",
+        "exampleMeaning": "일시적으로 서비스에 지장을 주다"
+      },
+      {
+        "word": "argue",
+        "meaning": "주장하다, 언쟁하다",
+        "example": "argue in favor of the new policy",
+        "exampleMeaning": "새로운 정책을 지지하는 주장을 하다"
+      },
+      {
+        "word": "assess",
+        "meaning": "평가하다",
+        "example": "assess the value of the jewelry",
+        "exampleMeaning": "보석의 가치를 평가하다"
+      },
+      {
+        "word": "divert",
+        "meaning": "다른 곳으로 돌리다, 우회시키다",
+        "example": "divert the phone call to another line",
+        "exampleMeaning": "전화를 다른 곳으로 돌리다"
+      },
+      {
+        "word": "establish",
+        "meaning": "설립하다, 수립하다",
+        "example": "establish an organization for local farmers",
+        "exampleMeaning": "지역 농부들을 위한 단체를 설립하다"
+      },
+      {
+        "word": "suspect",
+        "meaning": "의심하다",
+        "example": "suspect someone of cheating on an exam",
+        "exampleMeaning": "시험에서 부정 행위를 했다고 누군가를 의심하다"
+      },
+      {
+        "word": "rephrase",
+        "meaning": "바꾸어 말하다",
+        "example": "rephrase the question for clarity",
+        "exampleMeaning": "명확성을 위해 질문을 바꾸어 말하다"
+      },
+      {
+        "word": "expand",
+        "meaning": "확장시키다",
+        "example": "expand the business into Europe",
+        "exampleMeaning": "사업을 유럽으로 확장시키다"
+      },
+      {
+        "word": "enclose",
+        "meaning": "동봉하다",
+        "example": "enclose the application form with the letter",
+        "exampleMeaning": "편지에 신청서를 동봉하다"
+      },
+      {
+        "word": "verify",
+        "meaning": "확인하다, 증명하다",
+        "example": "verify the validity of a license",
+        "exampleMeaning": "자격증의 유효성을 확인하다"
+      },
+      {
+        "word": "omit",
+        "meaning": "생략하다, 누락하다",
+        "example": "omit the introductions and begin the presentation",
+        "exampleMeaning": "도입부를 생략하고 발표를 시작하다"
+      },
+      {
+        "word": "capture",
+        "meaning": "획득하다, 포획하다",
+        "example": "capture the majority of the votes",
+        "exampleMeaning": "투표수의 대부분을 획득하다"
+      },
+      {
+        "word": "cite",
+        "meaning": "인용하다",
+        "example": "cite the findings from a recent study",
+        "exampleMeaning": "최근 연구로부터 결과를 인용하다"
+      },
+      {
+        "word": "appoint",
+        "meaning": "임명하다, 지명하다",
+        "example": "appoint a new head of security",
+        "exampleMeaning": "새로운 보안 부장을 임명하다"
+      },
+      {
+        "word": "demonstrate",
+        "meaning": "시연하다, 설명하다",
+        "example": "demonstrate a technique to trainees",
+        "exampleMeaning": "교육생들에게 기술을 시연하다"
+      },
+      {
+        "word": "cancel",
+        "meaning": "취소하다",
+        "example": "cancel the magazine subscription",
+        "exampleMeaning": "잡지 구독을 취소하다"
+      },
+      {
+        "word": "suspend",
+        "meaning": "중단하다, 정지하다",
+        "example": "suspend telephone service for a month",
+        "exampleMeaning": "한 달 동안 전화 서비스를 중단하다"
+      }
+    ]
+  },
+  {
+    "day": 9,
+    "date": null,
+    "title": "DAY 09 [어휘] 동사 4",
+    "words": [
+      {
+        "word": "access",
+        "meaning": "접근하다, 들어가다",
+        "example": "access confidential medical records",
+        "exampleMeaning": "기밀 진료 기록에 접근하다"
+      },
+      {
+        "word": "ensure",
+        "meaning": "반드시 ~하게 하다, 보장하다",
+        "example": "ensure that all the doors are locked",
+        "exampleMeaning": "모든 문이 반드시 잠기게 하다"
+      },
+      {
+        "word": "feature",
+        "meaning": "(특별히) 포함하다, 특징으로 삼다",
+        "example": "feature several exciting upgrades",
+        "exampleMeaning": "몇 가지 흥미로운 개선을 포함하다"
+      },
+      {
+        "word": "contend",
+        "meaning": "주장하다, 다투다",
+        "example": "contend that more staff is required",
+        "exampleMeaning": "더 많은 직원이 필요하다고 주장하다"
+      },
+      {
+        "word": "determine",
+        "meaning": "알아내다, 결정하다",
+        "example": "determine the cause of the delay",
+        "exampleMeaning": "지연의 원인을 알아내다"
+      },
+      {
+        "word": "award",
+        "meaning": "주다, 수여하다",
+        "example": "award compensation for a defective item",
+        "exampleMeaning": "결함이 있는 물품에 대해 보상을 주다"
+      },
+      {
+        "word": "decline",
+        "meaning": "거부하다, 감소하다",
+        "example": "decline an invitation for dinner",
+        "exampleMeaning": "저녁 식사 초대를 거부하다"
+      },
+      {
+        "word": "discuss",
+        "meaning": "논의하다",
+        "example": "meet to discuss hiring plans",
+        "exampleMeaning": "채용 계획을 논의하기 위해 만나다"
+      },
+      {
+        "word": "review",
+        "meaning": "검토하다, 확인하다",
+        "example": "review a budget before submission",
+        "exampleMeaning": "제출 전에 예산을 검토하다"
+      },
+      {
+        "word": "serve",
+        "meaning": "봉사하다, (음식 등을) 제공하다",
+        "example": "serve the city as the mayor",
+        "exampleMeaning": "시장으로서 시에 봉사하다"
+      },
+      {
+        "word": "obtain",
+        "meaning": "입수하다, 획득하다",
+        "example": "obtain materials from the supplier",
+        "exampleMeaning": "공급업자로부터 재료를 입수하다"
+      },
+      {
+        "word": "minimize",
+        "meaning": "최소화하다",
+        "example": "minimize environmental impacts",
+        "exampleMeaning": "환경 영향을 최소화하다"
+      },
+      {
+        "word": "merge",
+        "meaning": "합병하다, 통합하다",
+        "example": "merge the two companies",
+        "exampleMeaning": "두 회사를 합병하다"
+      },
+      {
+        "word": "duplicate",
+        "meaning": "복사하다, 복제하다",
+        "example": "duplicate an important document",
+        "exampleMeaning": "중요한 문서를 복사하다"
+      },
+      {
+        "word": "pursue",
+        "meaning": "추구하다, 계속하다",
+        "example": "vigorously pursue policy changes",
+        "exampleMeaning": "정책 변경을 강력하게 추구하다"
+      },
+      {
+        "word": "host",
+        "meaning": "주최하다",
+        "example": "host a small gathering for friends",
+        "exampleMeaning": "친구들을 위해 작은 모임을 주최하다"
+      },
+      {
+        "word": "gather",
+        "meaning": "수집하다, 모으다",
+        "example": "use a survey to gather information",
+        "exampleMeaning": "정보를 수집하기 위해 설문 조사를 이용하다"
+      },
+      {
+        "word": "reset",
+        "meaning": "재설정하다",
+        "example": "reset a password once a month",
+        "exampleMeaning": "한 달에 한 번씩 비밀번호를 재설정하다"
+      },
+      {
+        "word": "inform",
+        "meaning": "알려주다",
+        "example": "inform voters about where to register",
+        "exampleMeaning": "투표자들에게 어디에서 등록해야 하는지 알려주다"
+      },
+      {
+        "word": "announce",
+        "meaning": "발표하다, 공지하다",
+        "example": "announce plans for a new community center",
+        "exampleMeaning": "새로운 시민 문화 회관에 관한 계획을 발표하다"
+      }
+    ]
+  },
+  {
+    "day": 10,
+    "date": null,
+    "title": "DAY 10 [어휘] 형용사 1",
+    "words": [
+      {
+        "word": "diverse",
+        "meaning": "다양한, 여러 가지의",
+        "example": "have a culturally diverse population",
+        "exampleMeaning": "문화적으로 다양한 인구를 가지고 있다"
+      },
+      {
+        "word": "excessive",
+        "meaning": "매우 많은, 과도한",
+        "example": "receive an excessive amount of mail",
+        "exampleMeaning": "매우 많은 양의 편지를 받다"
+      },
+      {
+        "word": "prestigious",
+        "meaning": "일류의, 명망 있는",
+        "example": "attend a prestigious educational institution",
+        "exampleMeaning": "일류의 교육 기관에 다니다"
+      },
+      {
+        "word": "comprehensive",
+        "meaning": "종합적인, 포괄적인",
+        "example": "create a comprehensive evaluation system",
+        "exampleMeaning": "종합적인 평가 시스템을 구축하다"
+      },
+      {
+        "word": "resistant",
+        "meaning": "~에 강한, 저항하는",
+        "example": "be resistant to minor climate change",
+        "exampleMeaning": "작은 기후 변화에 강하다"
+      },
+      {
+        "word": "elaborate",
+        "meaning": "복잡한, 공을 들인",
+        "example": "follow a long and elaborate procedure",
+        "exampleMeaning": "길고 복잡한 절차를 따르다"
+      },
+      {
+        "word": "current",
+        "meaning": "현재의",
+        "example": "address current concerns first",
+        "exampleMeaning": "현재의 걱정거리들을 먼저 다루다"
+      },
+      {
+        "word": "revised",
+        "meaning": "수정된, 변경된",
+        "example": "release a revised price estimate",
+        "exampleMeaning": "수정된 가격 견적서를 공개하다"
+      },
+      {
+        "word": "affordable",
+        "meaning": "가격이 알맞은, 저렴한",
+        "example": "seek affordable housing in the city center",
+        "exampleMeaning": "도심에서 가격이 알맞은 주택을 찾다"
+      },
+      {
+        "word": "practical",
+        "meaning": "실용적인",
+        "example": "offer trainees practical advice",
+        "exampleMeaning": "교육생들에게 실용적인 조언을 제공하다"
+      },
+      {
+        "word": "time-consuming",
+        "meaning": "시간이 걸리는",
+        "example": "work on a time-consuming task",
+        "exampleMeaning": "시간이 걸리는 업무를 하다"
+      },
+      {
+        "word": "relevant",
+        "meaning": "관련 있는, 적절한",
+        "example": "discover information relevant to the investigation",
+        "exampleMeaning": "조사에 관련 있는 정보를 발견하다"
+      },
+      {
+        "word": "adequate",
+        "meaning": "충분한, 적절한",
+        "example": "prepare an adequate amount of food",
+        "exampleMeaning": "충분한 양의 음식을 준비하다"
+      },
+      {
+        "word": "minor",
+        "meaning": "가벼운, 중요치 않은",
+        "example": "experience a minor setback",
+        "exampleMeaning": "가벼운 차질을 겪다"
+      },
+      {
+        "word": "productive",
+        "meaning": "생산적인",
+        "example": "reward the highly productive team",
+        "exampleMeaning": "매우 생산적인 팀에게 보상하다"
+      },
+      {
+        "word": "flexible",
+        "meaning": "유동적인",
+        "example": "prefer to have flexible working hours",
+        "exampleMeaning": "유동적인 근무 시간을 선호하다"
+      },
+      {
+        "word": "loyal",
+        "meaning": "충성스러운, 충실한",
+        "example": "offer special deals to loyal customers",
+        "exampleMeaning": "충성스러운 고객들에게 특별한 거래를 제공하다"
+      },
+      {
+        "word": "fertile",
+        "meaning": "비옥한, 기름진",
+        "example": "plant crops in fertile soil",
+        "exampleMeaning": "비옥한 토지에 작물을 심다"
+      },
+      {
+        "word": "vacant",
+        "meaning": "빈, 사람이 없는",
+        "example": "book a vacant hotel room",
+        "exampleMeaning": "빈 호텔 방을 예약하다"
+      },
+      {
+        "word": "hollow",
+        "meaning": "속이 빈",
+        "example": "manufacture hollow pipes for plumbing systems",
+        "exampleMeaning": "배수 설비를 위해 속이 빈 파이프를 제조하다"
+      }
+    ]
+  },
+  {
+    "day": 11,
+    "date": null,
+    "title": "DAY 11 [어휘] 형용사 2",
+    "words": [
+      {
+        "word": "renowned",
+        "meaning": "유명한, 명성 있는",
+        "example": "visit a region renowned for its vineyards",
+        "exampleMeaning": "포도밭으로 유명한 지역을 방문하다"
+      },
+      {
+        "word": "valid",
+        "meaning": "유효한, 타당한",
+        "example": "show a valid piece of identification",
+        "exampleMeaning": "유효한 신분증을 보여주다"
+      },
+      {
+        "word": "frustrating",
+        "meaning": "불만스러운, 좌절스러운",
+        "example": "experience a frustrating shipping delay",
+        "exampleMeaning": "불만스러운 배송 지연을 겪다"
+      },
+      {
+        "word": "sole",
+        "meaning": "유일한, 혼자의",
+        "example": "select a sole winner from the ten finalists",
+        "exampleMeaning": "10명의 최종 후보 중에서 유일한 우승자를 선택하다"
+      },
+      {
+        "word": "proficient",
+        "meaning": "능숙한, 숙달한",
+        "example": "become proficient in multiple languages",
+        "exampleMeaning": "다양한 언어에 능숙하게 되다"
+      },
+      {
+        "word": "lively",
+        "meaning": "활기찬, 강렬한",
+        "example": "participate in a lively debate",
+        "exampleMeaning": "활기찬 토론에 참석하다"
+      },
+      {
+        "word": "economic",
+        "meaning": "경제적인, 경제성이 있는",
+        "example": "discuss the economic impact of a tax cut",
+        "exampleMeaning": "감세의 경제적인 영향을 논하다"
+      },
+      {
+        "word": "relaxing",
+        "meaning": "나른한",
+        "example": "enjoy a relaxing day off",
+        "exampleMeaning": "나른한 휴일을 즐기다"
+      },
+      {
+        "word": "profitable",
+        "meaning": "수익성 있는",
+        "example": "operate a profitable franchise",
+        "exampleMeaning": "수익성 있는 가맹점을 운영하다"
+      },
+      {
+        "word": "wasteful",
+        "meaning": "낭비적인, 소모적인",
+        "example": "eliminate wasteful spending",
+        "exampleMeaning": "낭비적인 지출을 없애다"
+      },
+      {
+        "word": "alternative",
+        "meaning": "다른, 대안적인",
+        "example": "take an alternative route",
+        "exampleMeaning": "다른 길로 가다"
+      },
+      {
+        "word": "domestic",
+        "meaning": "국내의",
+        "example": "anticipate an increase in domestic demand",
+        "exampleMeaning": "국내 수요 증가를 예상하다"
+      },
+      {
+        "word": "respectful",
+        "meaning": "존중하는, 공손한",
+        "example": "be respectful of others' opinions",
+        "exampleMeaning": "다른 사람들의 의견을 존중하다"
+      },
+      {
+        "word": "sizable",
+        "meaning": "상당한",
+        "example": "maintain a sizable lead over competitors",
+        "exampleMeaning": "경쟁자들보다 상당한 우위를 유지하다"
+      },
+      {
+        "word": "disappointing",
+        "meaning": "실망스러운",
+        "example": "report disappointing earnings results",
+        "exampleMeaning": "실망스러운 수익 결과를 보고하다"
+      },
+      {
+        "word": "conventional",
+        "meaning": "관습적인, 전통적인",
+        "example": "apply conventional monetary policies",
+        "exampleMeaning": "관습적인 화폐 정책을 적용하다"
+      },
+      {
+        "word": "fair",
+        "meaning": "공정한, 공평한",
+        "example": "charge a fair price for the used car",
+        "exampleMeaning": "중고차에 대해 공정한 가격을 매기다"
+      },
+      {
+        "word": "distinctive",
+        "meaning": "독특한",
+        "example": "feature a distinctive pattern",
+        "exampleMeaning": "독특한 무늬를 특징으로 하다"
+      },
+      {
+        "word": "original",
+        "meaning": "원래의, 최초의",
+        "example": "be more popular than the original version of the song",
+        "exampleMeaning": "원래 버전의 노래보다 더 유명하다"
+      },
+      {
+        "word": "introductory",
+        "meaning": "입문의, 서론의",
+        "example": "attend an introductory class for computer science",
+        "exampleMeaning": "컴퓨터 공학의 입문 수업을 듣다"
+      }
+    ]
+  },
+  {
+    "day": 12,
+    "date": null,
+    "title": "DAY 12 [어휘] 형용사 3",
+    "words": [
+      {
+        "word": "reliable",
+        "meaning": "신뢰할 수 있는, 믿을 만한",
+        "example": "find a reliable form of transportation",
+        "exampleMeaning": "신뢰할 수 있는 교통수단을 찾다"
+      },
+      {
+        "word": "potential",
+        "meaning": "잠재적인, 가능성 있는",
+        "example": "interview potential candidates for the job",
+        "exampleMeaning": "직무에 대한 잠재적인 후보자들의 면접을 보다"
+      },
+      {
+        "word": "efficient",
+        "meaning": "효율적인, 능률적인",
+        "example": "adopt an efficient means of production",
+        "exampleMeaning": "효율적인 생산 수단을 채택하다"
+      },
+      {
+        "word": "unanticipated",
+        "meaning": "예상 밖의",
+        "example": "surprised by the unanticipated test results",
+        "exampleMeaning": "예상 밖의 실험 결과에 놀라다"
+      },
+      {
+        "word": "prominent",
+        "meaning": "유명한, 탁월한",
+        "example": "invite prominent local business owners",
+        "exampleMeaning": "유명한 현지 사업주들을 초대하다"
+      },
+      {
+        "word": "knowledgeable",
+        "meaning": "아는 것이 많은, 총명한",
+        "example": "be knowledgeable about a broad range of topics",
+        "exampleMeaning": "폭넓은 주제에 대해 아는 것이 많다"
+      },
+      {
+        "word": "appropriate",
+        "meaning": "적절한, 적당한",
+        "example": "wear appropriate office attire",
+        "exampleMeaning": "적절한 근무 복장을 입다"
+      },
+      {
+        "word": "combustible",
+        "meaning": "가연성의",
+        "example": "avoid dangerous combustible chemicals",
+        "exampleMeaning": "위험한 가연성 화학 물질들을 피하다"
+      },
+      {
+        "word": "equivalent",
+        "meaning": "동등한, 상당하는",
+        "example": "select an item of equivalent value",
+        "exampleMeaning": "동등한 가치의 물품을 선택하다"
+      },
+      {
+        "word": "residential",
+        "meaning": "주거의, 거주의",
+        "example": "purchase a residential property",
+        "exampleMeaning": "주거용 부동산을 구입하다"
+      },
+      {
+        "word": "deliberate",
+        "meaning": "신중한, 의도적인",
+        "example": "make a deliberate decision",
+        "exampleMeaning": "신중한 결정을 하다"
+      },
+      {
+        "word": "frequent",
+        "meaning": "빈번한, 잦은",
+        "example": "make frequent stops to drop off passengers",
+        "exampleMeaning": "승객들을 내려주기 위해 빈번한 정차를 하다"
+      },
+      {
+        "word": "standard",
+        "meaning": "표준의, 보통의",
+        "example": "charge the standard rate",
+        "exampleMeaning": "표준 요금을 부과하다"
+      },
+      {
+        "word": "insistent",
+        "meaning": "주장하는",
+        "example": "remain insistent on getting a refund",
+        "exampleMeaning": "환불받는 것을 계속해서 주장하다"
+      },
+      {
+        "word": "commercial",
+        "meaning": "상업의",
+        "example": "lease a commercial space to set up a store",
+        "exampleMeaning": "상점을 설립할 수 있는 상업 공간을 임대하다"
+      },
+      {
+        "word": "legitimate",
+        "meaning": "합법적인, 합리적인",
+        "example": "set up a legitimate business",
+        "exampleMeaning": "합법적인 사업을 시작하다"
+      },
+      {
+        "word": "punctual",
+        "meaning": "시간을 엄수하는",
+        "example": "require punctual attendance",
+        "exampleMeaning": "시간을 엄수하는 출근을 요구하다"
+      },
+      {
+        "word": "decisive",
+        "meaning": "결단력 있는, 결정적인",
+        "example": "take decisive action on the matter",
+        "exampleMeaning": "그 일에 대해 결단력 있는 행동을 취하다"
+      },
+      {
+        "word": "cautious",
+        "meaning": "주의하여, 조심스러운",
+        "example": "urge drivers to be cautious on icy roads",
+        "exampleMeaning": "운전자들에게 빙판길에서 주의할 것을 촉구하다"
+      },
+      {
+        "word": "delicate",
+        "meaning": "다루기 어려운, 세심한, 까다로운",
+        "example": "bring up a delicate subject",
+        "exampleMeaning": "다루기 어려운 주제를 꺼내다"
+      }
+    ]
+  },
+  {
+    "day": 13,
+    "date": null,
+    "title": "DAY 13 [어휘] 형용사 4",
+    "words": [
+      {
+        "word": "previous",
+        "meaning": "이전의",
+        "example": "own a previous version of the product",
+        "exampleMeaning": "상품의 이전 버전을 소유하다"
+      },
+      {
+        "word": "sensitive",
+        "meaning": "민감한",
+        "example": "restrict access to sensitive information",
+        "exampleMeaning": "민감한 정보에 대해 접근을 제한하다"
+      },
+      {
+        "word": "substantial",
+        "meaning": "상당한, 튼튼한",
+        "example": "require a substantial amount of time to finish the project",
+        "exampleMeaning": "프로젝트를 끝내는 데 상당한 양의 시간을 필요로 하다"
+      },
+      {
+        "word": "convincing",
+        "meaning": "설득력 있는, 확실한",
+        "example": "need a convincing argument to get funding for the venture",
+        "exampleMeaning": "벤처 사업을 위한 자금을 받기 위해 설득력 있는 주장이 필요하다"
+      },
+      {
+        "word": "diligent",
+        "meaning": "성실한, 부지런한",
+        "example": "praise a diligent employee",
+        "exampleMeaning": "성실한 직원을 칭찬하다"
+      },
+      {
+        "word": "promising",
+        "meaning": "유망한, 전망이 밝은",
+        "example": "receive many promising candidates for the vacant position",
+        "exampleMeaning": "공석에 대해 많은 유망한 지원자들을 받다"
+      },
+      {
+        "word": "comfortable",
+        "meaning": "안락한, 편안한",
+        "example": "buy a comfortable sofa for the living room",
+        "exampleMeaning": "거실에 놓을 안락한 소파를 구매하다"
+      },
+      {
+        "word": "available",
+        "meaning": "구할 수 있는",
+        "example": "make available at department stores",
+        "exampleMeaning": "백화점에서 구할 수 있게 만들다"
+      },
+      {
+        "word": "impressive",
+        "meaning": "인상적인",
+        "example": "have a lot of impressive features",
+        "exampleMeaning": "많은 인상적인 기능들을 가지고 있다"
+      },
+      {
+        "word": "direct",
+        "meaning": "직접적인",
+        "example": "receive direct orders from a supervisor",
+        "exampleMeaning": "감독관으로부터 직접적인 지시를 받다"
+      },
+      {
+        "word": "credible",
+        "meaning": "신뢰할 수 있는",
+        "example": "present credible evidence for the claim",
+        "exampleMeaning": "주장에 대해 신뢰할 수 있는 근거를 제시하다"
+      },
+      {
+        "word": "lengthy",
+        "meaning": "장황한, 지루한",
+        "example": "give a lengthy speech at the opening ceremony",
+        "exampleMeaning": "개막식에서 장황한 연설을 하다"
+      },
+      {
+        "word": "preferred",
+        "meaning": "선호하는, 선호되는",
+        "example": "select one's preferred meal option",
+        "exampleMeaning": "선호하는 식사 선택권을 고르다"
+      },
+      {
+        "word": "rigorous",
+        "meaning": "엄격한, 철저한",
+        "example": "implement rigorous regulations",
+        "exampleMeaning": "엄격한 규정을 시행하다"
+      },
+      {
+        "word": "mundane",
+        "meaning": "일상적인, 따분한",
+        "example": "handle mundane affairs",
+        "exampleMeaning": "일상적인 일을 처리하다"
+      },
+      {
+        "word": "overpriced",
+        "meaning": "너무 비싼",
+        "example": "refuse to buy overpriced goods",
+        "exampleMeaning": "너무 비싼 상품을 구매하는 것을 거부하다"
+      },
+      {
+        "word": "conclusive",
+        "meaning": "결정적인",
+        "example": "be conclusive proof that the new policy is a success",
+        "exampleMeaning": "새로운 정책이 성공적이라는 결정적인 증거이다"
+      },
+      {
+        "word": "imaginary",
+        "meaning": "가상의",
+        "example": "provide an imaginary scenario",
+        "exampleMeaning": "가상의 시나리오를 제공하다"
+      },
+      {
+        "word": "recent",
+        "meaning": "최근의",
+        "example": "discuss the recent policy",
+        "exampleMeaning": "최근의 정책을 논의하다"
+      },
+      {
+        "word": "late",
+        "meaning": "늦은",
+        "example": "cause a late arrival",
+        "exampleMeaning": "늦은 도착을 야기하다"
+      }
+    ]
+  },
+  {
+    "day": 14,
+    "date": null,
+    "title": "DAY 14 [어휘] 부사 1",
+    "words": [
+      {
+        "word": "accurately",
+        "meaning": "정확히, 정밀하게",
+        "example": "predict stock trends accurately",
+        "exampleMeaning": "주식 동향을 정확히 예측하다"
+      },
+      {
+        "word": "routinely",
+        "meaning": "일상적으로, 언제나",
+        "example": "routinely check the e-mail to ensure fast response",
+        "exampleMeaning": "빠른 답변을 보장하기 위해 일상적으로 이메일을 확인하다"
+      },
+      {
+        "word": "markedly",
+        "meaning": "현저하게, 두드러지게",
+        "example": "increase markedly from previous years",
+        "exampleMeaning": "이전 해들에 비해 현저하게 증가하다"
+      },
+      {
+        "word": "superbly",
+        "meaning": "훌륭하게, 최상으로",
+        "example": "develop a superbly designed product",
+        "exampleMeaning": "훌륭하게 디자인된 제품을 개발하다"
+      },
+      {
+        "word": "closely",
+        "meaning": "면밀히, 유심히",
+        "example": "analyze the results closely",
+        "exampleMeaning": "결과를 면밀히 분석하다"
+      },
+      {
+        "word": "intentionally",
+        "meaning": "의도적으로, 고의로",
+        "example": "drive the car at a slow speed intentionally",
+        "exampleMeaning": "의도적으로 차를 느린 속도로 운전하다"
+      },
+      {
+        "word": "merely",
+        "meaning": "단지, 그저",
+        "example": "merely provide a light snack",
+        "exampleMeaning": "단지 가벼운 간식을 제공하다"
+      },
+      {
+        "word": "acceptably",
+        "meaning": "만족스럽게",
+        "example": "perform acceptably in daily use",
+        "exampleMeaning": "일상적인 사용 시 만족스럽게 작동하다"
+      },
+      {
+        "word": "probably",
+        "meaning": "아마도",
+        "example": "be probably more dangerous than expected",
+        "exampleMeaning": "아마도 예상보다 더 위험할 것이다"
+      },
+      {
+        "word": "gradually",
+        "meaning": "서서히, 차츰",
+        "example": "reduce interest rates gradually",
+        "exampleMeaning": "이자율을 서서히 줄이다"
+      },
+      {
+        "word": "namely",
+        "meaning": "다시 말해, 즉",
+        "example": "hold a meeting on the 2nd floor, namely in Room 206",
+        "exampleMeaning": "회의를 2층에서, 다시 말해 206호에서 열다"
+      },
+      {
+        "word": "primarily",
+        "meaning": "주로",
+        "example": "upgrade software primarily used by the accounting department",
+        "exampleMeaning": "주로 회계 부서에 의해 사용되는 소프트웨어를 업그레이드하다"
+      },
+      {
+        "word": "aboard",
+        "meaning": "탑승하여",
+        "example": "have 120 passengers aboard",
+        "exampleMeaning": "120명의 승객이 탑승하여 있다"
+      },
+      {
+        "word": "occasionally",
+        "meaning": "종종, 가끔",
+        "example": "host staff outings occasionally",
+        "exampleMeaning": "직원 야유회를 종종 주최하다"
+      },
+      {
+        "word": "completely",
+        "meaning": "완전히, 전적으로",
+        "example": "have a completely different opinion",
+        "exampleMeaning": "완전히 다른 의견을 가지다"
+      },
+      {
+        "word": "understandably",
+        "meaning": "당연히",
+        "example": "feel understandably pleased about a promotion",
+        "exampleMeaning": "승진에 대해 당연히 기뻐하다"
+      },
+      {
+        "word": "apparently",
+        "meaning": "보아하니, 분명히",
+        "example": "be apparently more expensive than it looks",
+        "exampleMeaning": "보아하니 보기보다 더 비싸다"
+      },
+      {
+        "word": "necessarily",
+        "meaning": "(부정문에서) 반드시 ~은 아니다",
+        "example": "do not necessarily apply to all applicants",
+        "exampleMeaning": "반드시 모든 지원자에게 해당되는 것은 아니다"
+      },
+      {
+        "word": "immediately",
+        "meaning": "즉시",
+        "example": "announce the news immediately",
+        "exampleMeaning": "소식을 즉시 발표하다"
+      },
+      {
+        "word": "briefly",
+        "meaning": "간략하게, 잠시",
+        "example": "explain the issue briefly",
+        "exampleMeaning": "문제를 간략하게 설명하다"
+      }
+    ]
+  },
+  {
+    "day": 15,
+    "date": null,
+    "title": "DAY 15 [어휘] 부사 2",
+    "words": [
+      {
+        "word": "exclusively",
+        "meaning": "오직 ~만, 독점적으로",
+        "example": "sell exclusively to overseas clients",
+        "exampleMeaning": "오직 해외 고객에게만 판매하다"
+      },
+      {
+        "word": "promptly",
+        "meaning": "지체 없이, 신속히",
+        "example": "respond to all inquiries promptly",
+        "exampleMeaning": "모든 문의에 지체 없이 응대하다"
+      },
+      {
+        "word": "relatively",
+        "meaning": "비교적, 상대적으로",
+        "example": "attend a relatively crowded workshop",
+        "exampleMeaning": "비교적 혼잡한 워크숍에 참가하다"
+      },
+      {
+        "word": "periodically",
+        "meaning": "정기적으로",
+        "example": "scan computers for viruses periodically",
+        "exampleMeaning": "바이러스에 대비하여 정기적으로 컴퓨터를 점검하다"
+      },
+      {
+        "word": "elsewhere",
+        "meaning": "다른 곳에서",
+        "example": "search for assistance elsewhere",
+        "exampleMeaning": "다른 곳에서 도움을 찾아보다"
+      },
+      {
+        "word": "barely",
+        "meaning": "거의 ~하지 않은, 가까스로",
+        "example": "introduce people who barely know each other",
+        "exampleMeaning": "서로 거의 알지 못하는 사람들을 소개하다"
+      },
+      {
+        "word": "justly",
+        "meaning": "정당하게, 바르게",
+        "example": "justly claim credit for the invention",
+        "exampleMeaning": "발명에 대한 공적을 정당하게 주장하다"
+      },
+      {
+        "word": "inseparably",
+        "meaning": "밀접하게",
+        "example": "inseparably connected with the consumer's perception",
+        "exampleMeaning": "소비자의 인식과 밀접하게 연관되어 있다"
+      },
+      {
+        "word": "largely",
+        "meaning": "대부분, 주로",
+        "example": "largely consists of sugar and flour",
+        "exampleMeaning": "대부분 설탕과 밀가루로 이루어져 있다"
+      },
+      {
+        "word": "slightly",
+        "meaning": "약간, 조금",
+        "example": "perform slightly better than last quarter",
+        "exampleMeaning": "지난 분기보다 약간 더 잘 수행하다"
+      },
+      {
+        "word": "virtually",
+        "meaning": "거의, 사실상",
+        "example": "vote for a virtually unknown politician",
+        "exampleMeaning": "거의 알려지지 않은 정치인에게 투표하다"
+      },
+      {
+        "word": "precisely",
+        "meaning": "정확하게, 신중하게",
+        "example": "arrive precisely at 9 o'clock",
+        "exampleMeaning": "9시 정각에 정확하게 도착하다"
+      },
+      {
+        "word": "evenly",
+        "meaning": "공평하게, 고르게",
+        "example": "divide tasks evenly among staff",
+        "exampleMeaning": "업무를 직원들 간에 공평하게 나누다"
+      },
+      {
+        "word": "tediously",
+        "meaning": "지루하게, 따분하게",
+        "example": "speak long and tediously on a subject",
+        "exampleMeaning": "주제에 대해 길고 지루하게 말하다"
+      },
+      {
+        "word": "consistently",
+        "meaning": "지속적으로",
+        "example": "consistently provide good service",
+        "exampleMeaning": "좋은 서비스를 지속적으로 제공하다"
+      },
+      {
+        "word": "densely",
+        "meaning": "밀집하여, 빽빽하게",
+        "example": "move to a densely populated area",
+        "exampleMeaning": "인구가 밀집하여 있는 지역으로 이사하다"
+      },
+      {
+        "word": "initially",
+        "meaning": "초기에, 처음에",
+        "example": "initially focus on basic staff training",
+        "exampleMeaning": "초기에 기본 직원 훈련에 초점을 두다"
+      },
+      {
+        "word": "loosely",
+        "meaning": "막연하게, 느슨하게",
+        "example": "be loosely based on a true event",
+        "exampleMeaning": "실제 사건에 막연하게 기반을 두다"
+      },
+      {
+        "word": "generally",
+        "meaning": "일반적으로",
+        "example": "generally pay high rent in cities",
+        "exampleMeaning": "도시에서는 일반적으로 높은 임차료를 내다"
+      },
+      {
+        "word": "totally",
+        "meaning": "완전히, 모두",
+        "example": "totally redo the assignment",
+        "exampleMeaning": "업무를 완전히 다시 하다"
+      }
+    ]
+  },
+  {
+    "day": 16,
+    "date": null,
+    "title": "DAY 16 [어휘] 부사 3",
+    "words": [
+      {
+        "word": "reasonably",
+        "meaning": "적절히, 알맞게",
+        "example": "buy a reasonably priced car",
+        "exampleMeaning": "가격이 적절히 책정된 자동차를 구매하다"
+      },
+      {
+        "word": "gently",
+        "meaning": "천천히, 부드럽게, 약하게",
+        "example": "place the glass bowl gently on the table",
+        "exampleMeaning": "유리그릇을 천천히 탁자 위에 놓다"
+      },
+      {
+        "word": "nearly",
+        "meaning": "거의, ~할 뻔하다",
+        "example": "check a nearly finished assignment",
+        "exampleMeaning": "거의 완료된 업무를 확인하다"
+      },
+      {
+        "word": "regularly",
+        "meaning": "정기적으로, 자주",
+        "example": "receive medical checkups regularly",
+        "exampleMeaning": "정기적으로 건강 검진을 받다"
+      },
+      {
+        "word": "exactly",
+        "meaning": "정확히, 바로, 틀림없이",
+        "example": "cost exactly $100 to get the car repaired",
+        "exampleMeaning": "차를 수리하는 데 정확히 100달러가 들다"
+      },
+      {
+        "word": "overly",
+        "meaning": "지나치게, 과도하게",
+        "example": "be overly dependent on the survey results",
+        "exampleMeaning": "설문 조사 결과에 지나치게 의존하다"
+      },
+      {
+        "word": "immeasurably",
+        "meaning": "잴 수 없을 만큼",
+        "example": "be immeasurably better than other products on the market",
+        "exampleMeaning": "시중의 다른 제품들보다 잴 수 없을 만큼 더 좋다"
+      },
+      {
+        "word": "successfully",
+        "meaning": "성공적으로",
+        "example": "show how successfully the plan worked",
+        "exampleMeaning": "계획이 어떻게 성공적으로 실행되었는지를 보여주다"
+      },
+      {
+        "word": "regretfully",
+        "meaning": "유감스럽게도",
+        "example": "regretfully announce the closing of the department store",
+        "exampleMeaning": "유감스럽게도 백화점의 폐점을 발표하다"
+      },
+      {
+        "word": "formerly",
+        "meaning": "이전에, 예전에",
+        "example": "purchase property formerly owned by a corporation",
+        "exampleMeaning": "이전에 기업에 의해 소유되었던 부동산을 구매하다"
+      },
+      {
+        "word": "rapidly",
+        "meaning": "급속히, 빠르게",
+        "example": "experience rapidly dropping temperatures",
+        "exampleMeaning": "급속히 떨어지는 온도를 경험하다"
+      },
+      {
+        "word": "considerably",
+        "meaning": "훨씬, 상당히",
+        "example": "do considerably better than before",
+        "exampleMeaning": "이전보다 훨씬 더 잘하다"
+      },
+      {
+        "word": "typically",
+        "meaning": "일반적으로, 전형적으로",
+        "example": "typically produce high quality items",
+        "exampleMeaning": "일반적으로 고품질의 물품들을 생산하다"
+      },
+      {
+        "word": "chiefly",
+        "meaning": "주로, 대개",
+        "example": "be chiefly used to produce electrical components",
+        "exampleMeaning": "전자 부품을 생산하는 데 주로 사용되다"
+      },
+      {
+        "word": "rightfully",
+        "meaning": "마땅히, 정당하게",
+        "example": "rightfully demand an apology",
+        "exampleMeaning": "마땅히 사과를 요구하다"
+      },
+      {
+        "word": "recently",
+        "meaning": "최근에",
+        "example": "review a recently opened restaurant",
+        "exampleMeaning": "최근에 개업한 식당을 논평하다"
+      },
+      {
+        "word": "entirely",
+        "meaning": "완전히, 전부",
+        "example": "begin an entirely new assignment",
+        "exampleMeaning": "완전히 새로운 업무를 시작하다"
+      },
+      {
+        "word": "continually",
+        "meaning": "계속적으로, 끊임없이",
+        "example": "occur continually throughout the year",
+        "exampleMeaning": "연중 내내 계속적으로 발생하다"
+      },
+      {
+        "word": "once",
+        "meaning": "한 번",
+        "example": "go at least once a month",
+        "exampleMeaning": "최소한 한 달에 한 번은 가다"
+      },
+      {
+        "word": "first",
+        "meaning": "첫 번째로, 최초로",
+        "example": "finish first in the race",
+        "exampleMeaning": "경주에서 첫 번째로 도착하다"
+      }
+    ]
+  },
+  {
+    "day": 17,
+    "date": null,
+    "title": "DAY 17 [어구] 형용사 관련 어구",
+    "words": [
+      {
+        "word": "be subject to",
+        "meaning": "~의 대상이다",
+        "example": "Factories are subject to random inspections.",
+        "exampleMeaning": "공장들은 불시 점검의 대상이다."
+      },
+      {
+        "word": "be similar to",
+        "meaning": "~과 비슷하다",
+        "example": "The sequel was similar to the original film.",
+        "exampleMeaning": "그 속편은 원작 영화와 비슷했다."
+      },
+      {
+        "word": "be pertinent to",
+        "meaning": "~과 관련 있다",
+        "example": "The memo is pertinent to sales department staff.",
+        "exampleMeaning": "회람은 영업부 직원과 관련 있다."
+      },
+      {
+        "word": "be unable to",
+        "meaning": "~할 수 없다",
+        "example": "Mr. Quentin was unable to find his briefcase.",
+        "exampleMeaning": "Mr. Quentin은 그의 서류 가방을 찾을 수 없었다."
+      },
+      {
+        "word": "be likely to",
+        "meaning": "~할 것 같다",
+        "example": "Ms. Fielding's home is likely to sell fast.",
+        "exampleMeaning": "Ms. Fielding의 집은 빠르게 팔릴 것 같다."
+      },
+      {
+        "word": "be popular with",
+        "meaning": "~에게 인기가 있다",
+        "example": "The clothing line is popular with young adults.",
+        "exampleMeaning": "그 의류 라인은 젊은 성인들에게 인기가 있다."
+      },
+      {
+        "word": "be familiar with",
+        "meaning": "~을 잘 알고 있다",
+        "example": "Applicants must be familiar with the word processing software.",
+        "exampleMeaning": "지원자들은 문서 작성 소프트웨어를 잘 알고 있어야 한다."
+      },
+      {
+        "word": "be eligible to",
+        "meaning": "~할 자격이 있다",
+        "example": "Club members are eligible to receive a 25 percent discount on all purchases.",
+        "exampleMeaning": "클럽 회원들은 모든 구매에 대해 25퍼센트 할인을 받을 자격이 있다."
+      },
+      {
+        "word": "be intended for",
+        "meaning": "~을 대상으로 하다",
+        "example": "The game is intended for children between the ages of 8 and 12.",
+        "exampleMeaning": "그 게임은 8세에서 12세 사이의 어린이들을 대상으로 한다."
+      },
+      {
+        "word": "be dedicated to",
+        "meaning": "~에 전념하다",
+        "example": "The factory is dedicated to the production of BNT Co. vehicle parts.",
+        "exampleMeaning": "그 공장은 BNT사의 차량 부품 생산에 전념한다."
+      },
+      {
+        "word": "be adequate for",
+        "meaning": "~에 적합하다, ~에 충분하다",
+        "example": "Ms. Patraki's skills are adequate for the position.",
+        "exampleMeaning": "Ms. Patraki의 능력은 그 직책에 적합하다."
+      },
+      {
+        "word": "be equipped with",
+        "meaning": "~을 갖추고 있다",
+        "example": "The laboratory is equipped with a 3D printer.",
+        "exampleMeaning": "그 실험실은 3D 프린터를 갖추고 있다."
+      },
+      {
+        "word": "be suitable for",
+        "meaning": "~에 알맞다, ~에 어울리다",
+        "example": "The apartment is suitable for tenants with pets.",
+        "exampleMeaning": "그 아파트는 반려동물이 있는 세입자들에게 알맞다."
+      },
+      {
+        "word": "be skilled at",
+        "meaning": "~에 능숙하다, ~에 노련하다",
+        "example": "Ms. Groves is skilled at writing press releases.",
+        "exampleMeaning": "Ms. Groves는 보도 자료를 쓰는 것에 능숙하다."
+      },
+      {
+        "word": "be willing to",
+        "meaning": "~할 용의가 있다",
+        "example": "Management is willing to negotiate on salaries.",
+        "exampleMeaning": "경영진은 급여에 대해 협상할 용의가 있다."
+      },
+      {
+        "word": "be unaware of",
+        "meaning": "~에 대해 알지 못하다",
+        "example": "Some customers were unaware of the price increase.",
+        "exampleMeaning": "일부 고객들은 가격 인상에 대해 알지 못했다."
+      },
+      {
+        "word": "be bound to",
+        "meaning": "틀림없이 ~할 것이다",
+        "example": "The product is bound to sell well with enough advertising.",
+        "exampleMeaning": "그 제품은 충분한 광고가 된다면 틀림없이 잘 팔릴 것이다."
+      },
+      {
+        "word": "be exempt from",
+        "meaning": "~이 면제되다",
+        "example": "Non-profit organizations are exempt from paying income tax.",
+        "exampleMeaning": "비영리 단체들은 소득세를 내는 것이 면제된다."
+      },
+      {
+        "word": "be pleased to",
+        "meaning": "~하게 되어 기쁘다",
+        "example": "The Newred Gallery is pleased to present an exhibit by sculptor Horatio P. Quinn.",
+        "exampleMeaning": "Newred 미술관은 조각가 Horatio P. Quinn에 의한 전시회를 진행하게 되어 기쁘다."
+      },
+      {
+        "word": "be selected for",
+        "meaning": "~에 뽑히다, ~에 선발되다",
+        "example": "The most qualified candidate will be selected for the job.",
+        "exampleMeaning": "가장 자격이 있는 지원자가 직무에 뽑힐 것이다."
+      }
+    ]
+  },
+  {
+    "day": 18,
+    "date": null,
+    "title": "DAY 18 [어구] 동사 관련 어구",
+    "words": [
+      {
+        "word": "acknowledge A for B",
+        "meaning": "A에게 B에 대해 감사하다",
+        "example": "In his speech, the CEO acknowledged the sales team for their hard work.",
+        "exampleMeaning": "연설에서 최고 경영자는 영업팀에게 그들의 노고에 대해 감사했다."
+      },
+      {
+        "word": "associate A with B",
+        "meaning": "A를 B와 관련시켜 생각하다",
+        "example": "People often associate high-paying jobs with success.",
+        "exampleMeaning": "사람들은 종종 돈을 많이 받는 직업을 성공과 관련시켜 생각한다."
+      },
+      {
+        "word": "participate in",
+        "meaning": "~에 참석하다, ~에 참여하다",
+        "example": "The employees will participate in a team-building exercise.",
+        "exampleMeaning": "직원들은 팀워크 향상 훈련에 참석할 것이다."
+      },
+      {
+        "word": "designate A for B",
+        "meaning": "B에 A를 지정하다, 할당하다",
+        "example": "Mr. Owens has already designated the advertising team for the assignment.",
+        "exampleMeaning": "Mr. Owens는 이미 그 업무에 광고팀을 지정했다."
+      },
+      {
+        "word": "depend on",
+        "meaning": "~에 달려 있다",
+        "example": "Whether the firm gets the contract depends on its presentation.",
+        "exampleMeaning": "그 회사가 계약을 따낼 것인지의 여부는 발표에 달려 있다."
+      },
+      {
+        "word": "result in",
+        "meaning": "~을 낳다, ~을 야기하다",
+        "example": "Regular incentives result in higher employee satisfaction.",
+        "exampleMeaning": "정기적인 인센티브는 더 높은 직원 만족도를 낳는다."
+      },
+      {
+        "word": "notify A of B",
+        "meaning": "A에게 B를 알리다",
+        "example": "The radio broadcast notified drivers of a road closure.",
+        "exampleMeaning": "라디오 방송은 운전자들에게 도로 폐쇄를 알렸다."
+      },
+      {
+        "word": "come in",
+        "meaning": "(상품 등이 여러 종류로) 나오다",
+        "example": "The ice cream bars come in three popular flavors.",
+        "exampleMeaning": "그 막대 아이스크림은 세 가지 인기 있는 맛으로 나온다."
+      },
+      {
+        "word": "recommend A for B",
+        "meaning": "A를 B에 추천하다",
+        "example": "Ms. Clarice recommended Sanjay Patel for a managerial position.",
+        "exampleMeaning": "Ms. Clarice는 Sanjay Patel을 관리직에 추천했다."
+      },
+      {
+        "word": "proceed with",
+        "meaning": "~을 진행하다, ~을 처리하다",
+        "example": "The council proceeded with the original plan after all.",
+        "exampleMeaning": "의회는 결국 원래 계획을 진행했다."
+      },
+      {
+        "word": "provide A with B",
+        "meaning": "A에게 B를 제공하다",
+        "example": "The museum will provide visitors with headsets for the guided tour.",
+        "exampleMeaning": "박물관은 방문객들에게 가이드 관광을 위한 헤드셋을 제공할 것이다."
+      },
+      {
+        "word": "prevent A from B",
+        "meaning": "A가 B하는 것을 막다, 예방하다",
+        "example": "Heavy traffic prevented Ms. Kim from arriving on time.",
+        "exampleMeaning": "극심한 교통량은 Ms. Kim이 제시간에 도착하는 것을 막았다."
+      },
+      {
+        "word": "preside over",
+        "meaning": "~을 주재하다, 사회를 보다",
+        "example": "Ms. Roberts will preside over the meeting.",
+        "exampleMeaning": "Ms. Roberts가 회의를 주재할 것이다."
+      },
+      {
+        "word": "ask A for B",
+        "meaning": "A에게 B를 요청하다",
+        "example": "Ms. Turner asked her boss for a raise.",
+        "exampleMeaning": "Ms. Turner는 상사에게 급여 인상을 요청했다."
+      },
+      {
+        "word": "specialize in",
+        "meaning": "~을 전문으로 하다",
+        "example": "Ms. Torres specializes in corporate law.",
+        "exampleMeaning": "Ms. Torres는 회사법을 전문으로 한다."
+      },
+      {
+        "word": "substitute A for B",
+        "meaning": "A로 B를 대신하다",
+        "example": "The baker substituted honey for sugar.",
+        "exampleMeaning": "제빵사는 꿀로 설탕을 대신했다."
+      },
+      {
+        "word": "lead to",
+        "meaning": "~으로 이어지다",
+        "example": "The store's promotion campaign led to increased profits.",
+        "exampleMeaning": "상점의 홍보 캠페인은 증가된 수익으로 이어졌다."
+      },
+      {
+        "word": "commend A for B",
+        "meaning": "A를 B에 대해 칭찬하다",
+        "example": "Mayor Brown commended citizens for their efforts.",
+        "exampleMeaning": "Brown 시장은 시민들을 그들의 노력에 대해 칭찬했다."
+      },
+      {
+        "word": "search for",
+        "meaning": "~을 찾아보다",
+        "example": "Ms. Lucas searched for her keys in her bag.",
+        "exampleMeaning": "Ms. Lucas는 그녀의 가방에서 열쇠를 찾아보았다."
+      },
+      {
+        "word": "split up",
+        "meaning": "나누다, 분리되다",
+        "example": "The corporation was split up into smaller companies.",
+        "exampleMeaning": "그 기업은 더 작은 회사들로 나뉘어졌다."
+      }
+    ]
+  },
+  {
+    "day": 19,
+    "date": null,
+    "title": "DAY 19 [어구] 명사 관련 어구",
+    "words": [
+      {
+        "word": "attention to",
+        "meaning": "~에 대한 주의",
+        "example": "The painter's attention to detail was remarkable.",
+        "exampleMeaning": "세부 사항에 대한 그 화가의 주의는 놀라웠다."
+      },
+      {
+        "word": "a portion of",
+        "meaning": "~의 일부, 약간의",
+        "example": "A portion of the profits will go to charity.",
+        "exampleMeaning": "수익의 일부는 자선 단체에 기부될 것이다."
+      },
+      {
+        "word": "compliance with",
+        "meaning": "~의 준수, ~의 지킴",
+        "example": "Compliance with health and safety regulations is necessary for restaurants.",
+        "exampleMeaning": "보건 안전 규정의 준수는 식당들에게 필수적이다."
+      },
+      {
+        "word": "identification badge",
+        "meaning": "신분 확인 명찰",
+        "example": "Employees must wear identification badges at all times.",
+        "exampleMeaning": "직원들은 항상 신분 확인 명찰을 차고 있어야 한다."
+      },
+      {
+        "word": "concerns about",
+        "meaning": "~에 대한 우려, 걱정",
+        "example": "There are some concerns about the side effects of the medication.",
+        "exampleMeaning": "약물의 부작용에 대한 우려가 있다."
+      },
+      {
+        "word": "intent to",
+        "meaning": "~할 의사, 의도, 목적",
+        "example": "The prime minister announced his intent to retire from his position.",
+        "exampleMeaning": "총리는 그의 직책에서 사임하겠다는 의사를 발표했다."
+      },
+      {
+        "word": "effect on",
+        "meaning": "~에 대한 효과",
+        "example": "Exercise has a great effect on wellbeing.",
+        "exampleMeaning": "운동은 건강에 대해 탁월한 효과가 있다."
+      },
+      {
+        "word": "admiration for",
+        "meaning": "~에 대한 존경, 감탄",
+        "example": "Mr. Jonson expressed admiration for his mentor.",
+        "exampleMeaning": "Mr. Jonson은 그의 멘토에 대한 존경을 표했다."
+      },
+      {
+        "word": "shift in",
+        "meaning": "~의 변화",
+        "example": "A shift in the stock market can have a great impact on the economy.",
+        "exampleMeaning": "주식 시장의 변화는 경제에 큰 영향을 줄 수 있다."
+      },
+      {
+        "word": "restrictions on",
+        "meaning": "~에 대한 규제, 제한",
+        "example": "The city government implemented new restrictions on weekend parking.",
+        "exampleMeaning": "시 정부는 주말 주차에 대한 새로운 규제를 시행했다."
+      },
+      {
+        "word": "perspective on",
+        "meaning": "~에 대한 관점",
+        "example": "The film reviewer had a unique perspective on the movie's deeper meaning.",
+        "exampleMeaning": "그 영화 평론가는 영화의 더 깊은 의미에 대해 독특한 관점을 갖고 있었다."
+      },
+      {
+        "word": "observation on",
+        "meaning": "~에 대한 논평, 의견",
+        "example": "The writer's observation on the election was entertaining.",
+        "exampleMeaning": "선거에 대한 작가의 논평은 재미있었다."
+      },
+      {
+        "word": "commitment to",
+        "meaning": "~에 대한 헌신, 전념",
+        "example": "Our commitment to customers never weakens.",
+        "exampleMeaning": "우리의 고객에 대한 헌신은 결코 약해지지 않는다."
+      },
+      {
+        "word": "requirement for",
+        "meaning": "~을 위한 요건, 필요 조건",
+        "example": "Consulting experience is a requirement for this position.",
+        "exampleMeaning": "상담 경력은 이 일자리를 위한 요건이다."
+      },
+      {
+        "word": "transition from A to B",
+        "meaning": "A에서 B로의 변화, 이행",
+        "example": "The transition from university life to the world of work can be difficult.",
+        "exampleMeaning": "대학 생활에서 직장 세계로의 변화는 어려울 수 있다."
+      },
+      {
+        "word": "investment in",
+        "meaning": "~에 대한 투자",
+        "example": "Investment in overseas companies increased 17 percent last year.",
+        "exampleMeaning": "해외 기업들에 대한 투자가 작년에 17퍼센트 증가했다."
+      },
+      {
+        "word": "a source of",
+        "meaning": "~의 원천, 근원",
+        "example": "Real estate rentals are a source of income for investors.",
+        "exampleMeaning": "부동산 임대는 투자자들에게 수입의 원천이다."
+      },
+      {
+        "word": "preparation for",
+        "meaning": "~을 위한 준비",
+        "example": "Preparations for the book launch are already finished.",
+        "exampleMeaning": "그 책의 출간을 위한 준비는 이미 완료되었다."
+      },
+      {
+        "word": "report for",
+        "meaning": "~를 위한 보고",
+        "example": "The report for the board of directors should be as thorough as possible.",
+        "exampleMeaning": "이사회를 위한 보고는 최대한 상세해야 한다."
+      },
+      {
+        "word": "a consequence of",
+        "meaning": "~의 결과",
+        "example": "The store closed as a consequence of poor sales.",
+        "exampleMeaning": "그 상점은 판매 부진의 결과로 문을 닫았다."
+      }
+    ]
+  },
+  {
+    "day": 20,
+    "date": null,
+    "title": "DAY 20 [어구] 짝을 이루는 표현",
+    "words": [
+      {
+        "word": "make arrangements",
+        "meaning": "준비하다",
+        "example": "Ms. Lee made arrangements to meet the client.",
+        "exampleMeaning": "Ms. Lee는 고객을 만나기 위해 준비했다."
+      },
+      {
+        "word": "open space",
+        "meaning": "공터",
+        "example": "The park was designed with a lot of open spaces.",
+        "exampleMeaning": "그 공원은 많은 공터를 포함하도록 설계되었다."
+      },
+      {
+        "word": "work environment",
+        "meaning": "근무 환경",
+        "example": "A positive work environment keeps employees motivated.",
+        "exampleMeaning": "적극적인 근무 환경은 직원들이 동기 부여가 되도록 한다."
+      },
+      {
+        "word": "concentrated effort",
+        "meaning": "집중적인 노력",
+        "example": "The team made a concentrated effort to finish its work for the day.",
+        "exampleMeaning": "그 팀은 그날의 업무를 끝내기 위해 집중적인 노력을 했다."
+      },
+      {
+        "word": "follow the regulations",
+        "meaning": "규정을 따르다",
+        "example": "Drivers must follow the regulations to avoid accidents.",
+        "exampleMeaning": "운전자들은 사고를 방지하기 위해 규정을 따라야 한다."
+      },
+      {
+        "word": "selling point",
+        "meaning": "장점",
+        "example": "The phone's biggest selling point is its long battery life.",
+        "exampleMeaning": "그 핸드폰의 가장 큰 장점은 긴 배터리 수명이다."
+      },
+      {
+        "word": "warm welcome",
+        "meaning": "따뜻한 환영",
+        "example": "Seminar attendees gave the speaker a warm welcome.",
+        "exampleMeaning": "세미나 참석자들은 연설자에게 따뜻한 환영을 해주었다."
+      },
+      {
+        "word": "thorough analysis",
+        "meaning": "철저한 분석",
+        "example": "A thorough analysis of the budget is necessary to prevent overspending.",
+        "exampleMeaning": "예산안의 철저한 분석은 과도한 지출을 예방하기 위해 필수적이다."
+      },
+      {
+        "word": "eagerly await",
+        "meaning": "간절히 기다리다",
+        "example": "Citizens of Frankton are eagerly awaiting the grand opening of the new subway line.",
+        "exampleMeaning": "Frankton의 시민들은 새로운 지하철 노선의 개통을 간절히 기다리고 있다."
+      },
+      {
+        "word": "mutually beneficial",
+        "meaning": "상호적으로 이득이 되는",
+        "example": "Internship programs are mutually beneficial to businesses and students.",
+        "exampleMeaning": "인턴십 프로그램은 회사와 학생들에게 상호적으로 이득이 된다."
+      },
+      {
+        "word": "strong performer",
+        "meaning": "경쟁력 있는 회사 · 사람",
+        "example": "GlobalGo is a strong performer in the tourism industry.",
+        "exampleMeaning": "GlobalGo사는 관광 산업에서 경쟁력 있는 회사이다."
+      },
+      {
+        "word": "take measures",
+        "meaning": "조치를 취하다",
+        "example": "Korincorp took measures to protect its computer network.",
+        "exampleMeaning": "Korincorp사는 컴퓨터 네트워크를 보호하기 위한 조치를 취했다."
+      },
+      {
+        "word": "quicken the pace",
+        "meaning": "속도를 높이다",
+        "example": "Mr. Jones must quicken the pace of his work to meet his deadline.",
+        "exampleMeaning": "Mr. Jones는 마감 기한을 맞추기 위해 업무 속도를 높여야만 한다."
+      },
+      {
+        "word": "heavy usage",
+        "meaning": "과다 사용",
+        "example": "The battery of the new smartphone lasts for 10 hours, even with heavy usage.",
+        "exampleMeaning": "그 새로운 스마트폰의 배터리는 과다 사용 시에도 10시간 동안 지속된다."
+      },
+      {
+        "word": "display initiative",
+        "meaning": "주도성을 발휘하다",
+        "example": "The performance review will reflect whether employees display initiative at work.",
+        "exampleMeaning": "업무 수행 평가는 직원들이 직장에서 주도성을 발휘하는지를 반영할 것이다."
+      },
+      {
+        "word": "conveniently located",
+        "meaning": "편리하게 위치한",
+        "example": "The company is conveniently located near a subway station.",
+        "exampleMeaning": "그 회사는 지하철역 근처에 편리하게 위치해 있다."
+      },
+      {
+        "word": "steady growth",
+        "meaning": "꾸준한 성장",
+        "example": "Because of the firm's steady growth, it had to expand its headquarters.",
+        "exampleMeaning": "그 회사의 꾸준한 성장으로 인해, 그곳은 본사를 확장해야 했다."
+      },
+      {
+        "word": "cease operations",
+        "meaning": "영업을 중단하다",
+        "example": "The company had to cease operations last year due to poor management.",
+        "exampleMeaning": "그 회사는 형편없는 경영으로 인해 작년에 영업을 중단해야만 했다."
+      },
+      {
+        "word": "sales performance",
+        "meaning": "판매 실적",
+        "example": "The company's sales performance has improved.",
+        "exampleMeaning": "회사의 판매 실적이 개선되었다."
+      },
+      {
+        "word": "conduct an inspection",
+        "meaning": "점검을 실시하다",
+        "example": "Technicians will conduct an inspection of the equipment.",
+        "exampleMeaning": "기술자들은 장비에 대한 점검을 실시할 것이다."
+      }
+    ]
+  }
+]
