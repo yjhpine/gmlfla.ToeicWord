@@ -35,11 +35,26 @@ function WordResultList({
   title,
   words,
   emptyText,
+  hideMeaning = false,
+  hideExample = false,
 }: {
   title: string;
   words: QuizWord[];
   emptyText: string;
+  hideMeaning?: boolean;
+  hideExample?: boolean;
 }) {
+  const [peeked, setPeeked] = useState<Set<string>>(new Set());
+
+  function togglePeek(key: string) {
+    setPeeked((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
+
   return (
     <section className="mt-8">
       <h2 className="text-base font-medium text-[var(--fg)]">
@@ -50,26 +65,175 @@ function WordResultList({
         <p className="mt-3 text-sm text-[var(--muted)]">{emptyText}</p>
       ) : (
         <ul className="mt-3 divide-y divide-[var(--line)] border-y border-[var(--line)]">
-          {words.map((entry) => (
-            <li key={wordKey(entry)} className="py-3">
-              <p className="text-xs text-[var(--muted)]">Day {entry.day}</p>
-              <p className="mt-0.5 text-lg font-semibold text-[var(--accent)]">
-                {entry.word}
-              </p>
-              <p className="mt-1 text-sm text-[var(--fg)]">{entry.meaning}</p>
-              <p className="mt-1 text-sm text-[var(--fg)]">
-                <ExampleWithUnderline example={entry.example} word={entry.word} />
-              </p>
-              {entry.exampleMeaning ? (
-                <p className="mt-1 text-sm text-[var(--muted)]">
-                  {entry.exampleMeaning}
-                </p>
-              ) : null}
-            </li>
-          ))}
+          {words.map((entry) => {
+            const key = wordKey(entry);
+            const showMeaning = !hideMeaning || peeked.has(key);
+            return (
+              <li key={key} className="py-3">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-[var(--muted)]">Day {entry.day}</p>
+                    <p className="mt-0.5 text-lg font-semibold text-[var(--accent)]">
+                      {entry.word}
+                    </p>
+                    {showMeaning ? (
+                      <p className="mt-1 text-sm text-[var(--fg)]">{entry.meaning}</p>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => togglePeek(key)}
+                        className="mt-1 text-sm text-[var(--muted)] underline decoration-dotted underline-offset-2"
+                      >
+                        뜻 보기
+                      </button>
+                    )}
+                    {!hideExample ? (
+                      <>
+                        <p className="mt-1 text-sm text-[var(--fg)]">
+                          <ExampleWithUnderline
+                            example={entry.example}
+                            word={entry.word}
+                          />
+                        </p>
+                        {entry.exampleMeaning ? (
+                          <p className="mt-1 text-sm text-[var(--muted)]">
+                            {entry.exampleMeaning}
+                          </p>
+                        ) : null}
+                      </>
+                    ) : null}
+                  </div>
+                  <SpeakButton text={entry.word} label="발음" />
+                </div>
+                {hideMeaning && peeked.has(key) ? (
+                  <button
+                    type="button"
+                    onClick={() => togglePeek(key)}
+                    className="mt-1 text-xs text-[var(--muted)]"
+                  >
+                    다시 가리기
+                  </button>
+                ) : null}
+              </li>
+            );
+          })}
         </ul>
       )}
     </section>
+  );
+}
+
+function ResultScreen({
+  selectedLabel,
+  totalCount,
+  knownWords,
+  retriedWords,
+  canUndo,
+  onUndo,
+  onRestart,
+  onHome,
+}: {
+  selectedLabel: string;
+  totalCount: number;
+  knownWords: QuizWord[];
+  retriedWords: QuizWord[];
+  canUndo: boolean;
+  onUndo: () => void;
+  onRestart: () => void;
+  onHome: () => void;
+}) {
+  const [hideExample, setHideExample] = useState(false);
+  const [hideMeaning, setHideMeaning] = useState(false);
+
+  return (
+    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-8">
+      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--accent)]">
+        시험 완료
+      </h1>
+      <p className="mt-2 text-[var(--muted)]">
+        {selectedLabel} · 전체 {totalCount}개 · 바로 맞춤 {knownWords.length} ·
+        다시 맞춤 {retriedWords.length}
+      </p>
+
+      <div className="mt-6 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => setHideExample((v) => !v)}
+          className={
+            hideExample
+              ? "rounded-md bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white"
+              : "rounded-md border border-[var(--line)] bg-white/70 px-4 py-2 text-sm font-medium transition hover:bg-white"
+          }
+          aria-pressed={hideExample}
+        >
+          {hideExample ? "예문 보기" : "예제 빼고 복습"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setHideMeaning((v) => !v)}
+          className={
+            hideMeaning
+              ? "rounded-md bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white"
+              : "rounded-md border border-[var(--line)] bg-white/70 px-4 py-2 text-sm font-medium transition hover:bg-white"
+          }
+          aria-pressed={hideMeaning}
+        >
+          {hideMeaning ? "뜻 보이기" : "뜻 가리기"}
+        </button>
+      </div>
+
+      {hideExample || hideMeaning ? (
+        <p className="mt-3 text-sm text-[var(--muted)]">
+          {hideExample ? "예문·해석을 숨겼어요. " : null}
+          {hideMeaning
+            ? "뜻은 가려 두었어요. 단어만 보고 떠올린 뒤 「뜻 보기」로 확인하세요."
+            : null}
+        </p>
+      ) : null}
+
+      <WordResultList
+        key={`retried-${hideMeaning}-${hideExample}`}
+        title="모르겠어요 했던 단어"
+        words={retriedWords}
+        emptyText="한 번도 모르겠어요를 누르지 않았어요."
+        hideMeaning={hideMeaning}
+        hideExample={hideExample}
+      />
+      <WordResultList
+        key={`known-${hideMeaning}-${hideExample}`}
+        title="바로 맞춘 단어"
+        words={knownWords}
+        emptyText="바로 맞춘 단어가 없어요."
+        hideMeaning={hideMeaning}
+        hideExample={hideExample}
+      />
+
+      <div className="mt-10 flex flex-wrap gap-3">
+        {canUndo ? (
+          <button
+            type="button"
+            onClick={onUndo}
+            className="rounded-md border border-[var(--line)] bg-white px-5 py-2.5 text-sm font-medium transition hover:bg-white"
+          >
+            마지막 단어로 돌아가기
+          </button>
+        ) : null}
+        <button
+          type="button"
+          onClick={onRestart}
+          className="rounded-md bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90"
+        >
+          같은 범위 다시
+        </button>
+        <button
+          type="button"
+          onClick={onHome}
+          className="rounded-md border border-[var(--line)] bg-white/70 px-5 py-2.5 text-sm font-medium transition hover:bg-white"
+        >
+          Day 다시 선택
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -195,52 +359,16 @@ export function QuizApp({ books }: Props) {
 
   if (phase === "result") {
     return (
-      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-8">
-        <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--accent)]">
-          시험 완료
-        </h1>
-        <p className="mt-2 text-[var(--muted)]">
-          {selectedLabel} · 전체 {totalCount}개 · 바로 맞춤 {knownWords.length} ·
-          다시 맞춤 {retriedWords.length}
-        </p>
-
-        <WordResultList
-          title="모르겠어요 했던 단어"
-          words={retriedWords}
-          emptyText="한 번도 모르겠어요를 누르지 않았어요."
-        />
-        <WordResultList
-          title="바로 맞춘 단어"
-          words={knownWords}
-          emptyText="바로 맞춘 단어가 없어요."
-        />
-
-        <div className="mt-10 flex flex-wrap gap-3">
-          {canUndo ? (
-            <button
-              type="button"
-              onClick={undoLast}
-              className="rounded-md border border-[var(--line)] bg-white px-5 py-2.5 text-sm font-medium transition hover:bg-white"
-            >
-              마지막 단어로 돌아가기
-            </button>
-          ) : null}
-          <button
-            type="button"
-            onClick={startQuiz}
-            className="rounded-md bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90"
-          >
-            같은 범위 다시
-          </button>
-          <button
-            type="button"
-            onClick={resetToSelect}
-            className="rounded-md border border-[var(--line)] bg-white/70 px-5 py-2.5 text-sm font-medium transition hover:bg-white"
-          >
-            Day 다시 선택
-          </button>
-        </div>
-      </div>
+      <ResultScreen
+        selectedLabel={selectedLabel}
+        totalCount={totalCount}
+        knownWords={knownWords}
+        retriedWords={retriedWords}
+        canUndo={canUndo}
+        onUndo={undoLast}
+        onRestart={startQuiz}
+        onHome={resetToSelect}
+      />
     );
   }
 
