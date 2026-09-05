@@ -22,12 +22,15 @@ function shuffle<T>(items: T[]): T[] {
 export function QuizApp({ books }: Props) {
   const [selected, setSelected] = useState<number[]>([1]);
   const [phase, setPhase] = useState<Phase>("select");
-  const [queue, setQueue] = useState<QuizWord[]>([]);
-  const [index, setIndex] = useState(0);
-  const [wrong, setWrong] = useState<QuizWord[]>([]);
+  /** 아직 맞추지 못한 단어 큐 (앞=현재) */
+  const [remaining, setRemaining] = useState<QuizWord[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
 
-  const current = queue[index];
-  const progress = queue.length ? Math.min(index + 1, queue.length) : 0;
+  const current = remaining[0];
+  const cleared = Math.max(totalCount - remaining.length, 0);
+  const progressRatio = totalCount
+    ? cleared / totalCount
+    : 0;
 
   const selectedLabel = useMemo(() => {
     if (selected.length === 0) return "Day를 선택하세요";
@@ -52,9 +55,9 @@ export function QuizApp({ books }: Props) {
         })),
       );
     if (words.length === 0) return;
-    setQueue(shuffle(words));
-    setIndex(0);
-    setWrong([]);
+    const shuffled = shuffle(words);
+    setRemaining(shuffled);
+    setTotalCount(shuffled.length);
     setPhase("prompt");
   }
 
@@ -62,68 +65,43 @@ export function QuizApp({ books }: Props) {
     if (phase === "prompt") setPhase("reveal");
   }
 
+  /** 모르겠어요 → 현재 단어를 맨 뒤로 보내고 계속 시험 */
   function markWrong() {
-    if (!current) return;
-    setWrong((prev) => [...prev, current]);
-    goNext();
+    if (remaining.length === 0) return;
+    const [head, ...rest] = remaining;
+    setRemaining([...rest, head]);
+    setPhase("prompt");
   }
 
+  /** 맞췄어요 → 큐에서 제거. 없으면 종료 */
   function markCorrect() {
-    goNext();
-  }
-
-  function goNext() {
-    const nextIndex = index + 1;
-    if (nextIndex >= queue.length) {
+    if (remaining.length <= 1) {
+      setRemaining([]);
       setPhase("result");
       return;
     }
-    setIndex(nextIndex);
+    setRemaining(remaining.slice(1));
     setPhase("prompt");
   }
 
   function resetToSelect() {
     setPhase("select");
-    setQueue([]);
-    setIndex(0);
-    setWrong([]);
+    setRemaining([]);
+    setTotalCount(0);
   }
 
   if (phase === "result") {
     return (
       <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-8">
         <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--accent)]">
-          시험 결과
+          시험 완료
         </h1>
         <p className="mt-2 text-[var(--muted)]">
-          {selectedLabel} · 총 {queue.length}문제 중 틀린 단어 {wrong.length}개
+          {selectedLabel} · {totalCount}개 단어를 모두 맞췄어요
         </p>
-
-        {wrong.length === 0 ? (
-          <p className="mt-10 text-lg font-medium text-[var(--accent)]">
-            전부 맞췄어요. 잘했습니다!
-          </p>
-        ) : (
-          <ol className="mt-8 divide-y divide-[var(--line)] border-y border-[var(--line)]">
-            {wrong.map((entry, i) => (
-              <li key={`${entry.day}-${entry.word}-${i}`} className="py-4">
-                <p className="text-xs text-[var(--muted)]">Day {entry.day}</p>
-                <p className="mt-1 text-xl font-semibold text-[var(--accent)]">
-                  {entry.word}
-                </p>
-                <p className="mt-1 text-[var(--fg)]">{entry.meaning}</p>
-                <p className="mt-2 text-sm text-[var(--fg)]">
-                  <ExampleWithUnderline example={entry.example} word={entry.word} />
-                </p>
-                {entry.exampleMeaning ? (
-                  <p className="mt-1 text-sm text-[var(--muted)]">
-                    {entry.exampleMeaning}
-                  </p>
-                ) : null}
-              </li>
-            ))}
-          </ol>
-        )}
+        <p className="mt-10 text-lg font-medium text-[var(--accent)]">
+          잘했습니다!
+        </p>
 
         <div className="mt-10 flex flex-wrap gap-3">
           <button
@@ -151,13 +129,14 @@ export function QuizApp({ books }: Props) {
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 pt-4 text-sm text-[var(--muted)]">
           <span>{selectedLabel}</span>
           <span>
-            {progress} / {queue.length}
+            완료 {cleared} / {totalCount}
+            {remaining.length > 0 ? ` · 남음 ${remaining.length}` : ""}
           </span>
         </div>
         <div className="mx-auto mt-2 h-1 w-full max-w-3xl overflow-hidden px-4">
           <div
             className="h-full rounded-full bg-[var(--accent)] transition-[width] duration-300"
-            style={{ width: `${(progress / Math.max(queue.length, 1)) * 100}%` }}
+            style={{ width: `${progressRatio * 100}%` }}
           />
         </div>
 
@@ -264,9 +243,11 @@ export function QuizApp({ books }: Props) {
       </div>
 
       <p className="mt-10 text-sm leading-relaxed text-[var(--muted)]">
-        영단어만 보이다가 화면을 누르면 뜻·예문이 나오고,
+        영단어만 보이다가 화면을 누르면 뜻·예문이 나옵니다.
         <br />
-        모르겠어요 / 맞췄어요로 다음으로 넘어갑니다.
+        모르겠어요 → 맨 뒤로 보내 다시 출제 / 맞췄어요 → 다음
+        <br />
+        모든 단어를 맞출 때까지 계속됩니다.
       </p>
     </div>
   );
