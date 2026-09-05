@@ -1,21 +1,59 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ExampleWithUnderline } from "@/components/ExampleWithUnderline";
 import type { DayWordbook } from "@/lib/words/types";
+
+type Phase = "select" | "study";
 
 type Props = {
   books: DayWordbook[];
 };
 
 export function WordsStudy({ books }: Props) {
+  const [phase, setPhase] = useState<Phase>("select");
   const [day, setDay] = useState(books[0]?.day ?? 1);
-  const [, startTransition] = useTransition();
+  const [index, setIndex] = useState(0);
+  /** 학습: 단어만 먼저 → 터치 시 뜻/예문 */
+  const [revealed, setRevealed] = useState(false);
 
   const current = useMemo(
     () => books.find((book) => book.day === day) ?? books[0],
     [books, day],
   );
+
+  const entry = current?.words[index];
+  const total = current?.words.length ?? 0;
+  const progressRatio = total ? (index + 1) / total : 0;
+
+  useEffect(() => {
+    setIndex(0);
+    setRevealed(false);
+  }, [day]);
+
+  function startStudy(nextDay: number) {
+    setDay(nextDay);
+    setIndex(0);
+    setRevealed(false);
+    setPhase("study");
+  }
+
+  function goPrev() {
+    if (index <= 0) return;
+    setIndex((i) => i - 1);
+    setRevealed(false);
+  }
+
+  function goNext() {
+    if (!current) return;
+    if (index >= current.words.length - 1) {
+      setPhase("select");
+      setRevealed(false);
+      return;
+    }
+    setIndex((i) => i + 1);
+    setRevealed(false);
+  }
 
   if (!current) {
     return (
@@ -25,77 +63,114 @@ export function WordsStudy({ books }: Props) {
     );
   }
 
-  return (
-    <div className="flex flex-col gap-8">
-      <div>
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--accent)]">
-              단어
-            </h1>
-            <p className="mt-2 text-[var(--muted)]">
-              Day를 고르면 영단어·뜻·예문(한글)을 한 화면에서 봅니다.
-            </p>
-          </div>
-          <p className="text-sm text-[var(--muted)]">
-            {current.words.length}단어 · Day {current.day}
-          </p>
+  if (phase === "study" && entry) {
+    return (
+      <div className="flex min-h-[70vh] flex-1 flex-col">
+        <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 pt-2 text-sm text-[var(--muted)]">
+          <button
+            type="button"
+            onClick={() => {
+              setPhase("select");
+              setRevealed(false);
+            }}
+            className="rounded-md px-2 py-1 transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
+          >
+            ← Day 선택
+          </button>
+          <span>
+            Day {current.day} · {index + 1} / {total}
+          </span>
+        </div>
+        <div className="mx-auto mt-2 h-1 w-full max-w-3xl overflow-hidden px-4">
+          <div
+            className="h-full rounded-full bg-[var(--accent)] transition-[width] duration-300"
+            style={{ width: `${progressRatio * 100}%` }}
+          />
         </div>
 
-        <ul className="mt-6 grid grid-cols-5 gap-2 sm:grid-cols-10">
-          {books.map((book) => {
-            const active = book.day === current.day;
-            return (
-              <li key={book.day}>
-                <button
-                  type="button"
-                  onClick={() => startTransition(() => setDay(book.day))}
-                  className={
-                    active
-                      ? "flex h-11 w-full items-center justify-center rounded-md bg-[var(--accent)] text-sm font-medium text-white transition"
-                      : "flex h-11 w-full items-center justify-center rounded-md border border-[var(--line)] bg-white/60 text-sm text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
-                  }
-                  aria-pressed={active}
-                >
-                  {book.day}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+        <button
+          type="button"
+          onClick={() => setRevealed(true)}
+          className="flex flex-1 flex-col items-center justify-center px-6 text-center"
+          aria-label={revealed ? "뜻·예문 표시됨" : "화면을 눌러 뜻·예문 보기"}
+        >
+          <p className="text-xs text-[var(--muted)]">{current.title}</p>
+          <p className="mt-4 font-[family-name:var(--font-display)] text-4xl tracking-tight text-[var(--fg)] sm:text-5xl">
+            {entry.word}
+          </p>
+          {!revealed ? (
+            <p className="mt-8 animate-pulse text-sm text-[var(--muted)]">
+              화면을 터치하면 뜻과 예문이 나옵니다
+            </p>
+          ) : (
+            <div
+              key={`${current.day}-${index}-reveal`}
+              className="mt-10 w-full max-w-lg animate-[fade-up_240ms_ease-out]"
+            >
+              <p className="text-xl font-medium text-[var(--accent)]">
+                {entry.meaning}
+              </p>
+              <p className="mt-3 text-base leading-relaxed text-[var(--fg)]">
+                <ExampleWithUnderline example={entry.example} word={entry.word} />
+              </p>
+              {entry.exampleMeaning ? (
+                <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
+                  {entry.exampleMeaning}
+                </p>
+              ) : null}
+            </div>
+          )}
+        </button>
 
-      <section key={current.day} className="animate-[fade-up_280ms_ease-out]">
-        <h2 className="text-lg font-medium text-[var(--fg)]">{current.title}</h2>
-        <ol className="mt-4 divide-y divide-[var(--line)] border-y border-[var(--line)]">
-          {current.words.map((entry, index) => (
-            <li key={`${current.day}-${entry.word}-${index}`} className="py-4">
-              <div className="flex items-baseline gap-3">
-                <span className="w-6 shrink-0 text-xs text-[var(--muted)]">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xl font-semibold tracking-tight text-[var(--accent)]">
-                    {entry.word}
-                  </p>
-                  <p className="mt-1 text-[var(--fg)]">{entry.meaning}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-[var(--fg)]">
-                    <ExampleWithUnderline
-                      example={entry.example}
-                      word={entry.word}
-                    />
-                  </p>
-                  {entry.exampleMeaning ? (
-                    <p className="mt-1 text-sm leading-relaxed text-[var(--muted)]">
-                      {entry.exampleMeaning}
-                    </p>
-                  ) : null}
-                </div>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
+        <div className="mx-auto grid w-full max-w-3xl grid-cols-2 gap-3 px-4 pb-8">
+          <button
+            type="button"
+            onClick={goPrev}
+            disabled={index === 0}
+            className="rounded-md border border-[var(--line)] bg-white px-4 py-4 text-sm font-medium text-[var(--fg)] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            이전
+          </button>
+          <button
+            type="button"
+            onClick={goNext}
+            className="rounded-md bg-[var(--accent)] px-4 py-4 text-sm font-medium text-white transition hover:opacity-90"
+          >
+            {index >= total - 1 ? "Day 선택으로" : "다음"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto w-full max-w-3xl px-4 py-8">
+      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--accent)]">
+        단어
+      </h1>
+      <p className="mt-2 text-[var(--muted)]">
+        Day를 고르면 단어를 하나씩 넘기며 학습합니다.
+      </p>
+
+      <ul className="mt-8 grid grid-cols-5 gap-2 sm:grid-cols-10">
+        {books.map((book) => (
+          <li key={book.day}>
+            <button
+              type="button"
+              onClick={() => startStudy(book.day)}
+              className="flex h-11 w-full items-center justify-center rounded-md border border-[var(--line)] bg-white/60 text-sm text-[var(--muted)] transition hover:border-[var(--accent)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
+            >
+              {book.day}
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      <p className="mt-10 text-sm leading-relaxed text-[var(--muted)]">
+        Day를 누르면 영단어만 나오고, 화면을 터치하면 뜻·예문이 보입니다.
+        <br />
+        이전 / 다음으로 단어를 넘깁니다.
+      </p>
     </div>
   );
 }
