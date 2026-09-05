@@ -7,102 +7,122 @@
     {
       "word": "attention to",
       "meaning": "~에 대한 주의",
-      "example": "The painter's attention to detail was remarkable."
+      "example": "The painter's attention to detail was remarkable.",
+      "exampleMeaning": "세부 사항에 대한 그 화가의 주의는 놀라웠다."
     },
     {
       "word": "a portion of",
       "meaning": "~의 일부, 약간의",
-      "example": "A portion of the profits will go to charity."
+      "example": "A portion of the profits will go to charity.",
+      "exampleMeaning": "수익의 일부는 자선 단체에 기부될 것이다."
     },
     {
       "word": "compliance with",
       "meaning": "~의 준수, ~의 지킴",
-      "example": "Compliance with health and safety regulations is necessary for restaurants."
+      "example": "Compliance with health and safety regulations is necessary for restaurants.",
+      "exampleMeaning": "보건 안전 규정의 준수는 식당들에게 필수적이다."
     },
     {
       "word": "identification badge",
       "meaning": "신분 확인 명찰",
-      "example": "Employees must wear identification badges at all times."
+      "example": "Employees must wear identification badges at all times.",
+      "exampleMeaning": "직원들은 항상 신분 확인 명찰을 차고 있어야 한다."
     },
     {
       "word": "concerns about",
       "meaning": "~에 대한 우려, 걱정",
-      "example": "There are some concerns about the side effects of the medication."
+      "example": "There are some concerns about the side effects of the medication.",
+      "exampleMeaning": "약물의 부작용에 대한 우려가 있다."
     },
     {
       "word": "intent to",
       "meaning": "~할 의사, 의도, 목적",
-      "example": "The prime minister announced his intent to retire from his position."
+      "example": "The prime minister announced his intent to retire from his position.",
+      "exampleMeaning": "총리는 그의 직책에서 사임하겠다는 의사를 발표했다."
     },
     {
       "word": "effect on",
       "meaning": "~에 대한 효과",
-      "example": "Exercise has a great effect on wellbeing."
+      "example": "Exercise has a great effect on wellbeing.",
+      "exampleMeaning": "운동은 건강에 대해 탁월한 효과가 있다."
     },
     {
       "word": "admiration for",
       "meaning": "~에 대한 존경, 감탄",
-      "example": "Mr. Jonson expressed admiration for his mentor."
+      "example": "Mr. Jonson expressed admiration for his mentor.",
+      "exampleMeaning": "Mr. Jonson은 그의 멘토에 대한 존경을 표했다."
     },
     {
       "word": "shift in",
       "meaning": "~의 변화",
-      "example": "A shift in the stock market can have a great impact on the economy."
+      "example": "A shift in the stock market can have a great impact on the economy.",
+      "exampleMeaning": "주식 시장의 변화는 경제에 큰 영향을 줄 수 있다."
     },
     {
       "word": "restrictions on",
       "meaning": "~에 대한 규제, 제한",
-      "example": "The city government implemented new restrictions on weekend parking."
+      "example": "The city government implemented new restrictions on weekend parking.",
+      "exampleMeaning": "시 정부는 주말 주차에 대한 새로운 규제를 시행했다."
     },
     {
       "word": "perspective on",
       "meaning": "~에 대한 관점",
-      "example": "The film reviewer had a unique perspective on the movie's deeper meaning."
+      "example": "The film reviewer had a unique perspective on the movie's deeper meaning.",
+      "exampleMeaning": "그 영화 평론가는 영화의 더 깊은 의미에 대해 독특한 관점을 갖고 있었다."
     },
     {
       "word": "observation on",
       "meaning": "~에 대한 논평, 의견",
-      "example": "The writer's observation on the election was entertaining."
+      "example": "The writer's observation on the election was entertaining.",
+      "exampleMeaning": "선거에 대한 작가의 논평은 재미있었다."
     },
     {
       "word": "commitment to",
       "meaning": "~에 대한 헌신, 전념",
-      "example": "Our commitment to customers never weakens."
+      "example": "Our commitment to customers never weakens.",
+      "exampleMeaning": "우리의 고객에 대한 헌신은 결코 약해지지 않는다."
     },
     {
       "word": "requirement for",
       "meaning": "~을 위한 요건, 필요 조건",
-      "example": "Consulting experience is a requirement for this position."
+      "example": "Consulting experience is a requirement for this position.",
+      "exampleMeaning": "상담 경력은 이 일자리를 위한 요건이다."
     },
     {
       "word": "transition from A to B",
       "meaning": "A에서 B로의 변화, 이행",
-      "example": "The transition from university life to the world of work can be difficult."
+      "example": "The transition from university life to the world of work can be difficult.",
+      "exampleMeaning": "대학 생활에서 직장 세계로의 변화는 어려울 수 있다."
     },
     {
       "word": "investment in",
       "meaning": "~에 대한 투자",
-      "example": "Investment in overseas companies increased 17 percent last year."
+      "example": "Investment in overseas companies increased 17 percent last year.",
+      "exampleMeaning": "해외 기업들에 대한 투자가 작년에 17퍼센트 증가했다."
     },
     {
       "word": "a source of",
       "meaning": "~의 원천, 근원",
-      "example": "Real estate rentals are a source of income for investors."
+      "example": "Real estate rentals are a source of income for investors.",
+      "exampleMeaning": "부동산 임대는 투자자들에게 수입의 원천이다."
     },
     {
       "word": "preparation for",
       "meaning": "~을 위한 준비",
-      "example": "Preparations for the book launch are already finished."
+      "example": "Preparations for the book launch are already finished.",
+      "exampleMeaning": "그 책의 출간을 위한 준비는 이미 완료되었다."
     },
     {
       "word": "report for",
       "meaning": "~를 위한 보고",
-      "example": "The report for the board of directors should be as thorough as possible."
+      "example": "The report for the board of directors should be as thorough as possible.",
+      "exampleMeaning": "이사회를 위한 보고는 최대한 상세해야 한다."
     },
     {
       "word": "a consequence of",
       "meaning": "~의 결과",
-      "example": "The store closed as a consequence of poor sales."
+      "example": "The store closed as a consequence of poor sales.",
+      "exampleMeaning": "그 상점은 판매 부진의 결과로 문을 닫았다."
     }
   ]
 }
