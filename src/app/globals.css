@@ -32,3 +32,27 @@ body {
     transform: translateY(0);
   }
 }
+
+@keyframes sticker-peel {
+  from {
+    opacity: 1;
+    transform: rotate(-1.5deg) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: rotate(-12deg) translateY(-10px) scale(0.92);
+  }
+}
+
+.sticker-cover {
+  background:
+    repeating-linear-gradient(
+      -18deg,
+      rgba(255, 255, 255, 0.18) 0 6px,
+      transparent 6px 12px
+    ),
+    linear-gradient(145deg, #ffe08a 0%, #ffc94a 55%, #f0b429 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.55) inset,
+    0 2px 6px rgba(15, 39, 64, 0.16);
+}
