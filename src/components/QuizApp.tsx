@@ -10,6 +10,13 @@ type Props = {
   books: DayWordbook[];
 };
 
+type Snapshot = {
+  remaining: QuizWord[];
+  missedKeys: string[];
+  retriedWords: QuizWord[];
+  knownWords: QuizWord[];
+};
+
 function shuffle<T>(items: T[]): T[] {
   const next = [...items];
   for (let i = next.length - 1; i > 0; i -= 1) {
@@ -70,16 +77,15 @@ export function QuizApp({ books }: Props) {
   const [phase, setPhase] = useState<Phase>("select");
   const [remaining, setRemaining] = useState<QuizWord[]>([]);
   const [totalCount, setTotalCount] = useState(0);
-  /** 한 번이라도 모르겠어요를 누른 단어 key */
   const [missedKeys, setMissedKeys] = useState<Set<string>>(new Set());
-  /** 모르겠어요 후 결국 맞춘 단어 */
   const [retriedWords, setRetriedWords] = useState<QuizWord[]>([]);
-  /** 바로 맞춘 단어 */
   const [knownWords, setKnownWords] = useState<QuizWord[]>([]);
+  const [history, setHistory] = useState<Snapshot[]>([]);
 
   const current = remaining[0];
   const cleared = Math.max(totalCount - remaining.length, 0);
   const progressRatio = totalCount ? cleared / totalCount : 0;
+  const canUndo = history.length > 0;
 
   const selectedLabel = useMemo(() => {
     if (selected.length === 0) return "Day를 선택하세요";
@@ -91,6 +97,30 @@ export function QuizApp({ books }: Props) {
     setSelected((prev) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
     );
+  }
+
+  function pushHistory() {
+    setHistory((prev) => [
+      ...prev,
+      {
+        remaining: [...remaining],
+        missedKeys: [...missedKeys],
+        retriedWords: [...retriedWords],
+        knownWords: [...knownWords],
+      },
+    ]);
+  }
+
+  function undoLast() {
+    if (history.length === 0) return;
+    const snapshot = history[history.length - 1];
+    setHistory((prev) => prev.slice(0, -1));
+    setRemaining(snapshot.remaining);
+    setMissedKeys(new Set(snapshot.missedKeys));
+    setRetriedWords(snapshot.retriedWords);
+    setKnownWords(snapshot.knownWords);
+    // 다시 선택하도록 정답 공개 상태로 복원
+    setPhase("reveal");
   }
 
   function startQuiz() {
@@ -110,6 +140,7 @@ export function QuizApp({ books }: Props) {
     setMissedKeys(new Set());
     setRetriedWords([]);
     setKnownWords([]);
+    setHistory([]);
     setPhase("prompt");
   }
 
@@ -119,6 +150,7 @@ export function QuizApp({ books }: Props) {
 
   function markWrong() {
     if (!current) return;
+    pushHistory();
     const key = wordKey(current);
     setMissedKeys((prev) => {
       if (prev.has(key)) return prev;
@@ -133,6 +165,7 @@ export function QuizApp({ books }: Props) {
 
   function markCorrect() {
     if (!current) return;
+    pushHistory();
     const key = wordKey(current);
     if (missedKeys.has(key)) {
       setRetriedWords((prev) => [...prev, current]);
@@ -156,6 +189,7 @@ export function QuizApp({ books }: Props) {
     setMissedKeys(new Set());
     setRetriedWords([]);
     setKnownWords([]);
+    setHistory([]);
   }
 
   if (phase === "result") {
@@ -181,6 +215,15 @@ export function QuizApp({ books }: Props) {
         />
 
         <div className="mt-10 flex flex-wrap gap-3">
+          {canUndo ? (
+            <button
+              type="button"
+              onClick={undoLast}
+              className="rounded-md border border-[var(--line)] bg-white px-5 py-2.5 text-sm font-medium transition hover:bg-white"
+            >
+              마지막 단어로 돌아가기
+            </button>
+          ) : null}
           <button
             type="button"
             onClick={startQuiz}
@@ -203,9 +246,18 @@ export function QuizApp({ books }: Props) {
   if (phase === "prompt" || phase === "reveal") {
     return (
       <div className="flex flex-1 flex-col">
-        <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 pt-4 text-sm text-[var(--muted)]">
-          <span>{selectedLabel}</span>
-          <span>
+        <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3 px-4 pt-4 text-sm text-[var(--muted)]">
+          <button
+            type="button"
+            onClick={undoLast}
+            disabled={!canUndo}
+            className="rounded-md px-2 py-1 transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-[var(--muted)]"
+          >
+            ← 이전 단어
+          </button>
+          <span className="text-right">
+            {selectedLabel}
+            <br />
             완료 {cleared} / {totalCount}
             {remaining.length > 0 ? ` · 남음 ${remaining.length}` : ""}
           </span>
@@ -324,7 +376,7 @@ export function QuizApp({ books }: Props) {
         <br />
         모르겠어요 → 맨 뒤로 보내 다시 출제 / 맞췄어요 → 다음
         <br />
-        끝나면 모르겠어요 했던 단어와 바로 맞춘 단어를 나눠 보여줍니다.
+        잘못 눌렀다면 ← 이전 단어 로 바로 전 문제로 돌아갈 수 있습니다.
       </p>
     </div>
   );
