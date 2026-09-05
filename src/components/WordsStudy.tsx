@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { ExampleWithUnderline } from "@/components/ExampleWithUnderline";
+import { SpeakButton } from "@/components/SpeakButton";
 import type { DayWordbook } from "@/lib/words/types";
 
 type Phase = "select" | "study";
@@ -86,6 +87,7 @@ export function WordsStudy({ books }: Props) {
           <p className="mt-4 font-[family-name:var(--font-display)] text-4xl tracking-tight text-[var(--fg)] sm:text-5xl">
             {entry.word}
           </p>
+          <SpeakButton text={entry.word} />
           <div className="mt-8 w-full max-w-lg">
             <p className="text-xl font-medium text-[var(--accent)]">
               {entry.meaning}

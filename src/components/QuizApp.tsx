@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ExampleWithUnderline } from "@/components/ExampleWithUnderline";
+import { SpeakButton } from "@/components/SpeakButton";
 import type { DayWordbook, QuizWord } from "@/lib/words/types";
 
 type Phase = "select" | "prompt" | "reveal" | "result";
@@ -278,6 +279,11 @@ export function QuizApp({ books }: Props) {
           <p className="font-[family-name:var(--font-display)] text-4xl tracking-tight text-[var(--fg)] sm:text-5xl">
             {current?.word}
           </p>
+          {current?.word ? (
+            <div className="mt-4">
+              <SpeakButton text={current.word} />
+            </div>
+          ) : null}
           {phase === "prompt" ? (
             <p className="mt-8 animate-pulse text-sm text-[var(--muted)]">
               화면을 터치하면 정답과 예문이 나옵니다
