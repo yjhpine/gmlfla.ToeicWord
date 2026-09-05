@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
+import { ExampleWithUnderline } from "@/components/ExampleWithUnderline";
 import type { DayWordbook } from "@/lib/words/types";
 
 type Props = {
@@ -33,7 +34,7 @@ export function WordsStudy({ books }: Props) {
               단어
             </h1>
             <p className="mt-2 text-[var(--muted)]">
-              Day를 고르면 영단어·뜻·예문을 한 화면에서 봅니다.
+              Day를 고르면 영단어·뜻·예문(한글)을 한 화면에서 봅니다.
             </p>
           </div>
           <p className="text-sm text-[var(--muted)]">
@@ -52,7 +53,7 @@ export function WordsStudy({ books }: Props) {
                   className={
                     active
                       ? "flex h-11 w-full items-center justify-center rounded-md bg-[var(--accent)] text-sm font-medium text-white transition"
-                      : "flex h-11 w-full items-center justify-center rounded-md border border-[var(--line)] bg-white/50 text-sm text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                      : "flex h-11 w-full items-center justify-center rounded-md border border-[var(--line)] bg-white/60 text-sm text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
                   }
                   aria-pressed={active}
                 >
@@ -78,9 +79,17 @@ export function WordsStudy({ books }: Props) {
                     {entry.word}
                   </p>
                   <p className="mt-1 text-[var(--fg)]">{entry.meaning}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
-                    {entry.example}
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--fg)]">
+                    <ExampleWithUnderline
+                      example={entry.example}
+                      word={entry.word}
+                    />
                   </p>
+                  {entry.exampleMeaning ? (
+                    <p className="mt-1 text-sm leading-relaxed text-[var(--muted)]">
+                      {entry.exampleMeaning}
+                    </p>
+                  ) : null}
                 </div>
               </div>
             </li>

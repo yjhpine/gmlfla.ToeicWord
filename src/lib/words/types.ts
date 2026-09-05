@@ -4,6 +4,8 @@ export type WordEntry = {
   word: string;
   meaning: string;
   example: string;
+  /** 예문 한국어 뜻 */
+  exampleMeaning: string;
 };
 
 export type DayWordbook = {

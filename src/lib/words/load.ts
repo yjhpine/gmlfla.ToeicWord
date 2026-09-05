@@ -28,7 +28,14 @@ export function getWordbookIndex(): WordbookIndex {
 export function getDayWordbook(day: number): DayWordbook | null {
   const filePath = path.join(WORDS_DIR, `day-${String(day).padStart(2, "0")}.json`);
   if (!existsSync(filePath)) return null;
-  return readJson<DayWordbook>(filePath);
+  const book = readJson<DayWordbook>(filePath);
+  return {
+    ...book,
+    words: book.words.map((w) => ({
+      ...w,
+      exampleMeaning: w.exampleMeaning ?? "",
+    })),
+  };
 }
 
 export function getAllDayWordbooks(): DayWordbook[] {

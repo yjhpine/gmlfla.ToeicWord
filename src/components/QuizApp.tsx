@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { ExampleWithUnderline } from "@/components/ExampleWithUnderline";
 import type { DayWordbook, QuizWord } from "@/lib/words/types";
 
 type Phase = "select" | "prompt" | "reveal" | "result";
@@ -111,7 +112,14 @@ export function QuizApp({ books }: Props) {
                   {entry.word}
                 </p>
                 <p className="mt-1 text-[var(--fg)]">{entry.meaning}</p>
-                <p className="mt-2 text-sm text-[var(--muted)]">{entry.example}</p>
+                <p className="mt-2 text-sm text-[var(--fg)]">
+                  <ExampleWithUnderline example={entry.example} word={entry.word} />
+                </p>
+                {entry.exampleMeaning ? (
+                  <p className="mt-1 text-sm text-[var(--muted)]">
+                    {entry.exampleMeaning}
+                  </p>
+                ) : null}
               </li>
             ))}
           </ol>
@@ -171,9 +179,19 @@ export function QuizApp({ books }: Props) {
               <p className="text-xl font-medium text-[var(--accent)]">
                 {current?.meaning}
               </p>
-              <p className="mt-3 text-base leading-relaxed text-[var(--muted)]">
-                {current?.example}
+              <p className="mt-3 text-base leading-relaxed text-[var(--fg)]">
+                {current ? (
+                  <ExampleWithUnderline
+                    example={current.example}
+                    word={current.word}
+                  />
+                ) : null}
               </p>
+              {current?.exampleMeaning ? (
+                <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
+                  {current.exampleMeaning}
+                </p>
+              ) : null}
             </div>
           )}
         </button>
