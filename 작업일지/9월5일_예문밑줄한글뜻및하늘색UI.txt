@@ -1,0 +1,12 @@
+9월5일 - 예문 밑줄/한글뜻 + 하늘색 UI + main 병합
+
+[변경]
+1. 전 Day JSON에 exampleMeaning(예문 한국어 뜻) 추가 (400개)
+2. 예문 내 학습 단어 밑줄 표시 (ExampleWithUnderline)
+3. UI 색감 파란/하늘색으로 변경
+   - accent #1d6fd8, bg #eef6fc, soft #d3e9fb
+4. 단어/시험 화면에 예문 한글 뜻 표시
+5. main 브랜치로 병합
+
+[검증]
+- next build 성공
