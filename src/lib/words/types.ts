@@ -7,13 +7,15 @@ export type WordEntry = {
 };
 
 export type DayWordbook = {
-  /** 학습 일차 (1~20) */
   day: number;
-  /** 스크린샷 기준 날짜 (YYYY-MM-DD), 없으면 null */
   date: string | null;
-  /** 원본 이미지 파일명 */
+  title: string;
   sourceImage: string | null;
   words: WordEntry[];
+};
+
+export type QuizWord = WordEntry & {
+  day: number;
 };
 
 export type WordbookIndex = {
@@ -22,7 +24,9 @@ export type WordbookIndex = {
   days: Array<{
     day: number;
     date: string | null;
+    title: string;
     wordCount: number;
     file: string;
+    sourceImage: string | null;
   }>;
 };

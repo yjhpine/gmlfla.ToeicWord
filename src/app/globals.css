@@ -20,3 +20,14 @@ body {
   color: var(--fg);
   font-family: var(--font-sans), "Noto Sans KR", sans-serif;
 }
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

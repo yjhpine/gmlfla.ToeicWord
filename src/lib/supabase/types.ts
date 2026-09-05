@@ -1,7 +1,3 @@
-import type { WordEntry } from "@/lib/words/types";
-
-/** Supabase public.wordbooks / public.words 테이블 타입 */
-
 export type WordbookRow = {
   id: string;
   day: number;
@@ -18,9 +14,4 @@ export type WordRow = {
   example: string;
   sort_order: number;
   created_at: string;
-};
-
-export type WordInsert = WordEntry & {
-  wordbook_id: string;
-  sort_order: number;
 };
