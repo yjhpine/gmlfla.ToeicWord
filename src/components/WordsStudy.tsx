@@ -14,8 +14,6 @@ export function WordsStudy({ books }: Props) {
   const [phase, setPhase] = useState<Phase>("select");
   const [day, setDay] = useState(books[0]?.day ?? 1);
   const [index, setIndex] = useState(0);
-  /** 학습: 단어만 먼저 → 터치 시 뜻/예문 */
-  const [revealed, setRevealed] = useState(false);
 
   const current = useMemo(
     () => books.find((book) => book.day === day) ?? books[0],
@@ -28,31 +26,26 @@ export function WordsStudy({ books }: Props) {
 
   useEffect(() => {
     setIndex(0);
-    setRevealed(false);
   }, [day]);
 
   function startStudy(nextDay: number) {
     setDay(nextDay);
     setIndex(0);
-    setRevealed(false);
     setPhase("study");
   }
 
   function goPrev() {
     if (index <= 0) return;
     setIndex((i) => i - 1);
-    setRevealed(false);
   }
 
   function goNext() {
     if (!current) return;
     if (index >= current.words.length - 1) {
       setPhase("select");
-      setRevealed(false);
       return;
     }
     setIndex((i) => i + 1);
-    setRevealed(false);
   }
 
   if (!current) {
@@ -69,10 +62,7 @@ export function WordsStudy({ books }: Props) {
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 pt-2 text-sm text-[var(--muted)]">
           <button
             type="button"
-            onClick={() => {
-              setPhase("select");
-              setRevealed(false);
-            }}
+            onClick={() => setPhase("select")}
             className="rounded-md px-2 py-1 transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
           >
             ← Day 선택
@@ -88,39 +78,28 @@ export function WordsStudy({ books }: Props) {
           />
         </div>
 
-        <button
-          type="button"
-          onClick={() => setRevealed(true)}
-          className="flex flex-1 flex-col items-center justify-center px-6 text-center"
-          aria-label={revealed ? "뜻·예문 표시됨" : "화면을 눌러 뜻·예문 보기"}
+        <div
+          key={`${current.day}-${index}`}
+          className="flex flex-1 flex-col items-center justify-center px-6 text-center animate-[fade-up_240ms_ease-out]"
         >
           <p className="text-xs text-[var(--muted)]">{current.title}</p>
           <p className="mt-4 font-[family-name:var(--font-display)] text-4xl tracking-tight text-[var(--fg)] sm:text-5xl">
             {entry.word}
           </p>
-          {!revealed ? (
-            <p className="mt-8 animate-pulse text-sm text-[var(--muted)]">
-              화면을 터치하면 뜻과 예문이 나옵니다
+          <div className="mt-8 w-full max-w-lg">
+            <p className="text-xl font-medium text-[var(--accent)]">
+              {entry.meaning}
             </p>
-          ) : (
-            <div
-              key={`${current.day}-${index}-reveal`}
-              className="mt-10 w-full max-w-lg animate-[fade-up_240ms_ease-out]"
-            >
-              <p className="text-xl font-medium text-[var(--accent)]">
-                {entry.meaning}
+            <p className="mt-3 text-base leading-relaxed text-[var(--fg)]">
+              <ExampleWithUnderline example={entry.example} word={entry.word} />
+            </p>
+            {entry.exampleMeaning ? (
+              <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
+                {entry.exampleMeaning}
               </p>
-              <p className="mt-3 text-base leading-relaxed text-[var(--fg)]">
-                <ExampleWithUnderline example={entry.example} word={entry.word} />
-              </p>
-              {entry.exampleMeaning ? (
-                <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
-                  {entry.exampleMeaning}
-                </p>
-              ) : null}
-            </div>
-          )}
-        </button>
+            ) : null}
+          </div>
+        </div>
 
         <div className="mx-auto grid w-full max-w-3xl grid-cols-2 gap-3 px-4 pb-8">
           <button
@@ -167,7 +146,7 @@ export function WordsStudy({ books }: Props) {
       </ul>
 
       <p className="mt-10 text-sm leading-relaxed text-[var(--muted)]">
-        Day를 누르면 영단어만 나오고, 화면을 터치하면 뜻·예문이 보입니다.
+        Day를 누르면 영단어·뜻·예문이 한 번에 나오고,
         <br />
         이전 / 다음으로 단어를 넘깁니다.
       </p>
