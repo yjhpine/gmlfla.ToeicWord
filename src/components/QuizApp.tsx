@@ -120,7 +120,6 @@ function WordResultList({
                       onReveal={() => reveal(key)}
                     />
                   </div>
-                  <SpeakButton text={entry.word} label="발음" />
                 </div>
               </li>
             );
