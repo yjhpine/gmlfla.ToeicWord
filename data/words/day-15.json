@@ -7,102 +7,122 @@
     {
       "word": "exclusively",
       "meaning": "오직 ~만, 독점적으로",
-      "example": "sell exclusively to overseas clients"
+      "example": "sell exclusively to overseas clients",
+      "exampleMeaning": "오직 해외 고객에게만 판매하다"
     },
     {
       "word": "promptly",
       "meaning": "지체 없이, 신속히",
-      "example": "respond to all inquiries promptly"
+      "example": "respond to all inquiries promptly",
+      "exampleMeaning": "모든 문의에 지체 없이 응대하다"
     },
     {
       "word": "relatively",
       "meaning": "비교적, 상대적으로",
-      "example": "attend a relatively crowded workshop"
+      "example": "attend a relatively crowded workshop",
+      "exampleMeaning": "비교적 혼잡한 워크숍에 참가하다"
     },
     {
       "word": "periodically",
       "meaning": "정기적으로",
-      "example": "scan computers for viruses periodically"
+      "example": "scan computers for viruses periodically",
+      "exampleMeaning": "바이러스에 대비하여 정기적으로 컴퓨터를 점검하다"
     },
     {
       "word": "elsewhere",
       "meaning": "다른 곳에서",
-      "example": "search for assistance elsewhere"
+      "example": "search for assistance elsewhere",
+      "exampleMeaning": "다른 곳에서 도움을 찾아보다"
     },
     {
       "word": "barely",
       "meaning": "거의 ~하지 않은, 가까스로",
-      "example": "introduce people who barely know each other"
+      "example": "introduce people who barely know each other",
+      "exampleMeaning": "서로 거의 알지 못하는 사람들을 소개하다"
     },
     {
       "word": "justly",
       "meaning": "정당하게, 바르게",
-      "example": "justly claim credit for the invention"
+      "example": "justly claim credit for the invention",
+      "exampleMeaning": "발명에 대한 공적을 정당하게 주장하다"
     },
     {
       "word": "inseparably",
       "meaning": "밀접하게",
-      "example": "inseparably connected with the consumer's perception"
+      "example": "inseparably connected with the consumer's perception",
+      "exampleMeaning": "소비자의 인식과 밀접하게 연관되어 있다"
     },
     {
       "word": "largely",
       "meaning": "대부분, 주로",
-      "example": "largely consists of sugar and flour"
+      "example": "largely consists of sugar and flour",
+      "exampleMeaning": "대부분 설탕과 밀가루로 이루어져 있다"
     },
     {
       "word": "slightly",
       "meaning": "약간, 조금",
-      "example": "perform slightly better than last quarter"
+      "example": "perform slightly better than last quarter",
+      "exampleMeaning": "지난 분기보다 약간 더 잘 수행하다"
     },
     {
       "word": "virtually",
       "meaning": "거의, 사실상",
-      "example": "vote for a virtually unknown politician"
+      "example": "vote for a virtually unknown politician",
+      "exampleMeaning": "거의 알려지지 않은 정치인에게 투표하다"
     },
     {
       "word": "precisely",
       "meaning": "정확하게, 신중하게",
-      "example": "arrive precisely at 9 o'clock"
+      "example": "arrive precisely at 9 o'clock",
+      "exampleMeaning": "9시 정각에 정확하게 도착하다"
     },
     {
       "word": "evenly",
       "meaning": "공평하게, 고르게",
-      "example": "divide tasks evenly among staff"
+      "example": "divide tasks evenly among staff",
+      "exampleMeaning": "업무를 직원들 간에 공평하게 나누다"
     },
     {
       "word": "tediously",
       "meaning": "지루하게, 따분하게",
-      "example": "speak long and tediously on a subject"
+      "example": "speak long and tediously on a subject",
+      "exampleMeaning": "주제에 대해 길고 지루하게 말하다"
     },
     {
       "word": "consistently",
       "meaning": "지속적으로",
-      "example": "consistently provide good service"
+      "example": "consistently provide good service",
+      "exampleMeaning": "좋은 서비스를 지속적으로 제공하다"
     },
     {
       "word": "densely",
       "meaning": "밀집하여, 빽빽하게",
-      "example": "move to a densely populated area"
+      "example": "move to a densely populated area",
+      "exampleMeaning": "인구가 밀집하여 있는 지역으로 이사하다"
     },
     {
       "word": "initially",
       "meaning": "초기에, 처음에",
-      "example": "initially focus on basic staff training"
+      "example": "initially focus on basic staff training",
+      "exampleMeaning": "초기에 기본 직원 훈련에 초점을 두다"
     },
     {
       "word": "loosely",
       "meaning": "막연하게, 느슨하게",
-      "example": "be loosely based on a true event"
+      "example": "be loosely based on a true event",
+      "exampleMeaning": "실제 사건에 막연하게 기반을 두다"
     },
     {
       "word": "generally",
       "meaning": "일반적으로",
-      "example": "generally pay high rent in cities"
+      "example": "generally pay high rent in cities",
+      "exampleMeaning": "도시에서는 일반적으로 높은 임차료를 내다"
     },
     {
       "word": "totally",
       "meaning": "완전히, 모두",
-      "example": "totally redo the assignment"
+      "example": "totally redo the assignment",
+      "exampleMeaning": "업무를 완전히 다시 하다"
     }
   ]
 }

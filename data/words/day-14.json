@@ -7,102 +7,122 @@
     {
       "word": "accurately",
       "meaning": "정확히, 정밀하게",
-      "example": "predict stock trends accurately"
+      "example": "predict stock trends accurately",
+      "exampleMeaning": "주식 동향을 정확히 예측하다"
     },
     {
       "word": "routinely",
       "meaning": "일상적으로, 언제나",
-      "example": "routinely check the e-mail to ensure fast response"
+      "example": "routinely check the e-mail to ensure fast response",
+      "exampleMeaning": "빠른 답변을 보장하기 위해 일상적으로 이메일을 확인하다"
     },
     {
       "word": "markedly",
       "meaning": "현저하게, 두드러지게",
-      "example": "increase markedly from previous years"
+      "example": "increase markedly from previous years",
+      "exampleMeaning": "이전 해들에 비해 현저하게 증가하다"
     },
     {
       "word": "superbly",
       "meaning": "훌륭하게, 최상으로",
-      "example": "develop a superbly designed product"
+      "example": "develop a superbly designed product",
+      "exampleMeaning": "훌륭하게 디자인된 제품을 개발하다"
     },
     {
       "word": "closely",
       "meaning": "면밀히, 유심히",
-      "example": "analyze the results closely"
+      "example": "analyze the results closely",
+      "exampleMeaning": "결과를 면밀히 분석하다"
     },
     {
       "word": "intentionally",
       "meaning": "의도적으로, 고의로",
-      "example": "drive the car at a slow speed intentionally"
+      "example": "drive the car at a slow speed intentionally",
+      "exampleMeaning": "의도적으로 차를 느린 속도로 운전하다"
     },
     {
       "word": "merely",
       "meaning": "단지, 그저",
-      "example": "merely provide a light snack"
+      "example": "merely provide a light snack",
+      "exampleMeaning": "단지 가벼운 간식을 제공하다"
     },
     {
       "word": "acceptably",
       "meaning": "만족스럽게",
-      "example": "perform acceptably in daily use"
+      "example": "perform acceptably in daily use",
+      "exampleMeaning": "일상적인 사용 시 만족스럽게 작동하다"
     },
     {
       "word": "probably",
       "meaning": "아마도",
-      "example": "be probably more dangerous than expected"
+      "example": "be probably more dangerous than expected",
+      "exampleMeaning": "아마도 예상보다 더 위험할 것이다"
     },
     {
       "word": "gradually",
       "meaning": "서서히, 차츰",
-      "example": "reduce interest rates gradually"
+      "example": "reduce interest rates gradually",
+      "exampleMeaning": "이자율을 서서히 줄이다"
     },
     {
       "word": "namely",
       "meaning": "다시 말해, 즉",
-      "example": "hold a meeting on the 2nd floor, namely in Room 206"
+      "example": "hold a meeting on the 2nd floor, namely in Room 206",
+      "exampleMeaning": "회의를 2층에서, 다시 말해 206호에서 열다"
     },
     {
       "word": "primarily",
       "meaning": "주로",
-      "example": "upgrade software primarily used by the accounting department"
+      "example": "upgrade software primarily used by the accounting department",
+      "exampleMeaning": "주로 회계 부서에 의해 사용되는 소프트웨어를 업그레이드하다"
     },
     {
       "word": "aboard",
       "meaning": "탑승하여",
-      "example": "have 120 passengers aboard"
+      "example": "have 120 passengers aboard",
+      "exampleMeaning": "120명의 승객이 탑승하여 있다"
     },
     {
       "word": "occasionally",
       "meaning": "종종, 가끔",
-      "example": "host staff outings occasionally"
+      "example": "host staff outings occasionally",
+      "exampleMeaning": "직원 야유회를 종종 주최하다"
     },
     {
       "word": "completely",
       "meaning": "완전히, 전적으로",
-      "example": "have a completely different opinion"
+      "example": "have a completely different opinion",
+      "exampleMeaning": "완전히 다른 의견을 가지다"
     },
     {
       "word": "understandably",
       "meaning": "당연히",
-      "example": "feel understandably pleased about a promotion"
+      "example": "feel understandably pleased about a promotion",
+      "exampleMeaning": "승진에 대해 당연히 기뻐하다"
     },
     {
       "word": "apparently",
       "meaning": "보아하니, 분명히",
-      "example": "be apparently more expensive than it looks"
+      "example": "be apparently more expensive than it looks",
+      "exampleMeaning": "보아하니 보기보다 더 비싸다"
     },
     {
       "word": "necessarily",
       "meaning": "(부정문에서) 반드시 ~은 아니다",
-      "example": "do not necessarily apply to all applicants"
+      "example": "do not necessarily apply to all applicants",
+      "exampleMeaning": "반드시 모든 지원자에게 해당되는 것은 아니다"
     },
     {
       "word": "immediately",
       "meaning": "즉시",
-      "example": "announce the news immediately"
+      "example": "announce the news immediately",
+      "exampleMeaning": "소식을 즉시 발표하다"
     },
     {
       "word": "briefly",
       "meaning": "간략하게, 잠시",
-      "example": "explain the issue briefly"
+      "example": "explain the issue briefly",
+      "exampleMeaning": "문제를 간략하게 설명하다"
     }
   ]
 }
