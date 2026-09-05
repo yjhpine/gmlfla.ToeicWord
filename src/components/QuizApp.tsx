@@ -19,18 +19,67 @@ function shuffle<T>(items: T[]): T[] {
   return next;
 }
 
+function wordKey(entry: QuizWord) {
+  return `${entry.day}::${entry.word}`;
+}
+
+function WordResultList({
+  title,
+  words,
+  emptyText,
+}: {
+  title: string;
+  words: QuizWord[];
+  emptyText: string;
+}) {
+  return (
+    <section className="mt-8">
+      <h2 className="text-base font-medium text-[var(--fg)]">
+        {title}{" "}
+        <span className="text-[var(--muted)]">({words.length})</span>
+      </h2>
+      {words.length === 0 ? (
+        <p className="mt-3 text-sm text-[var(--muted)]">{emptyText}</p>
+      ) : (
+        <ul className="mt-3 divide-y divide-[var(--line)] border-y border-[var(--line)]">
+          {words.map((entry) => (
+            <li key={wordKey(entry)} className="py-3">
+              <p className="text-xs text-[var(--muted)]">Day {entry.day}</p>
+              <p className="mt-0.5 text-lg font-semibold text-[var(--accent)]">
+                {entry.word}
+              </p>
+              <p className="mt-1 text-sm text-[var(--fg)]">{entry.meaning}</p>
+              <p className="mt-1 text-sm text-[var(--fg)]">
+                <ExampleWithUnderline example={entry.example} word={entry.word} />
+              </p>
+              {entry.exampleMeaning ? (
+                <p className="mt-1 text-sm text-[var(--muted)]">
+                  {entry.exampleMeaning}
+                </p>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
 export function QuizApp({ books }: Props) {
   const [selected, setSelected] = useState<number[]>([1]);
   const [phase, setPhase] = useState<Phase>("select");
-  /** 아직 맞추지 못한 단어 큐 (앞=현재) */
   const [remaining, setRemaining] = useState<QuizWord[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+  /** 한 번이라도 모르겠어요를 누른 단어 key */
+  const [missedKeys, setMissedKeys] = useState<Set<string>>(new Set());
+  /** 모르겠어요 후 결국 맞춘 단어 */
+  const [retriedWords, setRetriedWords] = useState<QuizWord[]>([]);
+  /** 바로 맞춘 단어 */
+  const [knownWords, setKnownWords] = useState<QuizWord[]>([]);
 
   const current = remaining[0];
   const cleared = Math.max(totalCount - remaining.length, 0);
-  const progressRatio = totalCount
-    ? cleared / totalCount
-    : 0;
+  const progressRatio = totalCount ? cleared / totalCount : 0;
 
   const selectedLabel = useMemo(() => {
     if (selected.length === 0) return "Day를 선택하세요";
@@ -58,6 +107,9 @@ export function QuizApp({ books }: Props) {
     const shuffled = shuffle(words);
     setRemaining(shuffled);
     setTotalCount(shuffled.length);
+    setMissedKeys(new Set());
+    setRetriedWords([]);
+    setKnownWords([]);
     setPhase("prompt");
   }
 
@@ -65,16 +117,29 @@ export function QuizApp({ books }: Props) {
     if (phase === "prompt") setPhase("reveal");
   }
 
-  /** 모르겠어요 → 현재 단어를 맨 뒤로 보내고 계속 시험 */
   function markWrong() {
-    if (remaining.length === 0) return;
+    if (!current) return;
+    const key = wordKey(current);
+    setMissedKeys((prev) => {
+      if (prev.has(key)) return prev;
+      const next = new Set(prev);
+      next.add(key);
+      return next;
+    });
     const [head, ...rest] = remaining;
     setRemaining([...rest, head]);
     setPhase("prompt");
   }
 
-  /** 맞췄어요 → 큐에서 제거. 없으면 종료 */
   function markCorrect() {
+    if (!current) return;
+    const key = wordKey(current);
+    if (missedKeys.has(key)) {
+      setRetriedWords((prev) => [...prev, current]);
+    } else {
+      setKnownWords((prev) => [...prev, current]);
+    }
+
     if (remaining.length <= 1) {
       setRemaining([]);
       setPhase("result");
@@ -88,6 +153,9 @@ export function QuizApp({ books }: Props) {
     setPhase("select");
     setRemaining([]);
     setTotalCount(0);
+    setMissedKeys(new Set());
+    setRetriedWords([]);
+    setKnownWords([]);
   }
 
   if (phase === "result") {
@@ -97,11 +165,20 @@ export function QuizApp({ books }: Props) {
           시험 완료
         </h1>
         <p className="mt-2 text-[var(--muted)]">
-          {selectedLabel} · {totalCount}개 단어를 모두 맞췄어요
+          {selectedLabel} · 전체 {totalCount}개 · 바로 맞춤 {knownWords.length} ·
+          다시 맞춤 {retriedWords.length}
         </p>
-        <p className="mt-10 text-lg font-medium text-[var(--accent)]">
-          잘했습니다!
-        </p>
+
+        <WordResultList
+          title="모르겠어요 했던 단어"
+          words={retriedWords}
+          emptyText="한 번도 모르겠어요를 누르지 않았어요."
+        />
+        <WordResultList
+          title="바로 맞춘 단어"
+          words={knownWords}
+          emptyText="바로 맞춘 단어가 없어요."
+        />
 
         <div className="mt-10 flex flex-wrap gap-3">
           <button
@@ -247,7 +324,7 @@ export function QuizApp({ books }: Props) {
         <br />
         모르겠어요 → 맨 뒤로 보내 다시 출제 / 맞췄어요 → 다음
         <br />
-        모든 단어를 맞출 때까지 계속됩니다.
+        끝나면 모르겠어요 했던 단어와 바로 맞춘 단어를 나눠 보여줍니다.
       </p>
     </div>
   );
