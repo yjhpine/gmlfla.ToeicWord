@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { ExampleWithUnderline } from "@/components/ExampleWithUnderline";
 import { SpeakButton } from "@/components/SpeakButton";
+import { markDaysQuizzed } from "@/lib/progress";
 import type { DayWordbook, QuizWord } from "@/lib/words/types";
 
 type Phase = "select" | "prompt" | "reveal" | "result";
@@ -305,6 +306,7 @@ export function QuizApp({ books }: Props) {
 
     if (remaining.length <= 1) {
       setRemaining([]);
+      markDaysQuizzed(selected);
       setPhase("result");
       return;
     }
