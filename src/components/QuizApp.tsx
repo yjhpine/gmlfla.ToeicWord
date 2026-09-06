@@ -1,12 +1,20 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ExampleWithUnderline } from "@/components/ExampleWithUnderline";
 import { SpeakButton } from "@/components/SpeakButton";
+import {
+  IMPORTANT_EVENT,
+  importantKey,
+  isImportantWord,
+  loadImportantWords,
+  toggleImportantWord,
+} from "@/lib/important";
 import { markDaysQuizzed } from "@/lib/progress";
 import type { DayWordbook, QuizWord } from "@/lib/words/types";
 
 type Phase = "select" | "prompt" | "reveal" | "result";
+type QuizSource = "days" | "important";
 
 type Props = {
   books: DayWordbook[];
@@ -64,11 +72,47 @@ function MeaningSticker({
       type="button"
       onClick={handleClick}
       className={`sticker-cover relative inline-flex h-8 min-w-[5.5rem] max-w-[12rem] shrink-0 items-center justify-center rounded-md px-3 text-xs font-medium text-[#7a5310] transition hover:brightness-105 ${
-        peeling ? "pointer-events-none animate-[sticker-peel_180ms_ease-in_forwards]" : "rotate-[-1.5deg]"
+        peeling
+          ? "pointer-events-none animate-[sticker-peel_180ms_ease-in_forwards]"
+          : "rotate-[-1.5deg]"
       }`}
       aria-label="스티커를 눌러 뜻 보기"
     >
       탭해서 보기
+    </button>
+  );
+}
+
+function ImportantToggle({ entry }: { entry: QuizWord }) {
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    function sync() {
+      setActive(isImportantWord(entry));
+    }
+    sync();
+    window.addEventListener(IMPORTANT_EVENT, sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener(IMPORTANT_EVENT, sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, [entry]);
+
+  return (
+    <button
+      type="button"
+      onClick={() => setActive(toggleImportantWord(entry))}
+      className={
+        active
+          ? "flex h-8 shrink-0 items-center justify-center rounded-md bg-[var(--accent)] px-2 text-xs font-semibold text-white"
+          : "flex h-8 shrink-0 items-center justify-center rounded-md border border-[var(--line)] bg-white px-2 text-xs font-semibold text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+      }
+      aria-pressed={active}
+      aria-label={active ? "중요 목록에서 제거" : "중요 목록에 추가"}
+      title={active ? "중요 해제" : "중요"}
+    >
+      중요
     </button>
   );
 }
@@ -108,6 +152,7 @@ function WordResultList({
             return (
               <li key={key} className="py-2.5">
                 <div className="flex items-center gap-3">
+                  <ImportantToggle entry={entry} />
                   <p className="w-10 shrink-0 text-xs text-[var(--muted)]">
                     D{entry.day}
                   </p>
@@ -160,7 +205,8 @@ function ResultScreen({
         다시 맞춤 {retriedWords.length}
       </p>
       <p className="mt-3 text-sm text-[var(--muted)]">
-        예문 없이 단어만 복습해요. 노란 스티커를 누르면 뜻이 나타납니다.
+        왼쪽 「중요」를 누르면 중요 목록에 저장되고, 나중에 그 목록만으로 시험볼
+        수 있어요. 노란 스티커를 누르면 뜻이 나타납니다.
       </p>
 
       <WordResultList
@@ -206,23 +252,43 @@ function ResultScreen({
 export function QuizApp({ books }: Props) {
   const [selected, setSelected] = useState<number[]>([1]);
   const [phase, setPhase] = useState<Phase>("select");
+  const [source, setSource] = useState<QuizSource>("days");
   const [remaining, setRemaining] = useState<QuizWord[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [missedKeys, setMissedKeys] = useState<Set<string>>(new Set());
   const [retriedWords, setRetriedWords] = useState<QuizWord[]>([]);
   const [knownWords, setKnownWords] = useState<QuizWord[]>([]);
   const [history, setHistory] = useState<Snapshot[]>([]);
+  const [importantCount, setImportantCount] = useState(0);
 
   const current = remaining[0];
   const cleared = Math.max(totalCount - remaining.length, 0);
   const progressRatio = totalCount ? cleared / totalCount : 0;
   const canUndo = history.length > 0;
 
+  useEffect(() => {
+    function syncImportantCount() {
+      setImportantCount(loadImportantWords().length);
+    }
+    syncImportantCount();
+    window.addEventListener(IMPORTANT_EVENT, syncImportantCount);
+    window.addEventListener("storage", syncImportantCount);
+    window.addEventListener("focus", syncImportantCount);
+    return () => {
+      window.removeEventListener(IMPORTANT_EVENT, syncImportantCount);
+      window.removeEventListener("storage", syncImportantCount);
+      window.removeEventListener("focus", syncImportantCount);
+    };
+  }, []);
+
   const selectedLabel = useMemo(() => {
+    if (source === "important") {
+      return `중요 단어 ${totalCount || importantCount}개`;
+    }
     if (selected.length === 0) return "Day를 선택하세요";
     const sorted = [...selected].sort((a, b) => a - b);
     return `Day ${sorted.join(", ")}`;
-  }, [selected]);
+  }, [source, selected, totalCount, importantCount]);
 
   function toggleDay(day: number) {
     setSelected((prev) =>
@@ -250,8 +316,20 @@ export function QuizApp({ books }: Props) {
     setMissedKeys(new Set(snapshot.missedKeys));
     setRetriedWords(snapshot.retriedWords);
     setKnownWords(snapshot.knownWords);
-    // 다시 선택하도록 정답 공개 상태로 복원
     setPhase("reveal");
+  }
+
+  function beginQuiz(words: QuizWord[], nextSource: QuizSource) {
+    if (words.length === 0) return;
+    const shuffled = shuffle(words);
+    setSource(nextSource);
+    setRemaining(shuffled);
+    setTotalCount(shuffled.length);
+    setMissedKeys(new Set());
+    setRetriedWords([]);
+    setKnownWords([]);
+    setHistory([]);
+    setPhase("prompt");
   }
 
   function startQuiz() {
@@ -264,15 +342,25 @@ export function QuizApp({ books }: Props) {
           day: book.day,
         })),
       );
-    if (words.length === 0) return;
-    const shuffled = shuffle(words);
-    setRemaining(shuffled);
-    setTotalCount(shuffled.length);
-    setMissedKeys(new Set());
-    setRetriedWords([]);
-    setKnownWords([]);
-    setHistory([]);
-    setPhase("prompt");
+    beginQuiz(words, "days");
+  }
+
+  function startImportantQuiz() {
+    const words = loadImportantWords();
+    // 키 중복 제거 (같은 day+word)
+    const unique = new Map<string, QuizWord>();
+    for (const word of words) {
+      unique.set(importantKey(word), word);
+    }
+    beginQuiz([...unique.values()], "important");
+  }
+
+  function restartQuiz() {
+    if (source === "important") {
+      startImportantQuiz();
+      return;
+    }
+    startQuiz();
   }
 
   function reveal() {
@@ -306,7 +394,9 @@ export function QuizApp({ books }: Props) {
 
     if (remaining.length <= 1) {
       setRemaining([]);
-      markDaysQuizzed(selected);
+      if (source === "days") {
+        markDaysQuizzed(selected);
+      }
       setPhase("result");
       return;
     }
@@ -316,12 +406,14 @@ export function QuizApp({ books }: Props) {
 
   function resetToSelect() {
     setPhase("select");
+    setSource("days");
     setRemaining([]);
     setTotalCount(0);
     setMissedKeys(new Set());
     setRetriedWords([]);
     setKnownWords([]);
     setHistory([]);
+    setImportantCount(loadImportantWords().length);
   }
 
   if (phase === "result") {
@@ -333,7 +425,7 @@ export function QuizApp({ books }: Props) {
         retriedWords={retriedWords}
         canUndo={canUndo}
         onUndo={undoLast}
-        onRestart={startQuiz}
+        onRestart={restartQuiz}
         onHome={resetToSelect}
       />
     );
@@ -460,7 +552,7 @@ export function QuizApp({ books }: Props) {
         })}
       </ul>
 
-      <div className="mt-8 flex flex-wrap items-center gap-4">
+      <div className="mt-8 flex flex-wrap items-center gap-3">
         <button
           type="button"
           onClick={startQuiz}
@@ -468,6 +560,15 @@ export function QuizApp({ books }: Props) {
           className="rounded-md bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
         >
           시험 시작
+        </button>
+        <button
+          type="button"
+          onClick={startImportantQuiz}
+          disabled={importantCount === 0}
+          className="rounded-md border border-[var(--line)] bg-white px-5 py-2.5 text-sm font-medium text-[var(--fg)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          중요 단어 시험
+          {importantCount > 0 ? ` (${importantCount})` : ""}
         </button>
         <p className="text-sm text-[var(--muted)]">{selectedLabel}</p>
       </div>
@@ -477,7 +578,8 @@ export function QuizApp({ books }: Props) {
         <br />
         모르겠어요 → 맨 뒤로 보내 다시 출제 / 맞췄어요 → 다음
         <br />
-        잘못 눌렀다면 ← 이전 단어 로 바로 전 문제로 돌아갈 수 있습니다.
+        시험 결과에서 「중요」를 누르면 중요 목록에 저장되고, 그 목록만으로도
+        시험볼 수 있습니다.
       </p>
     </div>
   );
