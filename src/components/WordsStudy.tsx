@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ExampleWithUnderline } from "@/components/ExampleWithUnderline";
 import { SpeakButton } from "@/components/SpeakButton";
+import { markDayStudied } from "@/lib/progress";
 import type { DayWordbook } from "@/lib/words/types";
 
 type Phase = "select" | "study";
@@ -43,6 +44,7 @@ export function WordsStudy({ books }: Props) {
   function goNext() {
     if (!current) return;
     if (index >= current.words.length - 1) {
+      markDayStudied(current.day);
       setPhase("select");
       return;
     }

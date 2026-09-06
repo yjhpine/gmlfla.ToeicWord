@@ -1,6 +1,10 @@
 import Link from "next/link";
+import { HomeAchievement } from "@/components/HomeAchievement";
+import { getWordbookIndex } from "@/lib/words/load";
 
 export default function Home() {
+  const index = getWordbookIndex();
+
   return (
     <section className="relative flex flex-1 flex-col justify-end overflow-hidden px-6 pb-16 pt-24">
       <div
@@ -11,11 +15,9 @@ export default function Home() {
         <p className="font-[family-name:var(--font-display)] text-5xl leading-none tracking-tight text-[var(--accent)] sm:text-6xl">
           희림 토익
         </p>
-        <h1 className="mt-4 max-w-md text-xl font-medium text-[var(--fg)] sm:text-2xl">
-          날짜별 단어를 익히고, 선택한 Day로 시험을 봅니다.
-        </h1>
-        <p className="mt-3 max-w-sm text-[var(--muted)]">
-          영단어·뜻·예문(한글 해석)을 Day 단위로 학습합니다.
+        <HomeAchievement totalDays={index.totalDays || 20} />
+        <p className="mt-6 max-w-sm text-[var(--muted)]">
+          Day 학습과 시험을 끝낼수록 성취도가 올라갑니다.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link

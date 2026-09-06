@@ -1,0 +1,16 @@
+제목: 9월6일 메인화면 학업성취도 퍼센트
+
+변경 요약
+- 메인(/) 화면에 학업 성취도 % 큰 숫자 + 진행 바 표시
+- localStorage로 Day 학습·시험 완료 기록
+- 성취도 = (학습완료 Day + 시험완료 Day) / (전체 Day × 2)
+- 단어 학습: Day 마지막 카드 완료 시 학습 Day 반영
+- 시험: 시험 종료 시 선택한 Day를 시험 완료로 반영
+
+파일
+- src/lib/progress.ts
+- src/components/HomeAchievement.tsx
+- src/app/page.tsx
+- src/components/WordsStudy.tsx
+- src/components/QuizApp.tsx
+- 작업일지/9월6일_메인화면학업성취도퍼센트.txt
