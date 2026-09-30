@@ -1,0 +1,15 @@
+제목: 9월30일 단어학습 타자등록 뜻예문검색해설
+
+변경 요약
+- 단어 학습 페이지에 「단어 등록·해설」 섹션 추가
+- 영단어 입력 시 로컬 단어장 우선 검색, 없으면 영어 사전 API + 한영 번역
+- 뜻·예문·해설 표시 후 「내 목록에 등록」으로 localStorage 저장
+- API: GET /api/lookup?word=
+
+파일
+- src/lib/words/lookup.ts
+- src/app/api/lookup/route.ts
+- src/lib/registered.ts
+- src/components/WordLookup.tsx
+- src/components/WordsStudy.tsx
+- 작업일지/9월30일_단어학습타자등록뜻예문검색해설.txt
