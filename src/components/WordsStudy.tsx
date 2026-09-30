@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ExampleWithUnderline } from "@/components/ExampleWithUnderline";
 import { SpeakButton } from "@/components/SpeakButton";
-import { WordLookup } from "@/components/WordLookup";
+import { WordRegister } from "@/components/WordRegister";
 import { markDayStudied } from "@/lib/progress";
 import type { DayWordbook } from "@/lib/words/types";
 
@@ -156,7 +156,7 @@ export function WordsStudy({ books }: Props) {
         이전 / 다음으로 단어를 넘깁니다.
       </p>
 
-      <WordLookup />
+      <WordRegister />
     </div>
   );
 }
