@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ExampleWithUnderline } from "@/components/ExampleWithUnderline";
 import { SpeakButton } from "@/components/SpeakButton";
+import { WordLookup } from "@/components/WordLookup";
 import { markDayStudied } from "@/lib/progress";
 import type { DayWordbook } from "@/lib/words/types";
 
@@ -149,11 +150,13 @@ export function WordsStudy({ books }: Props) {
         ))}
       </ul>
 
-      <p className="mt-10 text-sm leading-relaxed text-[var(--muted)]">
+      <p className="mt-8 text-sm leading-relaxed text-[var(--muted)]">
         Day를 누르면 영단어·뜻·예문이 한 번에 나오고,
         <br />
         이전 / 다음으로 단어를 넘깁니다.
       </p>
+
+      <WordLookup />
     </div>
   );
 }
