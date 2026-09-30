@@ -1,11 +1,12 @@
-/** 타자로 등록한 단어 해설 (브라우저 로컬) */
-
-import type { LookupResult } from "@/lib/words/lookup";
+/** 사용자가 직접 등록한 단어 (브라우저 로컬) */
 
 export const REGISTERED_STORAGE_KEY = "heelim-toeic-registered-v1";
 export const REGISTERED_EVENT = "heelim-registered-updated";
 
-export type RegisteredWord = LookupResult & {
+export type RegisteredWord = {
+  word: string;
+  meaning: string;
+  example: string;
   registeredAt: string;
 };
 
@@ -23,15 +24,9 @@ export function loadRegisteredWords(): RegisteredWord[] {
         return typeof w.word === "string" && typeof w.meaning === "string";
       })
       .map((w) => ({
-        word: w.word,
-        meaning: w.meaning,
-        meaningEn: w.meaningEn ?? "",
-        example: w.example ?? "",
-        exampleMeaning: w.exampleMeaning ?? "",
-        explanation: w.explanation ?? "",
-        source: w.source === "local" ? "local" : "dictionary",
-        partOfSpeech: w.partOfSpeech ?? "",
-        day: typeof w.day === "number" ? w.day : null,
+        word: w.word.trim(),
+        meaning: w.meaning.trim(),
+        example: (w.example ?? "").trim(),
         registeredAt: w.registeredAt ?? new Date().toISOString(),
       }));
   } catch {
@@ -45,16 +40,25 @@ function saveRegisteredWords(words: RegisteredWord[]) {
   window.dispatchEvent(new Event(REGISTERED_EVENT));
 }
 
-export function registerLookupResult(result: LookupResult): RegisteredWord[] {
+export function registerWord(input: {
+  word: string;
+  meaning: string;
+  example: string;
+}): RegisteredWord[] {
+  const word = input.word.trim();
+  const meaning = input.meaning.trim();
+  const example = input.example.trim();
+  const key = word.toLowerCase();
   const current = loadRegisteredWords();
-  const key = result.word.trim().toLowerCase();
   const next: RegisteredWord[] = [
     {
-      ...result,
+      word,
+      meaning,
+      example,
       registeredAt: new Date().toISOString(),
     },
     ...current.filter((w) => w.word.trim().toLowerCase() !== key),
-  ].slice(0, 50);
+  ].slice(0, 100);
   saveRegisteredWords(next);
   return next;
 }

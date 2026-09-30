@@ -1,0 +1,15 @@
+제목: 9월30일 단어직접등록으로변경
+
+변경 요약
+- 뜻·예문 자동 검색/해설(API·사전) 기능 제거
+- 사용자가 단어·뜻·예문을 직접 입력해 등록하도록 UI 변경
+- 등록 목록은 localStorage에 저장, 삭제 가능
+
+파일
+- src/components/WordRegister.tsx (신규)
+- src/components/WordLookup.tsx (삭제)
+- src/app/api/lookup/route.ts (삭제)
+- src/lib/words/lookup.ts (삭제)
+- src/lib/registered.ts
+- src/components/WordsStudy.tsx
+- 작업일지/9월30일_단어직접등록으로변경.txt
