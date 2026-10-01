@@ -1,0 +1,13 @@
+제목: 10월1일 등록단어를 Day처럼 학습·시험
+
+변경 요약
+- 단어 탭: 하단 등록 폼 제거 → Day 그리드에 「등록」 버튼, 들어가면 등록 화면
+- 시험 탭: Day 그리드에 「등록」 선택지 추가, Day와 함께/단독 출제 가능
+- registeredToQuizWords로 등록 단어를 QuizWord(day=0)로 변환
+
+파일
+- src/lib/registered.ts
+- src/components/WordRegister.tsx
+- src/components/WordsStudy.tsx
+- src/components/QuizApp.tsx
+- 작업일지/10월1일_등록단어를Day처럼학습시험.txt

@@ -10,7 +10,11 @@ import {
   type RegisteredWord,
 } from "@/lib/registered";
 
-export function WordRegister() {
+type Props = {
+  onBack: () => void;
+};
+
+export function WordRegister({ onBack }: Props) {
   const [word, setWord] = useState("");
   const [meaning, setMeaning] = useState("");
   const [example, setExample] = useState("");
@@ -63,13 +67,27 @@ export function WordRegister() {
   }
 
   return (
-    <section className="mt-10 animate-[fade-up_280ms_ease-out]">
-      <h2 className="text-lg font-medium text-[var(--fg)]">단어 등록</h2>
-      <p className="mt-1 text-sm text-[var(--muted)]">
-        영단어·뜻·예문을 직접 입력해 내 목록에 저장합니다.
+    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-6 animate-[fade-up_280ms_ease-out]">
+      <div className="flex items-center justify-between gap-3 text-sm text-[var(--muted)]">
+        <button
+          type="button"
+          onClick={onBack}
+          className="rounded-md px-2 py-1 transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
+        >
+          ← Day 선택
+        </button>
+        <span>등록 단어 · {registered.length}개</span>
+      </div>
+
+      <h1 className="mt-6 font-[family-name:var(--font-display)] text-3xl text-[var(--accent)]">
+        등록
+      </h1>
+      <p className="mt-2 text-sm text-[var(--muted)]">
+        영단어·뜻·예문을 입력해 저장합니다. 시험에서도 Day처럼 선택할 수
+        있어요.
       </p>
 
-      <form onSubmit={onSubmit} className="mt-4 space-y-3">
+      <form onSubmit={onSubmit} className="mt-6 space-y-3">
         <label className="block">
           <span className="text-xs font-medium text-[var(--muted)]">단어</span>
           <input
@@ -125,10 +143,10 @@ export function WordRegister() {
       ) : null}
 
       {registered.length > 0 ? (
-        <div className="mt-8">
-          <h3 className="text-sm font-medium text-[var(--muted)]">
+        <div className="mt-8 pb-8">
+          <h2 className="text-sm font-medium text-[var(--muted)]">
             등록한 단어 ({registered.length})
-          </h3>
+          </h2>
           <ul className="mt-3 divide-y divide-[var(--line)] border-y border-[var(--line)]">
             {registered.map((item) => (
               <li key={`${item.word}-${item.registeredAt}`} className="py-3">
@@ -164,7 +182,11 @@ export function WordRegister() {
             ))}
           </ul>
         </div>
-      ) : null}
-    </section>
+      ) : (
+        <p className="mt-8 text-sm text-[var(--muted)]">
+          아직 등록한 단어가 없어요.
+        </p>
+      )}
+    </div>
   );
 }
