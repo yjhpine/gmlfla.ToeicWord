@@ -1,0 +1,15 @@
+제목: 10월1일 등록블럭20개제한및이름설정
+
+변경 요약
+- 등록 단어를 블럭 단위로 관리, 블럭당 최대 20개
+- 가득 차면 「등록 2」처럼 새 블럭 자동 생성
+- 블럭 이름 사용자 수정 가능 (기본: 등록 1, 등록 2…)
+- 단어/시험 Day 그리드에 등록 블럭별 선택 표시
+- localStorage v2 + 기존 평탄 목록 마이그레이션
+
+파일
+- src/lib/registered.ts
+- src/components/WordRegister.tsx
+- src/components/WordsStudy.tsx
+- src/components/QuizApp.tsx
+- 작업일지/10월1일_등록블럭20개제한및이름설정.txt

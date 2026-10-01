@@ -12,10 +12,14 @@ import {
 } from "@/lib/important";
 import { markDaysQuizzed } from "@/lib/progress";
 import {
-  REGISTERED_DAY,
   REGISTERED_EVENT,
-  loadRegisteredWords,
+  WORDS_PER_BLOCK,
+  isRegisteredDay,
+  loadRegisteredBlocks,
+  registeredBlockDay,
+  registeredLabelForDay,
   registeredToQuizWords,
+  type RegisteredBlock,
 } from "@/lib/registered";
 import type { DayWordbook, QuizWord } from "@/lib/words/types";
 
@@ -159,8 +163,10 @@ function WordResultList({
               <li key={key} className="py-2.5">
                 <div className="flex items-center gap-3">
                   <ImportantToggle entry={entry} />
-                  <p className="w-10 shrink-0 text-xs text-[var(--muted)]">
-                    {entry.day === REGISTERED_DAY ? "등록" : `D${entry.day}`}
+                  <p className="w-14 shrink-0 truncate text-xs text-[var(--muted)]">
+                    {isRegisteredDay(entry.day)
+                      ? registeredLabelForDay(entry.day)
+                      : `D${entry.day}`}
                   </p>
                   <p className="w-[38%] min-w-0 shrink-0 truncate text-base font-semibold text-[var(--accent)] sm:w-44 sm:text-lg">
                     {entry.word}
@@ -266,7 +272,7 @@ export function QuizApp({ books }: Props) {
   const [knownWords, setKnownWords] = useState<QuizWord[]>([]);
   const [history, setHistory] = useState<Snapshot[]>([]);
   const [importantCount, setImportantCount] = useState(0);
-  const [registeredCount, setRegisteredCount] = useState(0);
+  const [regBlocks, setRegBlocks] = useState<RegisteredBlock[]>([]);
 
   const current = remaining[0];
   const cleared = Math.max(totalCount - remaining.length, 0);
@@ -276,7 +282,7 @@ export function QuizApp({ books }: Props) {
   useEffect(() => {
     function syncCounts() {
       setImportantCount(loadImportantWords().length);
-      setRegisteredCount(loadRegisteredWords().length);
+      setRegBlocks(loadRegisteredBlocks());
     }
     syncCounts();
     window.addEventListener(IMPORTANT_EVENT, syncCounts);
@@ -298,9 +304,9 @@ export function QuizApp({ books }: Props) {
     if (selected.length === 0) return "Day를 선택하세요";
     const labels = [...selected]
       .sort((a, b) => a - b)
-      .map((d) => (d === REGISTERED_DAY ? "등록" : String(d)));
+      .map((d) => (isRegisteredDay(d) ? registeredLabelForDay(d) : String(d)));
     return `Day ${labels.join(", ")}`;
-  }, [source, selected, totalCount, importantCount]);
+  }, [source, selected, totalCount, importantCount, regBlocks]);
 
   function toggleDay(day: number) {
     setSelected((prev) =>
@@ -354,16 +360,21 @@ export function QuizApp({ books }: Props) {
           day: book.day,
         })),
       );
-    if (days.has(REGISTERED_DAY)) {
-      words.push(...registeredToQuizWords());
+    const registeredDays = selected.filter(isRegisteredDay);
+    if (registeredDays.length > 0) {
+      words.push(...registeredToQuizWords(registeredDays));
     }
     beginQuiz(words, "days");
   }
 
   const canStartDayQuiz =
     selected.length > 0 &&
-    (selected.some((d) => d !== REGISTERED_DAY) ||
-      (selected.includes(REGISTERED_DAY) && registeredCount > 0));
+    (selected.some((d) => !isRegisteredDay(d)) ||
+      selected.some((d) => {
+        if (!isRegisteredDay(d)) return false;
+        const idx = -d - 1;
+        return (regBlocks[idx]?.words.length ?? 0) > 0;
+      }));
 
   function startImportantQuiz() {
     const words = loadImportantWords();
@@ -415,7 +426,7 @@ export function QuizApp({ books }: Props) {
     if (remaining.length <= 1) {
       setRemaining([]);
       if (source === "days") {
-        markDaysQuizzed(selected.filter((d) => d !== REGISTERED_DAY));
+        markDaysQuizzed(selected.filter((d) => !isRegisteredDay(d)));
       }
       setPhase("result");
       return;
@@ -434,7 +445,7 @@ export function QuizApp({ books }: Props) {
     setKnownWords([]);
     setHistory([]);
     setImportantCount(loadImportantWords().length);
-    setRegisteredCount(loadRegisteredWords().length);
+    setRegBlocks(loadRegisteredBlocks());
   }
 
   if (phase === "result") {
@@ -571,31 +582,36 @@ export function QuizApp({ books }: Props) {
             </li>
           );
         })}
-        <li>
-          <button
-            type="button"
-            onClick={() => toggleDay(REGISTERED_DAY)}
-            className={
-              selected.includes(REGISTERED_DAY)
-                ? "flex h-11 w-full items-center justify-center rounded-md bg-[var(--accent)] text-sm font-medium text-white"
-                : "flex h-11 w-full items-center justify-center rounded-md border border-[var(--line)] bg-white/50 text-sm text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
-            }
-            aria-pressed={selected.includes(REGISTERED_DAY)}
-            disabled={registeredCount === 0}
-            title={
-              registeredCount === 0
-                ? "단어 탭의 「등록」에서 먼저 추가하세요"
-                : `등록 단어 ${registeredCount}개`
-            }
-          >
-            등록
-            {registeredCount > 0 ? (
-              <span className="ml-0.5 text-xs opacity-80">
-                ({registeredCount})
-              </span>
-            ) : null}
-          </button>
-        </li>
+        {regBlocks.map((block, blockIndex) => {
+          const day = registeredBlockDay(blockIndex);
+          const active = selected.includes(day);
+          const empty = block.words.length === 0;
+          return (
+            <li key={block.id} className="col-span-2 sm:col-span-2">
+              <button
+                type="button"
+                onClick={() => toggleDay(day)}
+                disabled={empty}
+                title={
+                  empty
+                    ? "단어가 없는 등록 블럭입니다"
+                    : `${block.name} · ${block.words.length}/${WORDS_PER_BLOCK}`
+                }
+                className={
+                  active
+                    ? "flex h-11 w-full items-center justify-center truncate rounded-md bg-[var(--accent)] px-2 text-sm font-medium text-white"
+                    : "flex h-11 w-full items-center justify-center truncate rounded-md border border-[var(--line)] bg-white/50 px-2 text-sm text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
+                }
+                aria-pressed={active}
+              >
+                <span className="truncate">{block.name}</span>
+                <span className="ml-1 shrink-0 text-xs opacity-80">
+                  ({block.words.length})
+                </span>
+              </button>
+            </li>
+          );
+        })}
       </ul>
 
       <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -624,7 +640,7 @@ export function QuizApp({ books }: Props) {
         <br />
         모르겠어요 → 맨 뒤로 보내 다시 출제 / 맞췄어요 → 다음
         <br />
-        「등록」은 단어 탭에서 직접 추가한 단어입니다. Day와 함께 고를 수
+        등록 블럭(등록 1, 등록 2…)은 단어 탭에서 만들고, Day와 함께 고를 수
         있어요.
       </p>
     </div>
