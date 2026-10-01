@@ -11,6 +11,12 @@ import {
   toggleImportantWord,
 } from "@/lib/important";
 import { markDaysQuizzed } from "@/lib/progress";
+import {
+  REGISTERED_DAY,
+  REGISTERED_EVENT,
+  loadRegisteredWords,
+  registeredToQuizWords,
+} from "@/lib/registered";
 import type { DayWordbook, QuizWord } from "@/lib/words/types";
 
 type Phase = "select" | "prompt" | "reveal" | "result";
@@ -154,7 +160,7 @@ function WordResultList({
                 <div className="flex items-center gap-3">
                   <ImportantToggle entry={entry} />
                   <p className="w-10 shrink-0 text-xs text-[var(--muted)]">
-                    D{entry.day}
+                    {entry.day === REGISTERED_DAY ? "등록" : `D${entry.day}`}
                   </p>
                   <p className="w-[38%] min-w-0 shrink-0 truncate text-base font-semibold text-[var(--accent)] sm:w-44 sm:text-lg">
                     {entry.word}
@@ -260,6 +266,7 @@ export function QuizApp({ books }: Props) {
   const [knownWords, setKnownWords] = useState<QuizWord[]>([]);
   const [history, setHistory] = useState<Snapshot[]>([]);
   const [importantCount, setImportantCount] = useState(0);
+  const [registeredCount, setRegisteredCount] = useState(0);
 
   const current = remaining[0];
   const cleared = Math.max(totalCount - remaining.length, 0);
@@ -267,17 +274,20 @@ export function QuizApp({ books }: Props) {
   const canUndo = history.length > 0;
 
   useEffect(() => {
-    function syncImportantCount() {
+    function syncCounts() {
       setImportantCount(loadImportantWords().length);
+      setRegisteredCount(loadRegisteredWords().length);
     }
-    syncImportantCount();
-    window.addEventListener(IMPORTANT_EVENT, syncImportantCount);
-    window.addEventListener("storage", syncImportantCount);
-    window.addEventListener("focus", syncImportantCount);
+    syncCounts();
+    window.addEventListener(IMPORTANT_EVENT, syncCounts);
+    window.addEventListener(REGISTERED_EVENT, syncCounts);
+    window.addEventListener("storage", syncCounts);
+    window.addEventListener("focus", syncCounts);
     return () => {
-      window.removeEventListener(IMPORTANT_EVENT, syncImportantCount);
-      window.removeEventListener("storage", syncImportantCount);
-      window.removeEventListener("focus", syncImportantCount);
+      window.removeEventListener(IMPORTANT_EVENT, syncCounts);
+      window.removeEventListener(REGISTERED_EVENT, syncCounts);
+      window.removeEventListener("storage", syncCounts);
+      window.removeEventListener("focus", syncCounts);
     };
   }, []);
 
@@ -286,8 +296,10 @@ export function QuizApp({ books }: Props) {
       return `중요 단어 ${totalCount || importantCount}개`;
     }
     if (selected.length === 0) return "Day를 선택하세요";
-    const sorted = [...selected].sort((a, b) => a - b);
-    return `Day ${sorted.join(", ")}`;
+    const labels = [...selected]
+      .sort((a, b) => a - b)
+      .map((d) => (d === REGISTERED_DAY ? "등록" : String(d)));
+    return `Day ${labels.join(", ")}`;
   }, [source, selected, totalCount, importantCount]);
 
   function toggleDay(day: number) {
@@ -342,8 +354,16 @@ export function QuizApp({ books }: Props) {
           day: book.day,
         })),
       );
+    if (days.has(REGISTERED_DAY)) {
+      words.push(...registeredToQuizWords());
+    }
     beginQuiz(words, "days");
   }
+
+  const canStartDayQuiz =
+    selected.length > 0 &&
+    (selected.some((d) => d !== REGISTERED_DAY) ||
+      (selected.includes(REGISTERED_DAY) && registeredCount > 0));
 
   function startImportantQuiz() {
     const words = loadImportantWords();
@@ -395,7 +415,7 @@ export function QuizApp({ books }: Props) {
     if (remaining.length <= 1) {
       setRemaining([]);
       if (source === "days") {
-        markDaysQuizzed(selected);
+        markDaysQuizzed(selected.filter((d) => d !== REGISTERED_DAY));
       }
       setPhase("result");
       return;
@@ -414,6 +434,7 @@ export function QuizApp({ books }: Props) {
     setKnownWords([]);
     setHistory([]);
     setImportantCount(loadImportantWords().length);
+    setRegisteredCount(loadRegisteredWords().length);
   }
 
   if (phase === "result") {
@@ -550,13 +571,38 @@ export function QuizApp({ books }: Props) {
             </li>
           );
         })}
+        <li>
+          <button
+            type="button"
+            onClick={() => toggleDay(REGISTERED_DAY)}
+            className={
+              selected.includes(REGISTERED_DAY)
+                ? "flex h-11 w-full items-center justify-center rounded-md bg-[var(--accent)] text-sm font-medium text-white"
+                : "flex h-11 w-full items-center justify-center rounded-md border border-[var(--line)] bg-white/50 text-sm text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            }
+            aria-pressed={selected.includes(REGISTERED_DAY)}
+            disabled={registeredCount === 0}
+            title={
+              registeredCount === 0
+                ? "단어 탭의 「등록」에서 먼저 추가하세요"
+                : `등록 단어 ${registeredCount}개`
+            }
+          >
+            등록
+            {registeredCount > 0 ? (
+              <span className="ml-0.5 text-xs opacity-80">
+                ({registeredCount})
+              </span>
+            ) : null}
+          </button>
+        </li>
       </ul>
 
       <div className="mt-8 flex flex-wrap items-center gap-3">
         <button
           type="button"
           onClick={startQuiz}
-          disabled={selected.length === 0}
+          disabled={!canStartDayQuiz}
           className="rounded-md bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
         >
           시험 시작
@@ -578,8 +624,8 @@ export function QuizApp({ books }: Props) {
         <br />
         모르겠어요 → 맨 뒤로 보내 다시 출제 / 맞췄어요 → 다음
         <br />
-        시험 결과에서 「중요」를 누르면 중요 목록에 저장되고, 그 목록만으로도
-        시험볼 수 있습니다.
+        「등록」은 단어 탭에서 직접 추가한 단어입니다. Day와 함께 고를 수
+        있어요.
       </p>
     </div>
   );

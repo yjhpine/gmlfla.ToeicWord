@@ -1,7 +1,11 @@
 /** 사용자가 직접 등록한 단어 (브라우저 로컬) */
 
+import type { QuizWord } from "@/lib/words/types";
+
 export const REGISTERED_STORAGE_KEY = "heelim-toeic-registered-v1";
 export const REGISTERED_EVENT = "heelim-registered-updated";
+/** Day 그리드에서 등록 단어를 나타내는 가상 Day 번호 */
+export const REGISTERED_DAY = 0;
 
 export type RegisteredWord = {
   word: string;
@@ -9,6 +13,16 @@ export type RegisteredWord = {
   example: string;
   registeredAt: string;
 };
+
+export function registeredToQuizWords(): QuizWord[] {
+  return loadRegisteredWords().map((w) => ({
+    word: w.word,
+    meaning: w.meaning,
+    example: w.example,
+    exampleMeaning: "",
+    day: REGISTERED_DAY,
+  }));
+}
 
 export function loadRegisteredWords(): RegisteredWord[] {
   if (typeof window === "undefined") return [];

@@ -4,10 +4,14 @@ import { useEffect, useMemo, useState } from "react";
 import { ExampleWithUnderline } from "@/components/ExampleWithUnderline";
 import { SpeakButton } from "@/components/SpeakButton";
 import { WordRegister } from "@/components/WordRegister";
+import {
+  REGISTERED_EVENT,
+  loadRegisteredWords,
+} from "@/lib/registered";
 import { markDayStudied } from "@/lib/progress";
 import type { DayWordbook } from "@/lib/words/types";
 
-type Phase = "select" | "study";
+type Phase = "select" | "study" | "register";
 
 type Props = {
   books: DayWordbook[];
@@ -17,6 +21,7 @@ export function WordsStudy({ books }: Props) {
   const [phase, setPhase] = useState<Phase>("select");
   const [day, setDay] = useState(books[0]?.day ?? 1);
   const [index, setIndex] = useState(0);
+  const [registeredCount, setRegisteredCount] = useState(0);
 
   const current = useMemo(
     () => books.find((book) => book.day === day) ?? books[0],
@@ -30,6 +35,21 @@ export function WordsStudy({ books }: Props) {
   useEffect(() => {
     setIndex(0);
   }, [day]);
+
+  useEffect(() => {
+    function sync() {
+      setRegisteredCount(loadRegisteredWords().length);
+    }
+    sync();
+    window.addEventListener(REGISTERED_EVENT, sync);
+    window.addEventListener("storage", sync);
+    window.addEventListener("focus", sync);
+    return () => {
+      window.removeEventListener(REGISTERED_EVENT, sync);
+      window.removeEventListener("storage", sync);
+      window.removeEventListener("focus", sync);
+    };
+  }, []);
 
   function startStudy(nextDay: number) {
     setDay(nextDay);
@@ -57,6 +77,17 @@ export function WordsStudy({ books }: Props) {
       <p className="text-[var(--muted)]">
         추출된 단어 데이터가 없습니다. `data/words/` 를 확인해 주세요.
       </p>
+    );
+  }
+
+  if (phase === "register") {
+    return (
+      <WordRegister
+        onBack={() => {
+          setRegisteredCount(loadRegisteredWords().length);
+          setPhase("select");
+        }}
+      />
     );
   }
 
@@ -133,7 +164,7 @@ export function WordsStudy({ books }: Props) {
         단어
       </h1>
       <p className="mt-2 text-[var(--muted)]">
-        Day를 고르면 단어를 하나씩 넘기며 학습합니다.
+        Day를 고르면 학습하고, 「등록」에 들어가면 단어를 직접 추가합니다.
       </p>
 
       <ul className="mt-8 grid grid-cols-5 gap-2 sm:grid-cols-10">
@@ -148,15 +179,27 @@ export function WordsStudy({ books }: Props) {
             </button>
           </li>
         ))}
+        <li>
+          <button
+            type="button"
+            onClick={() => setPhase("register")}
+            className="flex h-11 w-full items-center justify-center rounded-md border border-[var(--accent)] bg-[var(--accent-soft)] text-sm font-medium text-[var(--accent)] transition hover:bg-[var(--accent)] hover:text-white"
+          >
+            등록
+            {registeredCount > 0 ? (
+              <span className="ml-1 text-xs opacity-80">({registeredCount})</span>
+            ) : null}
+          </button>
+        </li>
       </ul>
 
-      <p className="mt-8 text-sm leading-relaxed text-[var(--muted)]">
+      <p className="mt-10 text-sm leading-relaxed text-[var(--muted)]">
         Day를 누르면 영단어·뜻·예문이 한 번에 나오고,
         <br />
         이전 / 다음으로 단어를 넘깁니다.
+        <br />
+        「등록」에서 추가한 단어는 시험에서도 Day처럼 고를 수 있습니다.
       </p>
-
-      <WordRegister />
     </div>
   );
 }
