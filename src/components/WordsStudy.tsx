@@ -6,7 +6,9 @@ import { SpeakButton } from "@/components/SpeakButton";
 import { WordRegister } from "@/components/WordRegister";
 import {
   REGISTERED_EVENT,
-  loadRegisteredWords,
+  WORDS_PER_BLOCK,
+  loadRegisteredBlocks,
+  type RegisteredBlock,
 } from "@/lib/registered";
 import { markDayStudied } from "@/lib/progress";
 import type { DayWordbook } from "@/lib/words/types";
@@ -21,7 +23,8 @@ export function WordsStudy({ books }: Props) {
   const [phase, setPhase] = useState<Phase>("select");
   const [day, setDay] = useState(books[0]?.day ?? 1);
   const [index, setIndex] = useState(0);
-  const [registeredCount, setRegisteredCount] = useState(0);
+  const [blocks, setBlocks] = useState<RegisteredBlock[]>([]);
+  const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
 
   const current = useMemo(
     () => books.find((book) => book.day === day) ?? books[0],
@@ -38,7 +41,12 @@ export function WordsStudy({ books }: Props) {
 
   useEffect(() => {
     function sync() {
-      setRegisteredCount(loadRegisteredWords().length);
+      const next = loadRegisteredBlocks();
+      setBlocks(next);
+      setActiveBlockId((prev) => {
+        if (prev && next.some((b) => b.id === prev)) return prev;
+        return next[0]?.id ?? null;
+      });
     }
     sync();
     window.addEventListener(REGISTERED_EVENT, sync);
@@ -55,6 +63,11 @@ export function WordsStudy({ books }: Props) {
     setDay(nextDay);
     setIndex(0);
     setPhase("study");
+  }
+
+  function openRegister(blockId: string) {
+    setActiveBlockId(blockId);
+    setPhase("register");
   }
 
   function goPrev() {
@@ -80,11 +93,13 @@ export function WordsStudy({ books }: Props) {
     );
   }
 
-  if (phase === "register") {
+  if (phase === "register" && activeBlockId) {
     return (
       <WordRegister
+        blockId={activeBlockId}
+        onBlockChange={setActiveBlockId}
         onBack={() => {
-          setRegisteredCount(loadRegisteredWords().length);
+          setBlocks(loadRegisteredBlocks());
           setPhase("select");
         }}
       />
@@ -164,8 +179,8 @@ export function WordsStudy({ books }: Props) {
         단어
       </h1>
       <p className="mt-2 text-[var(--muted)]">
-        Day를 고르면 학습하고, 「등록」에 들어가면 등록 단어를 Day처럼
-        바로 학습합니다.
+        Day와 등록 블럭을 고르면 단어를 넘기며 학습합니다. 등록 블럭은{" "}
+        {WORDS_PER_BLOCK}개까지입니다.
       </p>
 
       <ul className="mt-8 grid grid-cols-5 gap-2 sm:grid-cols-10">
@@ -180,18 +195,21 @@ export function WordsStudy({ books }: Props) {
             </button>
           </li>
         ))}
-        <li>
-          <button
-            type="button"
-            onClick={() => setPhase("register")}
-            className="flex h-11 w-full items-center justify-center rounded-md border border-[var(--accent)] bg-[var(--accent-soft)] text-sm font-medium text-[var(--accent)] transition hover:bg-[var(--accent)] hover:text-white"
-          >
-            등록
-            {registeredCount > 0 ? (
-              <span className="ml-1 text-xs opacity-80">({registeredCount})</span>
-            ) : null}
-          </button>
-        </li>
+        {blocks.map((block) => (
+          <li key={block.id} className="col-span-2 sm:col-span-2">
+            <button
+              type="button"
+              onClick={() => openRegister(block.id)}
+              title={`${block.name} · ${block.words.length}/${WORDS_PER_BLOCK}`}
+              className="flex h-11 w-full items-center justify-center truncate rounded-md border border-[var(--accent)] bg-[var(--accent-soft)] px-2 text-sm font-medium text-[var(--accent)] transition hover:bg-[var(--accent)] hover:text-white"
+            >
+              <span className="truncate">{block.name}</span>
+              <span className="ml-1 shrink-0 text-xs opacity-80">
+                ({block.words.length})
+              </span>
+            </button>
+          </li>
+        ))}
       </ul>
 
       <p className="mt-10 text-sm leading-relaxed text-[var(--muted)]">
@@ -199,8 +217,8 @@ export function WordsStudy({ books }: Props) {
         <br />
         이전 / 다음으로 단어를 넘깁니다.
         <br />
-        「등록」에서는 등록 단어를 바로 넘기며 공부하고, 「단어 등록」으로
-        새 단어를 추가합니다.
+        등록 블럭은 이름 변경이 가능하고, {WORDS_PER_BLOCK}개가 차면 「등록
+        2」처럼 새 블럭이 생깁니다.
       </p>
     </div>
   );
