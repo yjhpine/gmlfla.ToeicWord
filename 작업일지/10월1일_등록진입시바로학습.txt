@@ -1,0 +1,11 @@
+제목: 10월1일 등록진입시바로학습
+
+변경 요약
+- 「등록」진입 시 등록 단어를 Day처럼 카드 학습으로 바로 시작
+- 상단 「단어 등록」버튼으로만 입력 폼 진입
+- 단어 없을 때는 빈 안내 + 단어 등록 CTA
+
+파일
+- src/components/WordRegister.tsx
+- src/components/WordsStudy.tsx
+- 작업일지/10월1일_등록진입시바로학습.txt

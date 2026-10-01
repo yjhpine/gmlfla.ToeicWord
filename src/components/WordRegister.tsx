@@ -7,7 +7,6 @@ import {
   REGISTERED_EVENT,
   loadRegisteredWords,
   registerWord,
-  removeRegisteredWord,
   type RegisteredWord,
 } from "@/lib/registered";
 
@@ -15,11 +14,11 @@ type Props = {
   onBack: () => void;
 };
 
-type Mode = "hub" | "study";
+type Mode = "study" | "form";
 
 export function WordRegister({ onBack }: Props) {
-  const [mode, setMode] = useState<Mode>("hub");
-  const [formOpen, setFormOpen] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [mode, setMode] = useState<Mode>("study");
   const [word, setWord] = useState("");
   const [meaning, setMeaning] = useState("");
   const [example, setExample] = useState("");
@@ -30,7 +29,13 @@ export function WordRegister({ onBack }: Props) {
 
   useEffect(() => {
     function sync() {
-      setRegistered(loadRegisteredWords());
+      const words = loadRegisteredWords();
+      setRegistered(words);
+      setReady(true);
+      setIndex((i) => {
+        if (words.length === 0) return 0;
+        return Math.min(i, words.length - 1);
+      });
     }
     sync();
     window.addEventListener(REGISTERED_EVENT, sync);
@@ -44,6 +49,21 @@ export function WordRegister({ onBack }: Props) {
   const entry = registered[index];
   const total = registered.length;
   const progressRatio = total ? (index + 1) / total : 0;
+
+  function openForm() {
+    setMode("form");
+    setError(null);
+    setOkMessage(null);
+  }
+
+  function closeForm() {
+    setMode("study");
+    setError(null);
+    setOkMessage(null);
+    setWord("");
+    setMeaning("");
+    setExample("");
+  }
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -73,13 +93,9 @@ export function WordRegister({ onBack }: Props) {
     setExample("");
     setError(null);
     setOkMessage(`「${nextWord}」를 등록했어요.`);
-  }
-
-  function startStudy() {
-    if (registered.length === 0) return;
+    // 방금 등록한 단어부터 학습
     setIndex(0);
     setMode("study");
-    setFormOpen(false);
   }
 
   function goPrev() {
@@ -89,134 +105,45 @@ export function WordRegister({ onBack }: Props) {
 
   function goNext() {
     if (index >= total - 1) {
-      setMode("hub");
+      onBack();
       return;
     }
     setIndex((i) => i + 1);
   }
 
-  if (mode === "study" && entry) {
+  if (!ready) {
     return (
-      <div className="flex min-h-[70vh] flex-1 flex-col">
-        <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 pt-2 text-sm text-[var(--muted)]">
-          <button
-            type="button"
-            onClick={() => setMode("hub")}
-            className="rounded-md px-2 py-1 transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
-          >
-            ← 등록 목록
-          </button>
-          <span>
-            등록 · {index + 1} / {total}
-          </span>
-        </div>
-        <div className="mx-auto mt-2 h-1 w-full max-w-3xl overflow-hidden px-4">
-          <div
-            className="h-full rounded-full bg-[var(--accent)] transition-[width] duration-300"
-            style={{ width: `${progressRatio * 100}%` }}
-          />
-        </div>
-
-        <div
-          key={`${entry.word}-${index}`}
-          className="flex flex-1 flex-col items-center justify-center px-6 text-center animate-[fade-up_240ms_ease-out]"
-        >
-          <p className="text-xs text-[var(--muted)]">내가 등록한 단어</p>
-          <p className="mt-4 font-[family-name:var(--font-display)] text-4xl tracking-tight text-[var(--fg)] sm:text-5xl">
-            {entry.word}
-          </p>
-          <SpeakButton text={entry.word} />
-          <div className="mt-8 w-full max-w-lg">
-            <p className="text-xl font-medium text-[var(--accent)]">
-              {entry.meaning}
-            </p>
-            {entry.example ? (
-              <p className="mt-3 text-base leading-relaxed text-[var(--fg)]">
-                <ExampleWithUnderline
-                  example={entry.example}
-                  word={entry.word}
-                />
-              </p>
-            ) : (
-              <p className="mt-3 text-sm text-[var(--muted)]">예문 없음</p>
-            )}
-          </div>
-        </div>
-
-        <div className="mx-auto grid w-full max-w-3xl grid-cols-2 gap-3 px-4 pb-8">
-          <button
-            type="button"
-            onClick={goPrev}
-            disabled={index === 0}
-            className="rounded-md border border-[var(--line)] bg-white px-4 py-4 text-sm font-medium text-[var(--fg)] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            이전
-          </button>
-          <button
-            type="button"
-            onClick={goNext}
-            className="rounded-md bg-[var(--accent)] px-4 py-4 text-sm font-medium text-white transition hover:opacity-90"
-          >
-            {index >= total - 1 ? "목록으로" : "다음"}
-          </button>
-        </div>
+      <div className="mx-auto w-full max-w-3xl px-4 py-8 text-sm text-[var(--muted)]">
+        불러오는 중…
       </div>
     );
   }
 
-  return (
-    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-6 animate-[fade-up_280ms_ease-out]">
-      <div className="flex items-center justify-between gap-3 text-sm text-[var(--muted)]">
-        <button
-          type="button"
-          onClick={onBack}
-          className="rounded-md px-2 py-1 transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
-        >
-          ← Day 선택
-        </button>
-        <span>등록 단어 · {registered.length}개</span>
-      </div>
+  if (mode === "form") {
+    return (
+      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-6 animate-[fade-up_280ms_ease-out]">
+        <div className="flex items-center justify-between gap-3 text-sm text-[var(--muted)]">
+          <button
+            type="button"
+            onClick={() => {
+              if (registered.length === 0) onBack();
+              else closeForm();
+            }}
+            className="rounded-md px-2 py-1 transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
+          >
+            {registered.length === 0 ? "← Day 선택" : "← 학습으로"}
+          </button>
+          <span>등록 단어 · {registered.length}개</span>
+        </div>
 
-      <h1 className="mt-6 font-[family-name:var(--font-display)] text-3xl text-[var(--accent)]">
-        등록
-      </h1>
-      <p className="mt-2 text-sm text-[var(--muted)]">
-        Day처럼 등록 단어를 넘기며 학습하고, 필요할 때만 등록 폼을 엽니다.
-      </p>
+        <h1 className="mt-6 font-[family-name:var(--font-display)] text-3xl text-[var(--accent)]">
+          단어 등록
+        </h1>
+        <p className="mt-2 text-sm text-[var(--muted)]">
+          영단어·뜻·예문을 입력해 저장합니다.
+        </p>
 
-      <div className="mt-6 flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={() => {
-            setFormOpen((v) => !v);
-            setError(null);
-            setOkMessage(null);
-          }}
-          className={
-            formOpen
-              ? "rounded-md bg-[var(--accent)] px-4 py-2.5 text-sm font-medium text-white"
-              : "rounded-md border border-[var(--line)] bg-white px-4 py-2.5 text-sm font-medium text-[var(--fg)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
-          }
-          aria-expanded={formOpen}
-        >
-          {formOpen ? "등록 접기" : "단어 등록"}
-        </button>
-        <button
-          type="button"
-          onClick={startStudy}
-          disabled={registered.length === 0}
-          className="rounded-md bg-[var(--accent)] px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          학습 시작
-          {registered.length > 0 ? ` (${registered.length})` : ""}
-        </button>
-      </div>
-
-      {formOpen ? (
-        <form
-          onSubmit={onSubmit}
-          className="mt-5 space-y-3 border-y border-[var(--line)] py-5 animate-[fade-up_200ms_ease-out]"
-        >
+        <form onSubmit={onSubmit} className="mt-6 space-y-3">
           <label className="block">
             <span className="text-xs font-medium text-[var(--muted)]">단어</span>
             <input
@@ -269,56 +196,111 @@ export function WordRegister({ onBack }: Props) {
             </p>
           ) : null}
         </form>
-      ) : null}
+      </div>
+    );
+  }
 
-      {registered.length > 0 ? (
-        <div className="mt-8 pb-8">
-          <h2 className="text-sm font-medium text-[var(--muted)]">
-            등록한 단어 ({registered.length})
-          </h2>
-          <ul className="mt-3 divide-y divide-[var(--line)] border-y border-[var(--line)]">
-            {registered.map((item) => (
-              <li key={`${item.word}-${item.registeredAt}`} className="py-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="font-semibold text-[var(--accent)]">
-                      {item.word}
-                    </p>
-                    <p className="mt-0.5 text-sm text-[var(--fg)]">
-                      {item.meaning}
-                    </p>
-                    {item.example ? (
-                      <p className="mt-1 text-sm text-[var(--muted)]">
-                        <ExampleWithUnderline
-                          example={item.example}
-                          word={item.word}
-                        />
-                      </p>
-                    ) : null}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      removeRegisteredWord(item.word);
-                      setOkMessage(null);
-                      if (mode === "study") {
-                        setIndex(0);
-                      }
-                    }}
-                    className="shrink-0 text-xs text-[var(--muted)] underline decoration-dotted underline-offset-2"
-                  >
-                    삭제
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
+  if (total === 0 || !entry) {
+    return (
+      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-6 animate-[fade-up_280ms_ease-out]">
+        <div className="flex items-center justify-between gap-3 text-sm text-[var(--muted)]">
+          <button
+            type="button"
+            onClick={onBack}
+            className="rounded-md px-2 py-1 transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
+          >
+            ← Day 선택
+          </button>
+          <span>등록 단어 · 0개</span>
         </div>
-      ) : (
-        <p className="mt-8 text-sm text-[var(--muted)]">
-          아직 등록한 단어가 없어요. 「단어 등록」을 눌러 추가해 보세요.
+        <h1 className="mt-6 font-[family-name:var(--font-display)] text-3xl text-[var(--accent)]">
+          등록
+        </h1>
+        <p className="mt-2 text-sm text-[var(--muted)]">
+          아직 등록한 단어가 없어요. 아래에서 추가한 뒤 Day처럼 학습할 수
+          있습니다.
         </p>
-      )}
+        <button
+          type="button"
+          onClick={openForm}
+          className="mt-8 w-fit rounded-md bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90"
+        >
+          단어 등록
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex min-h-[70vh] flex-1 flex-col">
+      <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3 px-4 pt-2 text-sm text-[var(--muted)]">
+        <button
+          type="button"
+          onClick={onBack}
+          className="rounded-md px-2 py-1 transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
+        >
+          ← Day 선택
+        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={openForm}
+            className="rounded-md border border-[var(--line)] bg-white px-3 py-1 text-xs font-medium text-[var(--fg)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+          >
+            단어 등록
+          </button>
+          <span>
+            등록 · {index + 1} / {total}
+          </span>
+        </div>
+      </div>
+      <div className="mx-auto mt-2 h-1 w-full max-w-3xl overflow-hidden px-4">
+        <div
+          className="h-full rounded-full bg-[var(--accent)] transition-[width] duration-300"
+          style={{ width: `${progressRatio * 100}%` }}
+        />
+      </div>
+
+      <div
+        key={`${entry.word}-${index}`}
+        className="flex flex-1 flex-col items-center justify-center px-6 text-center animate-[fade-up_240ms_ease-out]"
+      >
+        <p className="text-xs text-[var(--muted)]">내가 등록한 단어</p>
+        <p className="mt-4 font-[family-name:var(--font-display)] text-4xl tracking-tight text-[var(--fg)] sm:text-5xl">
+          {entry.word}
+        </p>
+        <SpeakButton text={entry.word} />
+        <div className="mt-8 w-full max-w-lg">
+          <p className="text-xl font-medium text-[var(--accent)]">
+            {entry.meaning}
+          </p>
+          {entry.example ? (
+            <p className="mt-3 text-base leading-relaxed text-[var(--fg)]">
+              <ExampleWithUnderline example={entry.example} word={entry.word} />
+            </p>
+          ) : (
+            <p className="mt-3 text-sm text-[var(--muted)]">예문 없음</p>
+          )}
+        </div>
+      </div>
+
+      <div className="mx-auto grid w-full max-w-3xl grid-cols-2 gap-3 px-4 pb-8">
+        <button
+          type="button"
+          onClick={goPrev}
+          disabled={index === 0}
+          className="rounded-md border border-[var(--line)] bg-white px-4 py-4 text-sm font-medium text-[var(--fg)] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          이전
+        </button>
+        <button
+          type="button"
+          onClick={goNext}
+          className="rounded-md bg-[var(--accent)] px-4 py-4 text-sm font-medium text-white transition hover:opacity-90"
+        >
+          {index >= total - 1 ? "Day 선택으로" : "다음"}
+        </button>
+      </div>
     </div>
   );
 }

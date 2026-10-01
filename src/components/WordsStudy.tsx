@@ -164,8 +164,8 @@ export function WordsStudy({ books }: Props) {
         단어
       </h1>
       <p className="mt-2 text-[var(--muted)]">
-        Day를 고르면 학습하고, 「등록」에서 추가한 단어도 같은 방식으로
-        학습합니다.
+        Day를 고르면 학습하고, 「등록」에 들어가면 등록 단어를 Day처럼
+        바로 학습합니다.
       </p>
 
       <ul className="mt-8 grid grid-cols-5 gap-2 sm:grid-cols-10">
@@ -199,7 +199,8 @@ export function WordsStudy({ books }: Props) {
         <br />
         이전 / 다음으로 단어를 넘깁니다.
         <br />
-        「등록」에서 단어를 추가·접고, 학습 시작으로 Day처럼 넘길 수 있습니다.
+        「등록」에서는 등록 단어를 바로 넘기며 공부하고, 「단어 등록」으로
+        새 단어를 추가합니다.
       </p>
     </div>
   );
