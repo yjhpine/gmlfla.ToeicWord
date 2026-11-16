@@ -9,6 +9,7 @@ import {
   getRegisteredBlock,
   loadRegisteredBlocks,
   registerWord,
+  registeredBlockLabel,
   renameRegisteredBlock,
   type RegisteredBlock,
   type RegisteredWord,
@@ -69,6 +70,7 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
   const total = registered.length;
   const progressRatio = total ? (index + 1) / total : 0;
   const isFull = total >= WORDS_PER_BLOCK;
+  const blockLabel = block ? registeredBlockLabel(block) : "등록";
 
   function openForm() {
     setMode("form");
@@ -180,10 +182,10 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
             }}
             className="rounded-md px-2 py-1 transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
           >
-            {total === 0 ? "← Day 선택" : "← 학습으로"}
+            {total === 0 ? "← 블럭 선택" : "← 학습으로"}
           </button>
           <span>
-            {block?.name ?? "등록"} · {total}/{WORDS_PER_BLOCK}
+            {blockLabel} · {total}/{WORDS_PER_BLOCK}
           </span>
         </div>
 
@@ -263,10 +265,10 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
             onClick={onBack}
             className="rounded-md px-2 py-1 transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
           >
-            ← Day 선택
+            ← 블럭 선택
           </button>
           <span>
-            {block?.name ?? "등록"} · 0/{WORDS_PER_BLOCK}
+            {blockLabel} · 0/{WORDS_PER_BLOCK}
           </span>
         </div>
 
@@ -312,7 +314,7 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
           onClick={onBack}
           className="rounded-md px-2 py-1 transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
         >
-          ← Day 선택
+          ← 블럭 선택
         </button>
         <div className="flex min-w-0 items-center gap-2">
           <button
@@ -323,7 +325,7 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
             단어 등록
           </button>
           <span className="truncate">
-            {block?.name ?? "등록"} · {index + 1} / {total}
+            {blockLabel} · {index + 1} / {total}
           </span>
         </div>
       </div>
@@ -358,7 +360,7 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
         className="flex flex-1 flex-col items-center justify-center px-6 text-center animate-[fade-up_240ms_ease-out]"
       >
         <p className="text-xs text-[var(--muted)]">
-          {block?.name ?? "등록"} · {total}/{WORDS_PER_BLOCK}
+          {blockLabel} · {total}/{WORDS_PER_BLOCK}
         </p>
         <p className="mt-4 font-[family-name:var(--font-display)] text-4xl tracking-tight text-[var(--fg)] sm:text-5xl">
           {entry.word}
@@ -392,7 +394,7 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
           onClick={goNext}
           className="rounded-md bg-[var(--accent)] px-4 py-4 text-sm font-medium text-white transition hover:opacity-90"
         >
-          {index >= total - 1 ? "Day 선택으로" : "다음"}
+          {index >= total - 1 ? "블럭 선택으로" : "다음"}
         </button>
       </div>
     </div>

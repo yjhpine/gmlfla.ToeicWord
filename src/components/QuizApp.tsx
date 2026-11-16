@@ -17,6 +17,7 @@ import {
   isRegisteredDay,
   loadRegisteredBlocks,
   registeredBlockDay,
+  registeredBlockLabel,
   registeredLabelForDay,
   registeredToQuizWords,
   type RegisteredBlock,
@@ -595,7 +596,7 @@ export function QuizApp({ books }: Props) {
                 title={
                   empty
                     ? "단어가 없는 등록 블럭입니다"
-                    : `${block.name} · ${block.words.length}/${WORDS_PER_BLOCK}`
+                    : `${registeredBlockLabel(block)} · ${block.words.length}/${WORDS_PER_BLOCK}`
                 }
                 className={
                   active
@@ -604,7 +605,7 @@ export function QuizApp({ books }: Props) {
                 }
                 aria-pressed={active}
               >
-                <span className="truncate">{block.name}</span>
+                <span className="truncate">{registeredBlockLabel(block)}</span>
                 <span className="ml-1 shrink-0 text-xs opacity-80">
                   ({block.words.length})
                 </span>

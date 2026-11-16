@@ -6,6 +6,8 @@ export const REGISTERED_STORAGE_KEY = "heelim-toeic-registered-v2";
 const LEGACY_STORAGE_KEY = "heelim-toeic-registered-v1";
 export const REGISTERED_EVENT = "heelim-registered-updated";
 export const WORDS_PER_BLOCK = 20;
+export const REGISTERED_CATEGORIES = ["general", "LC", "RC"] as const;
+export type RegisteredCategory = (typeof REGISTERED_CATEGORIES)[number];
 
 export type RegisteredWord = {
   word: string;
@@ -17,6 +19,7 @@ export type RegisteredWord = {
 export type RegisteredBlock = {
   id: string;
   name: string;
+  category: RegisteredCategory;
   words: RegisteredWord[];
 };
 
@@ -39,6 +42,23 @@ function nextDefaultName(blocks: RegisteredBlock[]) {
   return `등록 ${n}`;
 }
 
+function ensureCategories(blocks: RegisteredBlock[]): RegisteredBlock[] {
+  // Append new groups so existing negative quiz Day IDs keep their indices.
+  const next = [...blocks];
+  for (const category of REGISTERED_CATEGORIES) {
+    if (!next.some((block) => block.category === category)) {
+      next.push({ id: createId(), name: "등록 1", category, words: [] });
+    }
+  }
+  return next;
+}
+
+export function registeredBlockLabel(block: RegisteredBlock): string {
+  return block.category === "general"
+    ? block.name
+    : `${block.category} ${block.name}`;
+}
+
 function normalizeWord(item: Partial<RegisteredWord>): RegisteredWord | null {
   if (typeof item.word !== "string" || typeof item.meaning !== "string") {
     return null;
@@ -57,6 +77,7 @@ function chunkWords(words: RegisteredWord[]): RegisteredBlock[] {
       {
         id: createId(),
         name: "등록 1",
+        category: "general",
         words: [],
       },
     ];
@@ -66,6 +87,7 @@ function chunkWords(words: RegisteredWord[]): RegisteredBlock[] {
     blocks.push({
       id: createId(),
       name: `등록 ${blocks.length + 1}`,
+      category: "general",
       words: words.slice(i, i + WORDS_PER_BLOCK),
     });
   }
@@ -115,7 +137,7 @@ export function loadRegisteredBlocks(): RegisteredBlock[] {
         const words = parsed
           .map((item) => normalizeWord(item as Partial<RegisteredWord>))
           .filter((w): w is RegisteredWord => w !== null);
-        const blocks = chunkWords(words);
+        const blocks = ensureCategories(chunkWords(words));
         saveBlocks(blocks);
         return blocks;
       }
@@ -135,29 +157,33 @@ export function loadRegisteredBlocks(): RegisteredBlock[] {
                 typeof b.name === "string" && b.name.trim()
                   ? b.name.trim()
                   : `등록 ${index + 1}`,
+              category:
+                b.category === "LC" || b.category === "RC"
+                  ? b.category
+                  : "general",
               words,
             } satisfies RegisteredBlock;
           });
-        if (blocks.length === 0) {
-          const empty = chunkWords([]);
-          saveBlocks(empty);
-          return empty;
+        const next = ensureCategories(blocks);
+        if (JSON.stringify(next) !== JSON.stringify(parsed.blocks)) {
+          saveBlocks(next);
         }
-        return blocks;
+        return next;
       }
     }
 
     const migrated = migrateLegacy();
     if (migrated) {
-      saveBlocks(migrated);
-      return migrated;
+      const blocks = ensureCategories(migrated);
+      saveBlocks(blocks);
+      return blocks;
     }
 
-    const empty = chunkWords([]);
+    const empty = ensureCategories(chunkWords([]));
     saveBlocks(empty);
     return empty;
   } catch {
-    return chunkWords([]);
+    return ensureCategories(chunkWords([]));
   }
 }
 
@@ -190,7 +216,8 @@ export function getRegisteredBlockByDay(day: number): RegisteredBlock | null {
 }
 
 export function registeredLabelForDay(day: number): string {
-  return getRegisteredBlockByDay(day)?.name ?? "등록";
+  const block = getRegisteredBlockByDay(day);
+  return block ? registeredBlockLabel(block) : "등록";
 }
 
 export function registeredBlockToQuizWords(
@@ -246,9 +273,19 @@ export function registerWord(
   const meaning = input.meaning.trim();
   const example = input.example.trim();
   const key = word.toLowerCase();
-  let blocks = loadRegisteredBlocks().map((b) => ({
+  const current = loadRegisteredBlocks();
+  let targetIndex = blockId ? current.findIndex((b) => b.id === blockId) : -1;
+  // Calls without a block ID retain the original general-registration behavior.
+  if (targetIndex < 0) {
+    targetIndex = current.findLastIndex((b) => b.category === "general");
+  }
+  const category = current[targetIndex].category;
+  const blocks = current.map((b) => ({
     ...b,
-    words: b.words.filter((w) => w.word.trim().toLowerCase() !== key),
+    words:
+      b.category === category
+        ? b.words.filter((w) => w.word.trim().toLowerCase() !== key)
+        : b.words,
   }));
 
   const entry: RegisteredWord = {
@@ -258,34 +295,28 @@ export function registerWord(
     registeredAt: new Date().toISOString(),
   };
 
-  let targetIndex = blockId
-    ? blocks.findIndex((b) => b.id === blockId)
-    : blocks.length - 1;
-  if (targetIndex < 0) targetIndex = Math.max(blocks.length - 1, 0);
   const target = blocks[targetIndex];
 
   if (!target || target.words.length >= WORDS_PER_BLOCK) {
     const created: RegisteredBlock = {
       id: createId(),
-      name: nextDefaultName(blocks),
+      name: nextDefaultName(blocks.filter((b) => b.category === category)),
+      category,
       words: [entry],
     };
-    const next = [...blocks.filter((b) => b.words.length > 0), created];
+    const next = [...blocks, created];
     saveBlocks(next);
     return { blocks: next, blockId: created.id, createdNewBlock: true };
   }
 
-  const next = blocks
-    .map((b, i) =>
-      i === targetIndex
-        ? { ...b, words: [entry, ...b.words].slice(0, WORDS_PER_BLOCK) }
-        : b,
-    )
-    .filter((b) => b.words.length > 0);
-  const finalBlocks = next.length > 0 ? next : chunkWords([]);
-  saveBlocks(finalBlocks);
+  const next = blocks.map((b, i) =>
+    i === targetIndex
+      ? { ...b, words: [entry, ...b.words].slice(0, WORDS_PER_BLOCK) }
+      : b,
+  );
+  saveBlocks(next);
   return {
-    blocks: finalBlocks,
+    blocks: next,
     blockId: target.id,
     createdNewBlock: false,
   };
@@ -293,16 +324,12 @@ export function registerWord(
 
 export function removeRegisteredWord(blockId: string, word: string) {
   const key = word.trim().toLowerCase();
-  let blocks = loadRegisteredBlocks().map((b) =>
+  const blocks = loadRegisteredBlocks().map((b) =>
     b.id === blockId
       ? { ...b, words: b.words.filter((w) => w.word.trim().toLowerCase() !== key) }
       : b,
   );
-  // 빈 블럭 제거, 하나도 없으면 등록 1 생성
-  blocks = blocks.filter((b) => b.words.length > 0);
-  if (blocks.length === 0) {
-    blocks = chunkWords([]);
-  }
+  // Keep empty blocks: their IDs, category and quiz Day indices must stay stable.
   saveBlocks(blocks);
   return blocks;
 }

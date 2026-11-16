@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { ExampleWithUnderline } from "@/components/ExampleWithUnderline";
 import { SpeakButton } from "@/components/SpeakButton";
 import { WordRegister } from "@/components/WordRegister";
@@ -19,12 +19,66 @@ type Props = {
   books: DayWordbook[];
 };
 
+function StudyGroup({
+  id,
+  title,
+  description,
+  expanded,
+  onToggle,
+  children,
+}: {
+  id: string;
+  title: string;
+  description: string;
+  expanded: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <section
+      aria-labelledby={`${id}-heading`}
+      className="overflow-hidden rounded-xl border border-[var(--line)] bg-white/60"
+    >
+      <h2 id={`${id}-heading`}>
+        <button
+          type="button"
+          aria-expanded={expanded}
+          aria-controls={`${id}-content`}
+          onClick={onToggle}
+          className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left transition hover:bg-[var(--accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--accent)]"
+        >
+          <span>
+            <span className="block text-lg font-semibold text-[var(--accent)]">
+              {title}
+            </span>
+            <span className="mt-1 block text-xs text-[var(--muted)]">
+              {description}
+            </span>
+          </span>
+          <span className="shrink-0 text-xs text-[var(--muted)]">
+            {expanded ? "접기" : "펼치기"}{" "}
+            <span aria-hidden>{expanded ? "▴" : "▾"}</span>
+          </span>
+        </button>
+      </h2>
+      <div
+        id={`${id}-content`}
+        hidden={!expanded}
+        className="border-t border-[var(--line)] p-4"
+      >
+        {children}
+      </div>
+    </section>
+  );
+}
+
 export function WordsStudy({ books }: Props) {
   const [phase, setPhase] = useState<Phase>("select");
   const [day, setDay] = useState(books[0]?.day ?? 1);
   const [index, setIndex] = useState(0);
   const [blocks, setBlocks] = useState<RegisteredBlock[]>([]);
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState({ days: false, LC: true, RC: true });
 
   const current = useMemo(
     () => books.find((book) => book.day === day) ?? books[0],
@@ -34,10 +88,6 @@ export function WordsStudy({ books }: Props) {
   const entry = current?.words[index];
   const total = current?.words.length ?? 0;
   const progressRatio = total ? (index + 1) / total : 0;
-
-  useEffect(() => {
-    setIndex(0);
-  }, [day]);
 
   useEffect(() => {
     function sync() {
@@ -85,14 +135,6 @@ export function WordsStudy({ books }: Props) {
     setIndex((i) => i + 1);
   }
 
-  if (!current) {
-    return (
-      <p className="text-[var(--muted)]">
-        추출된 단어 데이터가 없습니다. `data/words/` 를 확인해 주세요.
-      </p>
-    );
-  }
-
   if (phase === "register" && activeBlockId) {
     return (
       <WordRegister
@@ -106,7 +148,7 @@ export function WordsStudy({ books }: Props) {
     );
   }
 
-  if (phase === "study" && entry) {
+  if (phase === "study" && current && entry) {
     return (
       <div className="flex min-h-[70vh] flex-1 flex-col">
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 pt-2 text-sm text-[var(--muted)]">
@@ -173,35 +215,16 @@ export function WordsStudy({ books }: Props) {
     );
   }
 
-  return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-8">
-      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--accent)]">
-        단어
-      </h1>
-      <p className="mt-2 text-[var(--muted)]">
-        Day와 등록 블럭을 고르면 단어를 넘기며 학습합니다. 등록 블럭은{" "}
-        {WORDS_PER_BLOCK}개까지입니다.
-      </p>
-
-      <ul className="mt-8 grid grid-cols-5 gap-2 sm:grid-cols-10">
-        {books.map((book) => (
-          <li key={book.day}>
-            <button
-              type="button"
-              onClick={() => startStudy(book.day)}
-              className="flex h-11 w-full items-center justify-center rounded-md border border-[var(--line)] bg-white/60 text-sm text-[var(--muted)] transition hover:border-[var(--accent)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
-            >
-              {book.day}
-            </button>
-          </li>
-        ))}
-        {blocks.map((block) => (
-          <li key={block.id} className="col-span-2 sm:col-span-2">
+  function renderBlocks(items: RegisteredBlock[]) {
+    return (
+      <ul className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {items.map((block) => (
+          <li key={block.id}>
             <button
               type="button"
               onClick={() => openRegister(block.id)}
               title={`${block.name} · ${block.words.length}/${WORDS_PER_BLOCK}`}
-              className="flex h-11 w-full items-center justify-center truncate rounded-md border border-[var(--accent)] bg-[var(--accent-soft)] px-2 text-sm font-medium text-[var(--accent)] transition hover:bg-[var(--accent)] hover:text-white"
+              className="flex min-h-14 w-full items-center justify-center rounded-md border border-[var(--accent)] bg-[var(--accent-soft)] px-3 py-2 text-sm font-medium text-[var(--accent)] transition hover:bg-[var(--accent)] hover:text-white"
             >
               <span className="truncate">{block.name}</span>
               <span className="ml-1 shrink-0 text-xs opacity-80">
@@ -211,14 +234,81 @@ export function WordsStudy({ books }: Props) {
           </li>
         ))}
       </ul>
+    );
+  }
+
+  return (
+    <div className="mx-auto w-full max-w-3xl px-4 py-8">
+      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--accent)]">
+        단어
+      </h1>
+      <p className="mt-2 text-[var(--muted)]">
+        Day 단어를 학습하거나 LC·RC에 나만의 단어를 등록해 보세요.
+      </p>
+
+      <div className="mt-8 space-y-5">
+        <StudyGroup
+          id="study-days"
+          title="Day 단어"
+          description={`${books.length}일차 · 기존 단어장`}
+          expanded={expanded.days}
+          onToggle={() => setExpanded((prev) => ({ ...prev, days: !prev.days }))}
+        >
+          <ul className="grid grid-cols-5 gap-2 sm:grid-cols-10">
+            {books.map((book) => (
+              <li key={book.day}>
+                <button
+                  type="button"
+                  onClick={() => startStudy(book.day)}
+                  className="flex h-11 w-full items-center justify-center rounded-md border border-[var(--line)] bg-white/60 text-sm text-[var(--muted)] transition hover:border-[var(--accent)] hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
+                >
+                  {book.day}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </StudyGroup>
+
+        <section aria-labelledby="registered-heading">
+          <h2
+            id="registered-heading"
+            className="mb-3 text-sm font-medium text-[var(--muted)]"
+          >
+            등록 단어
+          </h2>
+          {renderBlocks(blocks.filter((block) => block.category === "general"))}
+        </section>
+
+        {(["LC", "RC"] as const).map((category) => {
+          const categoryBlocks = blocks.filter(
+            (block) => block.category === category,
+          );
+          const wordCount = categoryBlocks.reduce(
+            (count, block) => count + block.words.length,
+            0,
+          );
+          return (
+            <StudyGroup
+              key={category}
+              id={`study-${category}`}
+              title={category}
+              description={`${category === "LC" ? "듣기" : "읽기"} 단어 · ${wordCount}개 등록`}
+              expanded={expanded[category]}
+              onToggle={() =>
+                setExpanded((prev) => ({ ...prev, [category]: !prev[category] }))
+              }
+            >
+              {renderBlocks(categoryBlocks)}
+            </StudyGroup>
+          );
+        })}
+      </div>
 
       <p className="mt-10 text-sm leading-relaxed text-[var(--muted)]">
-        Day를 누르면 영단어·뜻·예문이 한 번에 나오고,
+        등록 블럭을 누르면 단어를 추가하거나 학습할 수 있습니다.
         <br />
-        이전 / 다음으로 단어를 넘깁니다.
-        <br />
-        등록 블럭은 이름 변경이 가능하고, {WORDS_PER_BLOCK}개가 차면 「등록
-        2」처럼 새 블럭이 생깁니다.
+        블럭 이름을 바꿀 수 있고, {WORDS_PER_BLOCK}개가 차면 같은 그룹에 새
+        블럭이 생깁니다.
       </p>
     </div>
   );
