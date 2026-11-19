@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { ExampleWithUnderline } from "@/components/ExampleWithUnderline";
+import { QuizRangePicker, quizAreaNames } from "@/components/QuizRangePicker";
 import { SpeakButton } from "@/components/SpeakButton";
 import {
   IMPORTANT_EVENT,
@@ -12,15 +13,13 @@ import {
 } from "@/lib/important";
 import { markDaysQuizzed } from "@/lib/progress";
 import {
+  REGISTERED_CATEGORIES,
   REGISTERED_EVENT,
-  WORDS_PER_BLOCK,
   isRegisteredDay,
   loadRegisteredBlocks,
-  registeredBlockDay,
-  registeredBlockLabel,
   registeredLabelForDay,
-  registeredToQuizWords,
   type RegisteredBlock,
+  type RegisteredCategory,
 } from "@/lib/registered";
 import type { DayWordbook, QuizWord } from "@/lib/words/types";
 
@@ -47,10 +46,6 @@ function shuffle<T>(items: T[]): T[] {
   return next;
 }
 
-function wordKey(entry: QuizWord) {
-  return `${entry.day}::${entry.word}`;
-}
-
 function MeaningSticker({
   meaning,
   revealed,
@@ -64,7 +59,7 @@ function MeaningSticker({
 
   if (revealed) {
     return (
-      <span className="min-w-0 truncate text-sm text-[var(--fg)] animate-[fade-up_180ms_ease-out]">
+      <span className="min-w-0 text-sm text-[var(--fg)] animate-[fade-up_180ms_ease-out]">
         {meaning}
       </span>
     );
@@ -159,20 +154,22 @@ function WordResultList({
       ) : (
         <ul className="mt-3 divide-y divide-[var(--line)] border-y border-[var(--line)]">
           {words.map((entry) => {
-            const key = wordKey(entry);
+            const key = importantKey(entry);
             return (
               <li key={key} className="py-2.5">
-                <div className="flex items-center gap-3">
+                <div className={entry.isSentence ? "flex flex-wrap items-center gap-3" : "flex items-center gap-3"}>
                   <ImportantToggle entry={entry} />
                   <p className="w-14 shrink-0 truncate text-xs text-[var(--muted)]">
                     {isRegisteredDay(entry.day)
                       ? registeredLabelForDay(entry.day)
                       : `D${entry.day}`}
                   </p>
-                  <p className="w-[38%] min-w-0 shrink-0 truncate text-base font-semibold text-[var(--accent)] sm:w-44 sm:text-lg">
+                  <p className={entry.isSentence
+                    ? "w-full whitespace-pre-line wrap-anywhere text-base font-semibold text-[var(--accent)]"
+                    : "w-[38%] min-w-0 shrink-0 truncate text-base font-semibold text-[var(--accent)] sm:w-44 sm:text-lg"}>
                     {entry.word}
                   </p>
-                  <div className="min-w-0 flex-1">
+                  <div className={entry.isSentence ? "w-full whitespace-pre-line wrap-anywhere" : "min-w-0 flex-1 [&>span]:truncate"}>
                     <MeaningSticker
                       meaning={entry.meaning}
                       revealed={revealed.has(key)}
@@ -198,6 +195,7 @@ function ResultScreen({
   onUndo,
   onRestart,
   onHome,
+  returnLabel,
 }: {
   selectedLabel: string;
   totalCount: number;
@@ -207,6 +205,7 @@ function ResultScreen({
   onUndo: () => void;
   onRestart: () => void;
   onHome: () => void;
+  returnLabel: string;
 }) {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-8">
@@ -255,7 +254,7 @@ function ResultScreen({
           onClick={onHome}
           className="rounded-md border border-[var(--line)] bg-white/70 px-5 py-2.5 text-sm font-medium transition hover:bg-white"
         >
-          Day 다시 선택
+          {returnLabel}
         </button>
       </div>
     </div>
@@ -263,11 +262,14 @@ function ResultScreen({
 }
 
 export function QuizApp({ books }: Props) {
-  const [selected, setSelected] = useState<number[]>([1]);
+  const [area, setArea] = useState<RegisteredCategory | null>(null);
+  const [selected, setSelected] = useState<string[]>([]);
   const [phase, setPhase] = useState<Phase>("select");
-  const [source, setSource] = useState<QuizSource>("days");
+  const [session, setSession] = useState<{ words: QuizWord[]; label: string; source: QuizSource }>({
+    words: [], label: "", source: "days",
+  });
   const [remaining, setRemaining] = useState<QuizWord[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
+  const totalCount = session.words.length;
   const [missedKeys, setMissedKeys] = useState<Set<string>>(new Set());
   const [retriedWords, setRetriedWords] = useState<QuizWord[]>([]);
   const [knownWords, setKnownWords] = useState<QuizWord[]>([]);
@@ -298,21 +300,9 @@ export function QuizApp({ books }: Props) {
     };
   }, []);
 
-  const selectedLabel = useMemo(() => {
-    if (source === "important") {
-      return `중요 단어 ${totalCount || importantCount}개`;
-    }
-    if (selected.length === 0) return "Day를 선택하세요";
-    const labels = [...selected]
-      .sort((a, b) => a - b)
-      .map((d) => (isRegisteredDay(d) ? registeredLabelForDay(d) : String(d)));
-    return `Day ${labels.join(", ")}`;
-  }, [source, selected, totalCount, importantCount, regBlocks]);
-
-  function toggleDay(day: number) {
-    setSelected((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
-    );
+  function chooseArea(nextArea: RegisteredCategory | null) {
+    setArea(nextArea);
+    setSelected([]);
   }
 
   function pushHistory() {
@@ -338,12 +328,11 @@ export function QuizApp({ books }: Props) {
     setPhase("reveal");
   }
 
-  function beginQuiz(words: QuizWord[], nextSource: QuizSource) {
+  function beginQuiz(words: QuizWord[], label: string, source: QuizSource) {
     if (words.length === 0) return;
     const shuffled = shuffle(words);
-    setSource(nextSource);
+    setSession({ words, label, source });
     setRemaining(shuffled);
-    setTotalCount(shuffled.length);
     setMissedKeys(new Set());
     setRetriedWords([]);
     setKnownWords([]);
@@ -351,48 +340,25 @@ export function QuizApp({ books }: Props) {
     setPhase("prompt");
   }
 
-  function startQuiz() {
-    const days = new Set(selected);
-    const words = books
-      .filter((book) => days.has(book.day))
-      .flatMap((book) =>
-        book.words.map((word) => ({
-          ...word,
-          day: book.day,
-        })),
-      );
-    const registeredDays = selected.filter(isRegisteredDay);
-    if (registeredDays.length > 0) {
-      words.push(...registeredToQuizWords(registeredDays));
-    }
-    beginQuiz(words, "days");
-  }
-
-  const canStartDayQuiz =
-    selected.length > 0 &&
-    (selected.some((d) => !isRegisteredDay(d)) ||
-      selected.some((d) => {
-        if (!isRegisteredDay(d)) return false;
-        const idx = -d - 1;
-        return (regBlocks[idx]?.words.length ?? 0) > 0;
-      }));
-
   function startImportantQuiz() {
     const words = loadImportantWords();
-    // 키 중복 제거 (같은 day+word)
     const unique = new Map<string, QuizWord>();
     for (const word of words) {
       unique.set(importantKey(word), word);
     }
-    beginQuiz([...unique.values()], "important");
+    if (unique.size === 0) {
+      resetToSelect();
+      return;
+    }
+    beginQuiz([...unique.values()], `중요 목록 · ${unique.size}문항`, "important");
   }
 
   function restartQuiz() {
-    if (source === "important") {
+    if (session.source === "important") {
       startImportantQuiz();
       return;
     }
-    startQuiz();
+    beginQuiz(session.words, session.label, session.source);
   }
 
   function reveal() {
@@ -402,7 +368,7 @@ export function QuizApp({ books }: Props) {
   function markWrong() {
     if (!current) return;
     pushHistory();
-    const key = wordKey(current);
+    const key = importantKey(current);
     setMissedKeys((prev) => {
       if (prev.has(key)) return prev;
       const next = new Set(prev);
@@ -417,7 +383,7 @@ export function QuizApp({ books }: Props) {
   function markCorrect() {
     if (!current) return;
     pushHistory();
-    const key = wordKey(current);
+    const key = importantKey(current);
     if (missedKeys.has(key)) {
       setRetriedWords((prev) => [...prev, current]);
     } else {
@@ -426,8 +392,9 @@ export function QuizApp({ books }: Props) {
 
     if (remaining.length <= 1) {
       setRemaining([]);
-      if (source === "days") {
-        markDaysQuizzed(selected.filter((d) => !isRegisteredDay(d)));
+      if (session.source === "days") {
+        const completedDays = new Set(session.words.map((w) => w.day).filter((day) => day > 0));
+        markDaysQuizzed([...completedDays]);
       }
       setPhase("result");
       return;
@@ -438,9 +405,8 @@ export function QuizApp({ books }: Props) {
 
   function resetToSelect() {
     setPhase("select");
-    setSource("days");
+    setSession({ words: [], label: "", source: "days" });
     setRemaining([]);
-    setTotalCount(0);
     setMissedKeys(new Set());
     setRetriedWords([]);
     setKnownWords([]);
@@ -452,7 +418,7 @@ export function QuizApp({ books }: Props) {
   if (phase === "result") {
     return (
       <ResultScreen
-        selectedLabel={selectedLabel}
+        selectedLabel={session.label}
         totalCount={totalCount}
         knownWords={knownWords}
         retriedWords={retriedWords}
@@ -460,6 +426,7 @@ export function QuizApp({ books }: Props) {
         onUndo={undoLast}
         onRestart={restartQuiz}
         onHome={resetToSelect}
+        returnLabel={area ? "날짜 다시 선택" : "영역 선택"}
       />
     );
   }
@@ -477,7 +444,7 @@ export function QuizApp({ books }: Props) {
             ← 이전 단어
           </button>
           <span className="text-right">
-            {selectedLabel}
+            {session.label}
             <br />
             완료 {cleared} / {totalCount}
             {remaining.length > 0 ? ` · 남음 ${remaining.length}` : ""}
@@ -496,31 +463,33 @@ export function QuizApp({ books }: Props) {
           className="flex flex-1 flex-col items-center justify-center px-6 text-center"
           aria-label={phase === "prompt" ? "화면을 눌러 정답 보기" : "정답 표시됨"}
         >
-          <p className="font-[family-name:var(--font-display)] text-4xl tracking-tight text-[var(--fg)] sm:text-5xl">
+          <p className={current?.isSentence
+            ? "max-w-full whitespace-pre-line wrap-anywhere text-2xl leading-relaxed text-[var(--fg)] sm:text-3xl"
+            : "font-[family-name:var(--font-display)] text-4xl tracking-tight text-[var(--fg)] sm:text-5xl"}>
             {current?.word}
           </p>
           {current?.word ? (
             <div className="mt-4">
-              <SpeakButton text={current.word} />
+              <SpeakButton text={current.word} label={current.isSentence ? "문장 듣기" : undefined} />
             </div>
           ) : null}
           {phase === "prompt" ? (
             <p className="mt-8 animate-pulse text-sm text-[var(--muted)]">
-              화면을 터치하면 정답과 예문이 나옵니다
+              {current?.isSentence ? "화면을 터치하면 문장의 뜻이 나옵니다" : "화면을 터치하면 정답과 예문이 나옵니다"}
             </p>
           ) : (
             <div className="mt-10 w-full max-w-lg animate-[fade-up_240ms_ease-out]">
-              <p className="text-xl font-medium text-[var(--accent)]">
+              <p className="whitespace-pre-line wrap-anywhere text-xl font-medium text-[var(--accent)]">
                 {current?.meaning}
               </p>
-              <p className="mt-3 text-base leading-relaxed text-[var(--fg)]">
-                {current ? (
+              {current?.example && (
+                <p className="mt-3 text-base leading-relaxed text-[var(--fg)]">
                   <ExampleWithUnderline
                     example={current.example}
                     word={current.word}
                   />
-                ) : null}
-              </p>
+                </p>
+              )}
               {current?.exampleMeaning ? (
                 <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
                   {current.exampleMeaning}
@@ -554,96 +523,51 @@ export function QuizApp({ books }: Props) {
     );
   }
 
+  if (area) {
+    return (
+      <QuizRangePicker
+        area={area}
+        books={books}
+        blocks={regBlocks}
+        selected={selected}
+        onSelect={setSelected}
+        onBack={() => chooseArea(null)}
+        onStart={(words, label) => beginQuiz(words, label, "days")}
+      />
+    );
+  }
+
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8">
-      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--accent)]">
-        시험
-      </h1>
-      <p className="mt-2 text-[var(--muted)]">
-        시험을 볼 Day를 여러 개 고른 뒤 시작하세요.
-      </p>
-
-      <ul className="mt-8 grid grid-cols-5 gap-2 sm:grid-cols-10">
-        {books.map((book) => {
-          const active = selected.includes(book.day);
-          return (
-            <li key={book.day}>
-              <button
-                type="button"
-                onClick={() => toggleDay(book.day)}
-                className={
-                  active
-                    ? "flex h-11 w-full items-center justify-center rounded-md bg-[var(--accent)] text-sm font-medium text-white"
-                    : "flex h-11 w-full items-center justify-center rounded-md border border-[var(--line)] bg-white/50 text-sm text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
-                }
-                aria-pressed={active}
-              >
-                {book.day}
-              </button>
-            </li>
-          );
-        })}
-        {regBlocks.map((block, blockIndex) => {
-          const day = registeredBlockDay(blockIndex);
-          const active = selected.includes(day);
-          const empty = block.words.length === 0;
-          return (
-            <li key={block.id} className="col-span-2 sm:col-span-2">
-              <button
-                type="button"
-                onClick={() => toggleDay(day)}
-                disabled={empty}
-                title={
-                  empty
-                    ? "단어가 없는 등록 블럭입니다"
-                    : `${registeredBlockLabel(block)} · ${block.words.length}/${WORDS_PER_BLOCK}`
-                }
-                className={
-                  active
-                    ? "flex h-11 w-full items-center justify-center truncate rounded-md bg-[var(--accent)] px-2 text-sm font-medium text-white"
-                    : "flex h-11 w-full items-center justify-center truncate rounded-md border border-[var(--line)] bg-white/50 px-2 text-sm text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
-                }
-                aria-pressed={active}
-              >
-                <span className="truncate">{registeredBlockLabel(block)}</span>
-                <span className="ml-1 shrink-0 text-xs opacity-80">
-                  ({block.words.length})
+      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--accent)]">시험</h1>
+      <p className="mt-2 text-[var(--muted)]">시험을 볼 영역을 선택하세요.</p>
+      <ul aria-label="시험 영역" className="mt-8 space-y-3">
+        {REGISTERED_CATEGORIES.map((category) => (
+          <li key={category}>
+            <button
+              type="button"
+              onClick={() => chooseArea(category)}
+              className="flex w-full items-center justify-between gap-3 rounded-xl border border-[var(--line)] bg-white/60 px-5 py-4 text-left transition hover:border-[var(--accent)] hover:bg-white"
+            >
+              <span>
+                <span className="block text-lg font-semibold text-[var(--accent)]">{quizAreaNames[category]}</span>
+                <span className="mt-1 block text-sm text-[var(--muted)]">
+                  {category === "general" ? "Day 단어 · 등록 단어" : category === "LC" ? "듣기 단어·문장" : "읽기 단어"}
                 </span>
-              </button>
-            </li>
-          );
-        })}
+              </span>
+              <span aria-hidden="true" className="text-xl text-[var(--accent)]">›</span>
+            </button>
+          </li>
+        ))}
       </ul>
-
-      <div className="mt-8 flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          onClick={startQuiz}
-          disabled={!canStartDayQuiz}
-          className="rounded-md bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          시험 시작
-        </button>
-        <button
-          type="button"
-          onClick={startImportantQuiz}
-          disabled={importantCount === 0}
-          className="rounded-md border border-[var(--line)] bg-white px-5 py-2.5 text-sm font-medium text-[var(--fg)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          중요 단어 시험
-          {importantCount > 0 ? ` (${importantCount})` : ""}
-        </button>
-        <p className="text-sm text-[var(--muted)]">{selectedLabel}</p>
-      </div>
-
-      <p className="mt-10 text-sm leading-relaxed text-[var(--muted)]">
-        영단어만 보이다가 화면을 누르면 뜻·예문이 나옵니다.
-        <br />
-        모르겠어요 → 맨 뒤로 보내 다시 출제 / 맞췄어요 → 다음
-        <br />
-        등록 블럭(등록 1, 등록 2…)은 단어 탭에서 만들고, Day와 함께 고를 수
-        있어요.
-      </p>
+      <button
+        type="button"
+        onClick={startImportantQuiz}
+        disabled={importantCount === 0}
+        className="mt-6 rounded-md border border-[var(--line)] bg-white px-5 py-2.5 text-sm font-medium text-[var(--fg)] transition hover:border-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        중요 단어 시험{importantCount > 0 ? ` (${importantCount})` : ""}
+      </button>
     </div>
   );
 }

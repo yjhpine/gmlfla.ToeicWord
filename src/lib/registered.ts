@@ -1,6 +1,7 @@
 /** 사용자가 직접 등록한 단어 블럭 (브라우저 로컬, 블럭당 최대 20개) */
 
 import type { QuizWord } from "@/lib/words/types";
+import { updateImportantWord } from "./important.ts";
 
 export const REGISTERED_STORAGE_KEY = "heelim-toeic-registered-v2";
 const LEGACY_STORAGE_KEY = "heelim-toeic-registered-v1";
@@ -14,6 +15,7 @@ export type RegisteredWord = {
   meaning: string;
   example: string;
   registeredAt: string;
+  isSentence?: boolean;
 };
 
 export type RegisteredBlock = {
@@ -68,6 +70,7 @@ function normalizeWord(item: Partial<RegisteredWord>): RegisteredWord | null {
     meaning: item.meaning.trim(),
     example: (item.example ?? "").trim(),
     registeredAt: item.registeredAt ?? new Date().toISOString(),
+    ...(item.isSentence === true && { isSentence: true }),
   };
 }
 
@@ -119,10 +122,14 @@ function emitUpdate() {
   window.dispatchEvent(new Event(REGISTERED_EVENT));
 }
 
-function saveBlocks(blocks: RegisteredBlock[]) {
+function writeBlocks(blocks: RegisteredBlock[]) {
   if (typeof window === "undefined") return;
   const store: StoreV2 = { version: 2, blocks };
   window.localStorage.setItem(REGISTERED_STORAGE_KEY, JSON.stringify(store));
+}
+
+function saveBlocks(blocks: RegisteredBlock[]) {
+  writeBlocks(blocks);
   emitUpdate();
 }
 
@@ -220,18 +227,49 @@ export function registeredLabelForDay(day: number): string {
   return block ? registeredBlockLabel(block) : "등록";
 }
 
-export function registeredBlockToQuizWords(
-  block: RegisteredBlock,
-  blockIndex: number,
-): QuizWord[] {
-  const day = registeredBlockDay(blockIndex);
-  return block.words.map((w) => ({
+function toQuizWord(w: RegisteredWord, day: number): QuizWord {
+  return {
     word: w.word,
     meaning: w.meaning,
     example: w.example,
     exampleMeaning: "",
     day,
-  }));
+    ...(w.isSentence && { isSentence: true }),
+  };
+}
+
+export function registeredBlockToQuizWords(block: RegisteredBlock, blockIndex: number): QuizWord[] {
+  const day = registeredBlockDay(blockIndex);
+  return block.words.map((word) => toQuizWord(word, day));
+}
+
+type DatedQuizBlock = { id: string; name: string; words: QuizWord[] };
+
+const registrationDate = new Intl.DateTimeFormat("sv-SE", {
+  timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit",
+});
+
+export function registeredQuizDates(blocks: RegisteredBlock[], category: RegisteredCategory) {
+  const dates = new Map<string, DatedQuizBlock[]>();
+  blocks.forEach((block, blockIndex) => {
+    if (block.category !== category) return;
+    const byDate = new Map<string, QuizWord[]>();
+    const quizWords = registeredBlockToQuizWords(block, blockIndex);
+    block.words.forEach((word, index) => {
+      const timestamp = Date.parse(word.registeredAt);
+      const date = Number.isFinite(timestamp) ? registrationDate.format(timestamp) : "";
+      const words = byDate.get(date);
+      if (words) words.push(quizWords[index]);
+      else byDate.set(date, [quizWords[index]]);
+    });
+    for (const [date, words] of byDate) {
+      const range = { id: `${date}/${block.id}`, name: block.name, words };
+      const ranges = dates.get(date);
+      if (ranges) ranges.push(range);
+      else dates.set(date, [range]);
+    }
+  });
+  return [...dates].sort(([a], [b]) => b.localeCompare(a));
 }
 
 export function registeredToQuizWords(days?: number[]): QuizWord[] {
@@ -260,31 +298,84 @@ export function renameRegisteredBlock(blockId: string, name: string) {
   return next;
 }
 
+function matchesEntry(entry: RegisteredWord, key: string, isSentence: boolean) {
+  return Boolean(entry.isSentence) === isSentence && entry.word.trim().toLowerCase() === key;
+}
+
+export function editRegisteredWord(
+  blockId: string,
+  original: RegisteredWord,
+  input: Pick<RegisteredWord, "word" | "meaning" | "example">,
+): { ok: true; block: RegisteredBlock; index: number } | { ok: false; error: string } {
+  const blocks = loadRegisteredBlocks();
+  const blockIndex = blocks.findIndex((b) => b.id === blockId);
+  const block = blocks[blockIndex];
+  const isSentence = Boolean(original.isSentence);
+  const index = block?.words.findIndex((w) =>
+    Boolean(w.isSentence) === isSentence && w.word === original.word &&
+    w.registeredAt === original.registeredAt && w.meaning === original.meaning &&
+    w.example === original.example
+  ) ?? -1;
+  if (index < 0) {
+    return { ok: false, error: "항목이 변경되었거나 삭제되었습니다. 학습 화면에서 다시 열어 주세요." };
+  }
+
+  const word = input.word.trim();
+  const meaning = input.meaning.trim();
+  if (!word || !meaning) return { ok: false, error: "영어와 뜻을 모두 입력해 주세요." };
+  const key = word.toLowerCase();
+  const duplicate = blocks.some((b) => b.category === block.category && b.words.some(
+    (w, i) => (b.id !== blockId || i !== index) && matchesEntry(w, key, isSentence),
+  ));
+  if (duplicate) {
+    return { ok: false, error: `이 영역에 같은 ${isSentence ? "문장이" : "단어가"} 이미 있습니다.` };
+  }
+
+  const updated = { ...block.words[index], word, meaning, example: isSentence ? "" : input.example.trim() };
+  const nextBlock = { ...block, words: [...block.words] };
+  nextBlock.words[index] = updated;
+  const nextBlocks = [...blocks];
+  nextBlocks[blockIndex] = nextBlock;
+  const day = registeredBlockDay(blockIndex);
+  const storageError = "변경 내용을 저장할 수 없습니다. 브라우저 저장 공간을 확인하고 다시 시도해 주세요.";
+  try {
+    writeBlocks(nextBlocks);
+  } catch {
+    return { ok: false, error: storageError };
+  }
+  try {
+    updateImportantWord(toQuizWord(original, day), toQuizWord(updated, day));
+  } catch {
+    writeBlocks(blocks);
+    return { ok: false, error: storageError };
+  }
+  emitUpdate();
+  return { ok: true, block: nextBlock, index };
+}
+
 /** 단어 등록. 지정 블럭이 가득 차면 새 블럭을 만들고 그쪽에 추가 */
 export function registerWord(
-  input: {
-    word: string;
-    meaning: string;
-    example: string;
-  },
+  input: Pick<RegisteredWord, "word" | "meaning" | "example" | "isSentence">,
   blockId?: string,
 ): { blocks: RegisteredBlock[]; blockId: string; createdNewBlock: boolean } {
   const word = input.word.trim();
   const meaning = input.meaning.trim();
-  const example = input.example.trim();
+  const isSentence = input.isSentence === true;
+  const example = isSentence ? "" : input.example.trim();
   const key = word.toLowerCase();
   const current = loadRegisteredBlocks();
-  let targetIndex = blockId ? current.findIndex((b) => b.id === blockId) : -1;
-  // Calls without a block ID retain the original general-registration behavior.
+  let targetIndex = current.findIndex(
+    (b) => b.id === blockId && (!isSentence || b.category === "LC"),
+  );
   if (targetIndex < 0) {
-    targetIndex = current.findLastIndex((b) => b.category === "general");
+    targetIndex = current.findLastIndex((b) => b.category === (isSentence ? "LC" : "general"));
   }
   const category = current[targetIndex].category;
   const blocks = current.map((b) => ({
     ...b,
     words:
       b.category === category
-        ? b.words.filter((w) => w.word.trim().toLowerCase() !== key)
+        ? b.words.filter((w) => !matchesEntry(w, key, isSentence))
         : b.words,
   }));
 
@@ -293,6 +384,7 @@ export function registerWord(
     meaning,
     example,
     registeredAt: new Date().toISOString(),
+    ...(isSentence && { isSentence: true }),
   };
 
   const target = blocks[targetIndex];
@@ -322,11 +414,11 @@ export function registerWord(
   };
 }
 
-export function removeRegisteredWord(blockId: string, word: string) {
+export function removeRegisteredWord(blockId: string, word: string, isSentence = false) {
   const key = word.trim().toLowerCase();
   const blocks = loadRegisteredBlocks().map((b) =>
     b.id === blockId
-      ? { ...b, words: b.words.filter((w) => w.word.trim().toLowerCase() !== key) }
+      ? { ...b, words: b.words.filter((w) => !matchesEntry(w, key, isSentence)) }
       : b,
   );
   // Keep empty blocks: their IDs, category and quiz Day indices must stay stable.

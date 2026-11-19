@@ -5,8 +5,8 @@ import type { QuizWord } from "@/lib/words/types";
 export const IMPORTANT_STORAGE_KEY = "heelim-toeic-important-v1";
 export const IMPORTANT_EVENT = "heelim-important-updated";
 
-export function importantKey(entry: Pick<QuizWord, "day" | "word">) {
-  return `${entry.day}::${entry.word}`;
+export function importantKey(entry: Pick<QuizWord, "day" | "word" | "isSentence">) {
+  return `${entry.isSentence ? "sentence:" : ""}${entry.day}::${entry.word}`;
 }
 
 export function loadImportantWords(): QuizWord[] {
@@ -33,6 +33,7 @@ export function loadImportantWords(): QuizWord[] {
         meaning: w.meaning,
         example: w.example,
         exampleMeaning: w.exampleMeaning ?? "",
+        ...(w.isSentence === true && { isSentence: true }),
       }));
   } catch {
     return [];
@@ -45,7 +46,24 @@ function saveImportantWords(words: QuizWord[]) {
   window.dispatchEvent(new Event(IMPORTANT_EVENT));
 }
 
-export function isImportantWord(entry: Pick<QuizWord, "day" | "word">) {
+export function updateImportantWord(previous: QuizWord, updated: QuizWord) {
+  const oldKey = importantKey(previous);
+  const newKey = importantKey(updated);
+  const current = loadImportantWords();
+  const isEdited = (entry: QuizWord) => {
+    const key = importantKey(entry);
+    return key === oldKey || key === newKey;
+  };
+  const first = current.findIndex(isEdited);
+  if (first < 0) return;
+  const next = current.flatMap((entry, index) => {
+    if (index === first) return [updated];
+    return isEdited(entry) ? [] : [entry];
+  });
+  saveImportantWords(next);
+}
+
+export function isImportantWord(entry: Pick<QuizWord, "day" | "word" | "isSentence">) {
   const key = importantKey(entry);
   return loadImportantWords().some((w) => importantKey(w) === key);
 }
@@ -67,6 +85,7 @@ export function toggleImportantWord(entry: QuizWord): boolean {
       meaning: entry.meaning,
       example: entry.example,
       exampleMeaning: entry.exampleMeaning ?? "",
+      ...(entry.isSentence && { isSentence: true }),
     },
   ]);
   return true;

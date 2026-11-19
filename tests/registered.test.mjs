@@ -1,12 +1,15 @@
 import assert from 'node:assert/strict';
 import { beforeEach, afterEach, test } from 'node:test';
+import { IMPORTANT_STORAGE_KEY, loadImportantWords, toggleImportantWord } from '../src/lib/important.ts';
 import {
   REGISTERED_STORAGE_KEY,
+  editRegisteredWord,
   loadRegisteredBlocks,
   registerWord,
   removeRegisteredWord,
   renameRegisteredBlock,
   registeredLabelForDay,
+  registeredQuizDates,
   registeredToQuizWords,
 } from '../src/lib/registered.ts';
 
@@ -107,4 +110,106 @@ test('calls without a block ID continue registering in the general group', () =>
   assert.deepEqual(blockIn('general').words.map((w) => w.word), ['original']);
   assert.equal(blockIn('LC').words.length, 0);
   assert.equal(blockIn('RC').words.length, 0);
+});
+
+test('LC sentences and words with the same text keep separate meanings in study, quiz and review', () => {
+  const lc = blockIn('LC');
+  const text = 'Please hold.';
+  registerWord({ word: text, meaning: '기존 뜻', example: '기존 예문' }, lc.id);
+  const sentence = { word: text, meaning: '기다려 주세요.', example: '', isSentence: true };
+  registerWord(sentence, lc.id);
+  registerWord({ ...sentence, word: '  Please hold.  ', meaning: '잠시만 기다려 주세요.' }, lc.id);
+
+  assert.equal(blockIn('LC').words.length, 2);
+  const [quizSentence, quizWord] = registeredToQuizWords([-2]);
+  assert.equal(quizSentence.word, text);
+  assert.equal(quizSentence.meaning, '잠시만 기다려 주세요.');
+  assert.equal(quizSentence.isSentence, true);
+  assert.equal(quizWord.example, '기존 예문');
+  assert.equal(toggleImportantWord(quizWord), true);
+  assert.equal(toggleImportantWord(quizSentence), true);
+  assert.deepEqual(loadImportantWords(), [quizWord, quizSentence]);
+  removeRegisteredWord(lc.id, text, true);
+  assert.deepEqual(registeredToQuizWords([-2]), [quizWord]);
+});
+
+test('quiz dates group only the chosen area by Korean date and preserve block references', () => {
+  const at = (value, date) => ({ ...word(value), registeredAt: date });
+  const evening = '2026-11-17T14:59:59Z';
+  const midnight = '2026-11-17T15:00:00Z';
+  const blocks = [
+    { id: 'g', name: '일반', category: 'general', words: [at('general', midnight)] },
+    { id: 'a', name: '회의', category: 'LC', words: [at('before', evening), at('after', midnight)] },
+    { id: 'r', name: '읽기', category: 'RC', words: [at('reading', midnight)] },
+    { id: 'b', name: '공지', category: 'LC', words: [{ ...at('Please wait.', midnight), isSentence: true }, at('legacy', 'unknown')] },
+  ];
+  const dates = registeredQuizDates(blocks, 'LC');
+  assert.deepEqual(dates.map(([date]) => date), ['2026-11-18', '2026-11-17', '']);
+  assert.deepEqual(dates[0][1].map((range) => [range.name, range.words[0].day, range.words[0].word]), [
+    ['회의', -2, 'after'], ['공지', -4, 'Please wait.'],
+  ]);
+  assert.equal(dates[0][1][1].words[0].isSentence, true);
+  assert.notEqual(dates[0][1][0].id, dates[1][1][0].id);
+  assert.deepEqual(registeredQuizDates([], 'RC'), []);
+});
+
+test('editing a legacy entry in a full block keeps its position, date and bookmarked quiz content', () => {
+  const original = { ...word('reciept'), example: 'Old example.' };
+  const words = Array.from({ length: 20 }, (_, i) => i === 7 ? original : word('other-' + i));
+  window.localStorage.setItem(REGISTERED_STORAGE_KEY, JSON.stringify({ version: 2, blocks: [
+    { id: 'old', name: '기존 블록', words },
+  ] }));
+  toggleImportantWord(registeredToQuizWords([-1])[7]);
+  const result = editRegisteredWord('old', original, { word: ' receipt ', meaning: ' 영수증 ', example: ' A receipt. ' });
+  assert.equal(result.ok, true);
+  assert.equal(result.index, 7);
+  const expected = { ...original, word: 'receipt', meaning: '영수증', example: 'A receipt.' };
+  assert.deepEqual(blockIn('general').words, words.map((w, i) => i === 7 ? expected : w));
+  assert.equal(loadRegisteredBlocks().length, 3);
+  assert.deepEqual(loadImportantWords(), [registeredToQuizWords([-1])[7]]);
+  assert.equal(registeredQuizDates(loadRegisteredBlocks(), 'general')[0][0], '2026-01-01');
+});
+
+test('sentence edits reject same-kind collisions and stale drafts while keeping a same-text word', () => {
+  const lc = blockIn('LC');
+  const rc = blockIn('RC');
+  registerWord({ ...word('Wait.'), isSentence: true }, lc.id);
+  const original = blockIn('LC').words[0];
+  toggleImportantWord(registeredToQuizWords([-2])[0]);
+  registerWord(word('Wait.'), lc.id);
+  toggleImportantWord(registeredToQuizWords([-2])[0]);
+  registerWord({ ...word('Listen.'), isSentence: true }, lc.id);
+  registerWord(word('Please wait.'), rc.id);
+  const before = loadRegisteredBlocks();
+  assert.equal(editRegisteredWord(lc.id, original, word(' listen. ')).ok, false);
+  assert.equal(editRegisteredWord(lc.id, original, word('   ')).ok, false);
+  assert.deepEqual(loadRegisteredBlocks(), before);
+  const result = editRegisteredWord(lc.id, original, word('Please wait.', '기다려 주세요.'));
+  assert.equal(result.index, 2);
+  assert.deepEqual(result.block.words[2], { ...original, word: 'Please wait.', meaning: '기다려 주세요.' });
+  assert.equal(result.block.words[1].word, 'Wait.');
+  assert.equal(editRegisteredWord(lc.id, original, word('Stale')).ok, false);
+  const quiz = registeredToQuizWords([-2]);
+  assert.deepEqual(loadImportantWords(), [quiz[2], quiz[1]]);
+  assert.deepEqual(blockIn('RC'), before.find((b) => b.id === rc.id));
+});
+
+test('a failed bookmark write leaves the word and its bookmark available for retry', () => {
+  const block = blockIn('RC');
+  registerWord(word('banquet'), block.id);
+  const original = blockIn('RC').words[0];
+  const quizWord = registeredToQuizWords([-3])[0];
+  toggleImportantWord(quizWord);
+  const store = window.localStorage;
+  const setItem = store.setItem;
+  store.setItem = (key, value) => {
+    if (key === IMPORTANT_STORAGE_KEY) throw new Error('quota');
+    setItem(key, value);
+  };
+  assert.equal(editRegisteredWord(block.id, original, word('banquet', '연회')).ok, false);
+  assert.deepEqual(blockIn('RC').words[0], original);
+  assert.deepEqual(loadImportantWords(), [quizWord]);
+  store.setItem = setItem;
+  assert.equal(editRegisteredWord(block.id, original, word('banquet', '연회')).ok, true);
+  assert.equal(loadImportantWords()[0].meaning, '연회');
 });

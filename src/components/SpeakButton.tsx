@@ -34,7 +34,7 @@ export function SpeakButton({
         className ||
         "mt-4 inline-flex items-center gap-1.5 rounded-md border border-[var(--line)] bg-white px-3 py-1.5 text-sm font-medium text-[var(--accent)] transition hover:bg-[var(--accent-soft)]"
       }
-      aria-label={`${text} 발음 듣기`}
+      aria-label={`${text} ${label}`}
     >
       <span aria-hidden>🔊</span>
       {label}

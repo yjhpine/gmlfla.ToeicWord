@@ -18,6 +18,7 @@ export type DayWordbook = {
 
 export type QuizWord = WordEntry & {
   day: number;
+  isSentence?: boolean;
 };
 
 export type WordbookIndex = {
