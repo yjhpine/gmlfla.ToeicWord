@@ -4,8 +4,6 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { ExampleWithUnderline } from "@/components/ExampleWithUnderline";
 import { SpeakButton } from "@/components/SpeakButton";
 import { WordRegister } from "@/components/WordRegister";
-import { RegisteredBlockPanel } from "@/components/RegisteredBlockPanel";
-import type { FormMode } from "@/components/RegisteredEntryForm";
 import {
   REGISTERED_EVENT,
   WORDS_PER_BLOCK,
@@ -80,7 +78,6 @@ export function WordsStudy({ books }: Props) {
   const [index, setIndex] = useState(0);
   const [blocks, setBlocks] = useState<RegisteredBlock[]>([]);
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
-  const [initialKind, setInitialKind] = useState<FormMode>();
   const [expanded, setExpanded] = useState({ hackers: true, LC: true, RC: true });
   const [daysOpen, setDaysOpen] = useState(false);
 
@@ -114,9 +111,8 @@ export function WordsStudy({ books }: Props) {
     setPhase("study");
   }
 
-  function openRegister(blockId: string, kind?: FormMode) {
+  function openRegister(blockId: string) {
     setActiveBlockId(blockId);
-    setInitialKind(kind);
     setPhase("register");
   }
 
@@ -139,7 +135,6 @@ export function WordsStudy({ books }: Props) {
     return (
       <WordRegister
         blockId={activeBlockId}
-        initialKind={initialKind}
         onBlockChange={setActiveBlockId}
         onBack={() => {
           setBlocks(loadRegisteredBlocks());
@@ -218,15 +213,18 @@ export function WordsStudy({ books }: Props) {
 
   function renderBlocks(items: RegisteredBlock[]) {
     return (
-      <ul className="space-y-2">
+      <ul className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {items.map((block) => (
           <li key={block.id}>
-            <RegisteredBlockPanel
-              block={block}
-              expanded={activeBlockId === block.id}
-              onToggle={() => setActiveBlockId((id) => id === block.id ? null : block.id)}
-              onOpen={(kind) => openRegister(block.id, kind)}
-            />
+            <button
+              type="button"
+              onClick={() => openRegister(block.id)}
+              title={`${block.name} · ${block.words.length}/${WORDS_PER_BLOCK}`}
+              className="flex min-h-14 w-full items-center justify-center rounded-md border border-[var(--accent)] bg-[var(--accent-soft)] px-3 py-2 text-sm font-medium text-[var(--accent)] transition hover:bg-[var(--accent)] hover:text-white"
+            >
+              <span className="truncate">{block.name}</span>
+              <span className="ml-1 shrink-0 text-xs opacity-80">({block.words.length})</span>
+            </button>
           </li>
         ))}
       </ul>
@@ -311,7 +309,7 @@ export function WordsStudy({ books }: Props) {
       </div>
 
       <p className="mt-10 text-sm leading-relaxed text-[var(--muted)]">
-        등록 블록을 펼치면 각 항목을 수정하거나 카드로 학습할 수 있습니다.
+        등록 블록을 누르면 학습 카드가 열립니다. 카드에서 단어나 문장을 수정할 수 있습니다.
         <br />
         블럭 이름을 바꿀 수 있고, {WORDS_PER_BLOCK}개가 차면 같은 그룹에 새
         블럭이 생깁니다.

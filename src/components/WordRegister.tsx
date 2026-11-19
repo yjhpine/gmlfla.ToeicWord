@@ -19,22 +19,18 @@ import {
 
 type Props = {
   blockId: string;
-  initialKind?: FormMode;
   onBack: () => void;
   onBlockChange?: (blockId: string) => void;
 };
 
 type RegistrationForm = {
   kind: FormMode;
-  fromList?: boolean;
   editing?: { blockId: string; original: RegisteredWord };
 };
 
-export function WordRegister({ blockId, initialKind, onBack, onBlockChange }: Props) {
+export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
   const [ready, setReady] = useState(false);
-  const [form, setForm] = useState<RegistrationForm | null>(
-    initialKind ? { kind: initialKind, fromList: true } : null,
-  );
+  const [form, setForm] = useState<RegistrationForm | null>(null);
   const [okMessage, setOkMessage] = useState<string | null>(null);
   const [block, setBlock] = useState<RegisteredBlock | null>(null);
   const [nameDraft, setNameDraft] = useState("");
@@ -119,11 +115,6 @@ export function WordRegister({ blockId, initialKind, onBack, onBlockChange }: Pr
     }
 
     const result = registerWord({ ...input, isSentence: isSentenceForm }, block.id);
-    if (form?.fromList) {
-      onBlockChange?.(result.blockId);
-      onBack();
-      return;
-    }
     const nextBlock = result.blocks.find((b) => b.id === result.blockId) ?? null;
     setBlock(nextBlock);
     setNameDraft(nextBlock?.name ?? "");
@@ -165,16 +156,15 @@ export function WordRegister({ blockId, initialKind, onBack, onBlockChange }: Pr
   }
 
   if (form) {
-    const backToList = form.fromList || total === 0;
     return (
       <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-6 animate-[fade-up_280ms_ease-out]">
         <div className="flex items-center justify-between gap-3 text-sm text-[var(--muted)]">
           <button
             type="button"
-            onClick={backToList ? onBack : closeForm}
+            onClick={total === 0 ? onBack : closeForm}
             className="rounded-md px-2 py-1 transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
           >
-            {backToList ? "← 블록 목록" : "← 학습으로"}
+            {total === 0 ? "← 블록 목록" : "← 학습으로"}
           </button>
           <span>
             {blockLabel} · {total}/{WORDS_PER_BLOCK}
