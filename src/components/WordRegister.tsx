@@ -9,7 +9,6 @@ import {
   REGISTERED_EVENT,
   WORDS_PER_BLOCK,
   editRegisteredWord,
-  getRegisteredBlock,
   loadRegisteredBlocks,
   registerEntries,
   registeredBlockLabel,
@@ -41,18 +40,16 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
 
   useEffect(() => {
     function sync() {
-      const current = getRegisteredBlock(blockId);
-      if (!current) {
-        const fallback = loadRegisteredBlocks()[0] ?? null;
-        setBlock(fallback);
-        setNameDraft(fallback?.name ?? "");
-        if (fallback && fallback.id !== blockId) {
-          onBlockChange?.(fallback.id);
-        }
-      } else {
-        setBlock(current);
-        setNameDraft(current.name);
+      const blocks = loadRegisteredBlocks();
+      let current: RegisteredBlock | undefined = blocks.find((b) => b.id === blockId) ?? blocks[0];
+      if (current && current.words.length === 0) {
+        const category = current.category;
+        current = blocks.findLast((b) => b.category === category && b.words.length > 0)
+          ?? blocks.find((b) => b.category === category);
       }
+      setBlock(current ?? null);
+      setNameDraft(current?.name ?? "");
+      if (current && current.id !== blockId) onBlockChange?.(current.id);
       setReady(true);
       setIndex((i) => {
         const len = current?.words.length ?? 0;
@@ -73,7 +70,6 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
   const entry = registered[index];
   const total = registered.length;
   const progressRatio = total ? (index + 1) / total : 0;
-  const isFull = total >= WORDS_PER_BLOCK;
   const blockLabel = block ? registeredBlockLabel(block) : "등록";
 
   const isSentenceForm = form?.kind === "sentence";
@@ -193,10 +189,7 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
         </h1>
         {!form.editing && (
           <p className="mt-2 text-sm text-[var(--muted)]">
-            블럭당 최대 {WORDS_PER_BLOCK}개입니다.
-            {isFull
-              ? " 가득 찬 상태라 등록하면 새 블럭이 만들어집니다."
-              : ` 남은 자리 ${WORDS_PER_BLOCK - total}개.`}
+            같은 영역의 빈자리부터 채우고, {WORDS_PER_BLOCK}개를 넘으면 다음 블록에 저장합니다.
           </p>
         )}
 
@@ -207,7 +200,7 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
             <RegisteredEntryForm
               kind={form.kind}
               original={form.editing?.original}
-              submitLabel={form.editing ? "수정 저장" : isFull ? "새 블럭에 등록하기" : "등록하기"}
+              submitLabel={form.editing ? "수정 저장" : "등록하기"}
               onSave={saveEntry}
               onCancel={form.editing ? closeForm : undefined}
             />

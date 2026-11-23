@@ -19,6 +19,8 @@ export type DayWordbook = {
 export type QuizWord = WordEntry & {
   day: number;
   isSentence?: boolean;
+  /** Original registered Day used for bookmarks when a word moves between blocks. */
+  bookmarkDay?: number;
 };
 
 export type WordbookIndex = {

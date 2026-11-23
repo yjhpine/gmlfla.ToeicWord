@@ -214,7 +214,7 @@ export function WordsStudy({ books }: Props) {
   function renderBlocks(items: RegisteredBlock[]) {
     return (
       <ul className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        {items.map((block) => (
+        {items.filter((block, i) => i === 0 || block.words.length > 0).map((block) => (
           <li key={block.id}>
             <button
               type="button"
@@ -311,8 +311,7 @@ export function WordsStudy({ books }: Props) {
       <p className="mt-10 text-sm leading-relaxed text-[var(--muted)]">
         등록 블록을 누르면 학습 카드가 열립니다. 카드에서 단어나 문장을 수정할 수 있습니다.
         <br />
-        블럭 이름을 바꿀 수 있고, {WORDS_PER_BLOCK}개가 차면 같은 그룹에 새
-        블럭이 생깁니다.
+        같은 영역의 등록 단어는 블록당 {WORDS_PER_BLOCK}개씩 모입니다.
       </p>
     </div>
   );

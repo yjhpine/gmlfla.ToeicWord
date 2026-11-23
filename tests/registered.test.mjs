@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { beforeEach, afterEach, test } from 'node:test';
-import { IMPORTANT_STORAGE_KEY, loadImportantWords, toggleImportantWord } from '../src/lib/important.ts';
+import { IMPORTANT_STORAGE_KEY, isImportantWord, loadImportantWords, toggleImportantWord } from '../src/lib/important.ts';
 import {
   REGISTERED_STORAGE_KEY,
   editRegisteredWord,
@@ -39,18 +39,22 @@ test('new stores have independent general, LC and RC blocks with stable IDs', ()
   assert.deepEqual(loadRegisteredBlocks(), blocks);
 });
 
-test('existing v2 words, names, IDs, order and quiz Days survive adding categories', () => {
+test('existing v2 words pack in order and retain names, IDs and bookmark identities', () => {
   const old = [
     { id: 'old-1', name: '내 단어', words: [word('old')] },
     { id: 'old-2', name: '복습', words: [word('review')] },
   ];
   window.localStorage.setItem(REGISTERED_STORAGE_KEY, JSON.stringify({ version: 2, blocks: old }));
   const blocks = loadRegisteredBlocks();
-  assert.deepEqual(blocks.slice(0, 2), old.map((b) => ({ ...b, category: 'general' })));
+  assert.deepEqual(blocks.slice(0, 2), [
+    { ...old[0], category: 'general', words: [...old[0].words, { ...old[1].words[0], bookmarkDay: -2 }] },
+    { ...old[1], category: 'general', words: [] },
+  ]);
   assert.deepEqual(blocks.slice(2).map((b) => [b.category, b.words.length]), [['LC', 0], ['RC', 0]]);
   assert.equal(registeredLabelForDay(-1), '내 단어');
   assert.equal(registeredLabelForDay(-2), '복습');
-  assert.deepEqual(registeredToQuizWords([-2]).map((w) => w.word), ['review']);
+  assert.deepEqual(registeredToQuizWords([-1]).map((w) => w.word), ['old', 'review']);
+  assert.deepEqual(registeredToQuizWords([-2]), []);
   assert.deepEqual(loadRegisteredBlocks(), blocks);
 });
 
@@ -61,6 +65,42 @@ test('v1 legacy words remain in general blocks; migration repeats without duplic
   assert.deepEqual(blocks.filter((b) => b.category === 'general').flatMap((b) => b.words), words);
   assert.deepEqual(blocks.map((b) => b.words.length), [20, 1, 0, 0]);
   assert.deepEqual(loadRegisteredBlocks(), blocks);
+});
+
+test('fragmented RC blocks pack on load, reuse their slots and keep dates and bookmarks when cards move', () => {
+  const rc = blockIn('RC');
+  const initial = loadRegisteredBlocks();
+  const first = initial.find((b) => b.id === rc.id);
+  first.words = ['a', 'b', 'c'].map((s) => word(s));
+  const moved = { ...word('d'), registeredAt: '2026-01-02T00:00:00Z' };
+  const second = { ...rc, id: 'later', name: '등록 2', words: [moved, word('e')] };
+  window.localStorage.setItem(REGISTERED_STORAGE_KEY, JSON.stringify({ version: 2, blocks: [...initial, second] }));
+  const oldQuizWord = { day: -4, word: 'd', meaning: '뜻', example: '', exampleMeaning: '' };
+  toggleImportantWord(oldQuizWord);
+
+  const sizes = () => loadRegisteredBlocks().filter((b) => b.category === 'RC').map((b) => b.words.length);
+  assert.deepEqual(sizes(), [5, 0]);
+  assert.equal(blockIn('RC').words[3].registeredAt, moved.registeredAt);
+  const current = registeredToQuizWords([-3]).find((w) => w.word === 'd');
+  assert.equal(isImportantWord(current), true);
+  assert.equal(registeredLabelForDay(-4, oldQuizWord), 'RC 등록 1');
+  assert.equal(editRegisteredWord(rc.id, blockIn('RC').words[3], word('draft', '초안')).ok, true);
+  assert.equal(loadImportantWords()[0].word, 'draft');
+  assert.equal(isImportantWord(registeredToQuizWords([-3])[3]), true);
+
+  registerEntries(Array.from({ length: 18 }, (_, i) => word('test-' + i)), rc.id);
+  assert.deepEqual(sizes(), [20, 3]);
+  const more = registerEntries([word('one'), word('two')], rc.id);
+  assert.equal(more.firstBlock.id, second.id);
+  assert.equal(more.newBlockCount, 0);
+  assert.deepEqual(sizes(), [20, 5]);
+  const bookmarked = registeredToQuizWords([-4])[0];
+  toggleImportantWord(bookmarked);
+  removeRegisteredWord(rc.id, blockIn('RC').words[0]);
+  assert.deepEqual(sizes(), [20, 4]);
+  const shifted = registeredToQuizWords([-3]).find((w) => w.word === bookmarked.word);
+  assert.equal(isImportantWord(shifted), true);
+  assert.equal(toggleImportantWord(shifted), false);
 });
 
 test('the same word can be registered separately in general, LC and RC', () => {

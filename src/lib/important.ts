@@ -5,8 +5,10 @@ import type { QuizWord } from "@/lib/words/types";
 export const IMPORTANT_STORAGE_KEY = "heelim-toeic-important-v1";
 export const IMPORTANT_EVENT = "heelim-important-updated";
 
-export function importantKey(entry: Pick<QuizWord, "day" | "word" | "isSentence">) {
-  return `${entry.isSentence ? "sentence:" : ""}${entry.day}::${entry.word}`;
+type ImportantIdentity = Pick<QuizWord, "day" | "word" | "isSentence" | "bookmarkDay">;
+
+export function importantKey(entry: ImportantIdentity) {
+  return `${entry.isSentence ? "sentence:" : ""}${entry.bookmarkDay ?? entry.day}::${entry.word}`;
 }
 
 export function loadImportantWords(): QuizWord[] {
@@ -34,6 +36,7 @@ export function loadImportantWords(): QuizWord[] {
         example: w.example,
         exampleMeaning: w.exampleMeaning ?? "",
         ...(w.isSentence === true && { isSentence: true }),
+        ...(typeof w.bookmarkDay === "number" && w.bookmarkDay < 0 && { bookmarkDay: w.bookmarkDay }),
       }));
   } catch {
     return [];
@@ -63,7 +66,7 @@ export function updateImportantWord(previous: QuizWord, updated: QuizWord) {
   saveImportantWords(next);
 }
 
-export function isImportantWord(entry: Pick<QuizWord, "day" | "word" | "isSentence">) {
+export function isImportantWord(entry: ImportantIdentity) {
   const key = importantKey(entry);
   return loadImportantWords().some((w) => importantKey(w) === key);
 }
@@ -86,6 +89,7 @@ export function toggleImportantWord(entry: QuizWord): boolean {
       example: entry.example,
       exampleMeaning: entry.exampleMeaning ?? "",
       ...(entry.isSentence && { isSentence: true }),
+      ...(entry.bookmarkDay !== undefined && { bookmarkDay: entry.bookmarkDay }),
     },
   ]);
   return true;

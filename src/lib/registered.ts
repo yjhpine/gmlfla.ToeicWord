@@ -1,7 +1,7 @@
 /** 사용자가 직접 등록한 단어 블럭 (브라우저 로컬, 블럭당 최대 20개) */
 
 import type { QuizWord } from "@/lib/words/types";
-import { updateImportantWord } from "./important.ts";
+import { importantKey, updateImportantWord } from "./important.ts";
 
 export const REGISTERED_STORAGE_KEY = "heelim-toeic-registered-v2";
 const LEGACY_STORAGE_KEY = "heelim-toeic-registered-v1";
@@ -16,6 +16,7 @@ export type RegisteredWord = {
   example: string;
   registeredAt: string;
   isSentence?: boolean;
+  bookmarkDay?: number;
 };
 
 export type RegisteredBlock = {
@@ -71,6 +72,7 @@ function normalizeWord(item: Partial<RegisteredWord>): RegisteredWord | null {
     example: (item.example ?? "").trim(),
     registeredAt: item.registeredAt ?? new Date().toISOString(),
     ...(item.isSentence === true && { isSentence: true }),
+    ...(typeof item.bookmarkDay === "number" && item.bookmarkDay < 0 && { bookmarkDay: item.bookmarkDay }),
   };
 }
 
@@ -122,6 +124,30 @@ function emitUpdate() {
   window.dispatchEvent(new Event(REGISTERED_EVENT));
 }
 
+// Empty slots retain their names and quiz Day IDs, and can be filled again later.
+function packCategory(blocks: RegisteredBlock[], category: RegisteredCategory) {
+  const slots = blocks.map((block, index) => ({ block, day: registeredBlockDay(index) }))
+    .filter(({ block }) => block.category === category);
+  const count = slots.reduce((sum, { block }) => sum + block.words.length, 0);
+  if (slots.every(({ block }, i) =>
+    block.words.length === Math.max(0, Math.min(WORDS_PER_BLOCK, count - i * WORDS_PER_BLOCK))
+  )) return;
+
+  const entries = slots.flatMap(({ block, day }) => block.words.map((word) => ({ word, day })));
+  while (slots.length * WORDS_PER_BLOCK < count) {
+    const block: RegisteredBlock = {
+      id: createId(), name: nextDefaultName(slots.map((slot) => slot.block)), category, words: [],
+    };
+    slots.push({ block, day: registeredBlockDay(blocks.length) });
+    blocks.push(block);
+  }
+  slots.forEach(({ block, day }, i) => {
+    block.words = entries.slice(i * WORDS_PER_BLOCK, (i + 1) * WORDS_PER_BLOCK)
+      .map((entry) => entry.day === day || entry.word.bookmarkDay !== undefined
+        ? entry.word : { ...entry.word, bookmarkDay: entry.day });
+  });
+}
+
 function writeBlocks(blocks: RegisteredBlock[]) {
   if (typeof window === "undefined") return;
   const store: StoreV2 = { version: 2, blocks };
@@ -156,7 +182,6 @@ export function loadRegisteredBlocks(): RegisteredBlock[] {
               ? b.words
                   .map((w) => normalizeWord(w))
                   .filter((w): w is RegisteredWord => w !== null)
-                  .slice(0, WORDS_PER_BLOCK)
               : [];
             return {
               id: typeof b.id === "string" && b.id ? b.id : createId(),
@@ -172,8 +197,10 @@ export function loadRegisteredBlocks(): RegisteredBlock[] {
             } satisfies RegisteredBlock;
           });
         const next = ensureCategories(blocks);
+        for (const category of REGISTERED_CATEGORIES) packCategory(next, category);
         if (JSON.stringify(next) !== JSON.stringify(parsed.blocks)) {
-          saveBlocks(next);
+          // A read can still show all entries when storage is full. Retry persistence on the next load.
+          try { saveBlocks(next); } catch { return next; }
         }
         return next;
       }
@@ -222,9 +249,17 @@ export function getRegisteredBlockByDay(day: number): RegisteredBlock | null {
   return blocks[registeredDayToBlockIndex(day)] ?? null;
 }
 
-export function registeredLabelForDay(day: number): string {
-  const block = getRegisteredBlockByDay(day);
-  return block ? registeredBlockLabel(block) : "등록";
+export function registeredLabelForDay(day: number, entry?: QuizWord): string {
+  const blocks = loadRegisteredBlocks();
+  const block = blocks[registeredDayToBlockIndex(day)];
+  if (!block) return "등록";
+  if (entry) {
+    const key = importantKey(entry);
+    const current = blocks.find((b, i) => b.category === block.category && b.words.some((w) =>
+      importantKey({ ...w, day: registeredBlockDay(i) }) === key));
+    if (current) return registeredBlockLabel(current);
+  }
+  return registeredBlockLabel(block);
 }
 
 function toQuizWord(w: RegisteredWord, day: number): QuizWord {
@@ -235,6 +270,7 @@ function toQuizWord(w: RegisteredWord, day: number): QuizWord {
     exampleMeaning: "",
     day,
     ...(w.isSentence && { isSentence: true }),
+    ...(w.bookmarkDay !== undefined && { bookmarkDay: w.bookmarkDay }),
   };
 }
 
@@ -385,13 +421,14 @@ function storeEntries(
   if (!entries.size) return { ok: false, error: "등록할 영어와 뜻을 한 줄 이상 입력해 주세요." };
 
   const category = target.category;
-  for (const block of blocks) {
+  for (const [index, block] of blocks.entries()) {
     if (block.category !== category) continue;
     block.words = block.words.filter((previous) => {
       const key = previous.word.toLowerCase();
       const replacement = entries.get(key);
       if (!replacement || Boolean(previous.isSentence) !== isSentence) return true;
       if (keepExamples.has(key)) replacement.example = previous.example;
+      replacement.bookmarkDay = previous.bookmarkDay ?? registeredBlockDay(index);
       return false;
     });
   }
@@ -399,9 +436,12 @@ function storeEntries(
   const words = Array.from(entries.values());
   let firstBlock = target;
   let newBlockCount = 0;
+  const available = blocks.filter((b) => b.category === category && b.words.length < WORDS_PER_BLOCK);
+  let slot = 0;
   let offset = 0;
   while (offset < words.length) {
-    if (target.words.length === WORDS_PER_BLOCK) {
+    target = available[slot++];
+    if (!target) {
       target = { id: createId(), name: nextDefaultName(blocks.filter((b) => b.category === category)), category, words: [] };
       blocks.push(target);
       newBlockCount++;
@@ -413,6 +453,7 @@ function storeEntries(
   }
 
   try {
+    packCategory(blocks, category);
     saveBlocks(blocks);
   } catch {
     return { ok: false, error: "등록 내용을 저장할 수 없습니다. 브라우저 저장 공간을 확인하고 다시 시도해 주세요." };
@@ -453,7 +494,7 @@ export function removeRegisteredWord(blockId: string, target: string | Registere
     if (!block || index < 0) return null;
     block.words.splice(index, 1);
   }
-  // Keep empty blocks: their IDs, category and quiz Day indices must stay stable.
+  if (block) packCategory(blocks, block.category);
   saveBlocks(blocks);
   return blocks;
 }

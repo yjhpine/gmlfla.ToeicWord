@@ -161,7 +161,7 @@ function WordResultList({
                   <ImportantToggle entry={entry} />
                   <p className="w-14 shrink-0 truncate text-xs text-[var(--muted)]">
                     {isRegisteredDay(entry.day)
-                      ? registeredLabelForDay(entry.day)
+                      ? registeredLabelForDay(entry.day, entry)
                       : `D${entry.day}`}
                   </p>
                   <p className={entry.isSentence
