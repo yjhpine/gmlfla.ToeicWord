@@ -17,11 +17,12 @@ import {
   renameRegisteredBlock,
   type RegisteredBlock,
   type RegisteredWord,
-  type RegistrationInput,
+  type TableInput,
 } from "@/lib/registered";
 
 type Props = {
   blockId: string;
+  blocks: RegisteredBlock[];
   onBack: () => void;
   onBlockChange?: (blockId: string) => void;
 };
@@ -32,7 +33,7 @@ type RegistrationForm = {
   editing?: RegisteredWord;
 };
 
-export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
+export function WordRegister({ blockId, blocks, onBack, onBlockChange }: Props) {
   const [ready, setReady] = useState(false);
   const [form, setForm] = useState<RegistrationForm | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
@@ -120,11 +121,12 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
     finishRegistration(result.firstBlock, `「${input.word}」 등록을 마쳤어요.${overflow}`);
   }
 
-  function saveTable(rows: RegistrationInput[]) {
+  function saveTable(rows: TableInput[]) {
     if (!form) return "블록을 다시 열어 주세요.";
     const result = saveRegistrationTable(form.source, rows);
     if (!result.ok) return result.rowIndex === undefined ? result.error : `${result.rowIndex + 1}행 · ${result.error}`;
-    const changes = [result.edited && `수정 ${result.edited}개`, result.added && `추가 ${result.added}개`].filter(Boolean);
+    const changes = [result.edited && `수정 ${result.edited}개`, result.added && `추가 ${result.added}개`,
+      result.meaningsAdded && `뜻 추가 ${result.meaningsAdded}개`].filter(Boolean);
     finishRegistration(result.block, `${changes.join(" · ")} 저장했어요.`, result.index);
   }
 
@@ -201,7 +203,7 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
 
         <div className="mt-6">
           {form.kind === "word" && !form.editing ? (
-            <WordRegistrationTable existing={form.source.words} onSave={saveTable} />
+            <WordRegistrationTable source={form.source} blocks={blocks} onSave={saveTable} />
           ) : (
             <RegisteredEntryForm
               kind={form.kind}

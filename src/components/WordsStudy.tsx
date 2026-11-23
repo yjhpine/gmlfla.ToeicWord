@@ -135,6 +135,7 @@ export function WordsStudy({ books }: Props) {
     return (
       <WordRegister
         blockId={activeBlockId}
+        blocks={blocks}
         onBlockChange={setActiveBlockId}
         onBack={() => {
           setBlocks(loadRegisteredBlocks());

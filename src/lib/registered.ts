@@ -397,6 +397,38 @@ function commitEdits(previous: RegisteredBlock[], next: RegisteredBlock[], chang
 
 export type RegistrationInput = Pick<RegisteredWord, "word" | "meaning"> & { example?: string };
 
+export type RegisteredWordLocation = {
+  blockId: string;
+  category: RegisteredCategory;
+  label: string;
+  rowIndex: number;
+  entry: RegisteredWord;
+};
+
+export type TableInput = RegistrationInput & { meaningTarget?: RegisteredWordLocation | "separate" };
+
+export function registeredWordLocations(blocks: readonly RegisteredBlock[]) {
+  const locations = new Map<string, RegisteredWordLocation[]>();
+  for (const block of blocks) {
+    const area = block.category === "general" ? "해커스" : block.category;
+    block.words.forEach((entry, rowIndex) => {
+      if (entry.isSentence) return;
+      const key = entry.word.trim().toLowerCase();
+      const match = { blockId: block.id, category: block.category, rowIndex, entry,
+        label: `${area} · ${block.name} · ${rowIndex + 1}행` };
+      const matches = locations.get(key);
+      if (matches) matches.push(match);
+      else locations.set(key, [match]);
+    });
+  }
+  return locations;
+}
+
+export function sameWordLocation(a: RegisteredWordLocation, b: RegisteredWordLocation) {
+  return a.blockId === b.blockId && a.rowIndex === b.rowIndex &&
+    a.entry.bookmarkDay === b.entry.bookmarkDay && matchesOriginal(a.entry, b.entry);
+}
+
 type RegistrationError = { ok: false; error: string; rowIndex?: number };
 type RegistrationResult =
   | { ok: true; firstBlock: RegisteredBlock; count: number; newBlockCount: number }
@@ -483,10 +515,56 @@ export function registerEntries(inputs: readonly RegistrationInput[], blockId: s
   return storeEntries(inputs, blocks, target, isSentence);
 }
 
+function resolveTableAdditions(
+  inputs: readonly TableInput[],
+  before: RegisteredBlock[],
+  blocks: RegisteredBlock[],
+  block: RegisteredBlock,
+  changes: Map<RegisteredWord, ImportantWordChange>,
+): RegistrationError | { ok: true; additions: RegistrationInput[]; meaningsAdded: number } {
+  let meaningsAdded = 0;
+  const locations = registeredWordLocations(before);
+  const additions: RegistrationInput[] = [];
+  for (const [i, row] of inputs.entries()) {
+    const rowIndex = block.words.length + i;
+    const key = row.word.trim().toLowerCase();
+    const matches = (locations.get(key) ?? []).filter((m) =>
+      m.blockId !== block.id || matchesEntry(block.words[m.rowIndex], key, false));
+    const choice = row.meaningTarget;
+    if (choice && choice !== "separate") {
+      const match = matches.find((item) => sameWordLocation(item, choice));
+      if (!match) return { ok: false, rowIndex, error: "기존 단어가 바뀌었습니다. 뜻을 추가할 위치를 다시 선택해 주세요." };
+      const targetIndex = blocks.findIndex((b) => b.id === match.blockId);
+      const target = blocks[targetIndex];
+      const entry = target.words[match.rowIndex];
+      const meaning = row.meaning.trim();
+      if (!meaning) return { ok: false, rowIndex, error: "뜻 칸에 추가할 뜻을 입력해 주세요." };
+      if (entry.meaning === meaning || entry.meaning.split(/\s*[/,;\n]\s*/).includes(meaning)) {
+        return { ok: false, rowIndex, error: `${match.label}에 이미 있는 뜻입니다.` };
+      }
+      const updated = { ...entry, meaning: `${entry.meaning} / ${meaning}` };
+      target.words[match.rowIndex] = updated;
+      const targetDay = registeredBlockDay(targetIndex);
+      changes.set(match.entry, { previous: toQuizWord(match.entry, targetDay), updated: toQuizWord(updated, targetDay) });
+      meaningsAdded++;
+      additions.push({ word: "", meaning: "" }); // Keep validation row numbers aligned with the table.
+      continue;
+    }
+    if (matches.length && (choice !== "separate" || matches.some((m) => m.category === block.category))) {
+      return { ok: false, rowIndex, error: `${matches.map((m) => m.label).join(", ")}에 등록된 단어입니다. 저장할 위치를 선택해 주세요.` };
+    }
+    if (key && block.words.some((w) => matchesEntry(w, key, false))) {
+      return { ok: false, rowIndex, error: "같은 표에 입력한 단어입니다. 해당 행에서 뜻을 수정해 주세요." };
+    }
+    additions.push(row);
+  }
+  return { ok: true, additions, meaningsAdded };
+}
+
 export function saveRegistrationTable(
   original: RegisteredBlock,
-  rows: readonly RegistrationInput[],
-): RegistrationError | { ok: true; block: RegisteredBlock; index: number; added: number; edited: number } {
+  rows: readonly TableInput[],
+): RegistrationError | { ok: true; block: RegisteredBlock; index: number; added: number; edited: number; meaningsAdded: number } {
   const before = loadRegisteredBlocks();
   const blockIndex = before.findIndex((b) => b.id === original.id);
   const current = before[blockIndex];
@@ -498,7 +576,7 @@ export function saveRegistrationTable(
   const blocks = before.map((b) => ({ ...b, words: [...b.words] }));
   const block = blocks[blockIndex];
   const day = registeredBlockDay(blockIndex);
-  const changes: ImportantWordChange[] = [];
+  const changes = new Map<RegisteredWord, ImportantWordChange>();
   for (const [i, previous] of current.words.entries()) {
     const input = rows[i];
     if (!input) continue;
@@ -510,7 +588,7 @@ export function saveRegistrationTable(
     if (word === previous.word && meaning === previous.meaning && example === previous.example) continue;
     const updated = { ...previous, word, meaning, example };
     block.words[i] = updated;
-    changes.push({ previous: toQuizWord(previous, day), updated: toQuizWord(updated, day) });
+    changes.set(previous, { previous: toQuizWord(previous, day), updated: toQuizWord(updated, day) });
   }
 
   // Check the final spellings together so two edited rows can exchange names.
@@ -521,14 +599,13 @@ export function saveRegistrationTable(
     if (duplicate) return { ok: false, rowIndex: i, error: `이 영역에 「${entry.word}」가 이미 있습니다.` };
   }
 
-  const additions = rows.slice(current.words.length);
-  const existingWords = new Set(block.words.filter((w) => !w.isSentence).map((w) => w.word.toLowerCase()));
-  const duplicate = additions.findIndex((row) => row.word.trim() && existingWords.has(row.word.trim().toLowerCase()));
-  if (duplicate >= 0) {
-    return { ok: false, rowIndex: current.words.length + duplicate, error: "위에 등록된 단어입니다. 기존 행에서 수정해 주세요." };
-  }
+  const edited = changes.size;
+  const resolved = resolveTableAdditions(rows.slice(current.words.length), before, blocks, block, changes);
+  if (!resolved.ok) return resolved;
+  const { additions, meaningsAdded } = resolved;
   let added = 0;
-  let destination = block;
+  const edits = [...changes.values()];
+  let destination = edits.length ? blocks[registeredDayToBlockIndex(edits[0].updated.day)] : block;
   if (additions.some((row) => row.word.trim() || row.meaning.trim() || row.example?.trim())) {
     const result = placeEntries(additions, blocks, block, false, true);
     if (!result.ok) {
@@ -537,13 +614,13 @@ export function saveRegistrationTable(
     added = result.count;
     destination = result.firstBlock;
   }
-  if (!added && !changes.length) return { ok: false, error: "새 단어를 입력하거나 기존 내용을 수정해 주세요." };
-  const error = commitEdits(before, blocks, changes);
+  if (!added && !edits.length) return { ok: false, error: "새 단어를 입력하거나 기존 내용을 수정해 주세요." };
+  const error = commitEdits(before, blocks, edits);
   if (error) return { ok: false, error };
-  const focusWord = added ? additions.find((row) => row.word.trim())?.word.trim() : changes[0].updated.word;
-  const isSentence = !added && Boolean(changes[0].updated.isSentence);
+  const focusWord = added ? additions.find((row) => row.word.trim())?.word.trim() : edits[0].updated.word;
+  const isSentence = !added && Boolean(edits[0].updated.isSentence);
   const index = destination.words.findIndex((w) => w.word === focusWord && Boolean(w.isSentence) === isSentence);
-  return { ok: true, block: destination, index: Math.max(0, index), added, edited: changes.length };
+  return { ok: true, block: destination, index: Math.max(0, index), added, edited, meaningsAdded };
 }
 
 export function registerWord(

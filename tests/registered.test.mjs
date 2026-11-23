@@ -7,6 +7,7 @@ import {
   loadRegisteredBlocks,
   registerEntries,
   saveRegistrationTable,
+  registeredWordLocations,
   registerWord,
   removeRegisteredWord,
   renameRegisteredBlock,
@@ -357,4 +358,52 @@ test('invalid, empty and failed table saves preserve the original records and al
   store.setItem = write;
   assert.equal(saveRegistrationTable(original, rows).ok, true);
   assert.deepEqual(blockIn('RC').words.map((w) => w.word), ['keep', 'changed', 'added']);
+});
+
+test('duplicate lookup lists exact word locations and appends a typed meaning only to the selected entry', () => {
+  const lc = blockIn('LC');
+  const rc = blockIn('RC');
+  const general = blockIn('general');
+  registerWord({ ...word('Charge', '충전하다'), example: 'Charge the phone.' }, rc.id);
+  renameRegisteredBlock(rc.id, '요금');
+  registerWord(word('charge', '요금'), lc.id);
+  registerWord({ ...word('charge', '문장 뜻'), isSentence: true }, lc.id);
+  const matches = registeredWordLocations(loadRegisteredBlocks()).get('charge');
+  assert.deepEqual(matches.map((m) => m.label), ['LC · 등록 1 · 2행', 'RC · 요금 · 1행']);
+  const target = matches[1];
+  toggleImportantWord(registeredToQuizWords([-3])[0]);
+  const row = { word: '  CHARGE  ', meaning: '청구하다' };
+  const initial = loadRegisteredBlocks();
+  const pending = saveRegistrationTable(general, [row, word('also')]);
+  assert.equal(pending.rowIndex, 0);
+  assert.match(pending.error, /RC · 요금 · 1행/);
+  assert.deepEqual(loadRegisteredBlocks(), initial);
+  const result = saveRegistrationTable(general, [{ ...row, meaningTarget: target }, word('also')]);
+  assert.equal(result.ok, true);
+  assert.deepEqual([result.added, result.meaningsAdded], [1, 1]);
+  assert.deepEqual(blockIn('RC').words, [{ ...target.entry, meaning: '충전하다 / 청구하다' }]);
+  assert.deepEqual(blockIn('general').words.map((w) => w.word), ['also']);
+  assert.deepEqual(blockIn('LC'), initial.find((b) => b.id === lc.id));
+  assert.equal(loadImportantWords()[0].meaning, '충전하다 / 청구하다');
+  assert.equal(saveRegistrationTable(blockIn('general'), [...blockIn('general').words, { ...row, meaningTarget: target }]).ok, false);
+  const refreshed = registeredWordLocations(loadRegisteredBlocks()).get('charge')[1];
+  assert.equal(saveRegistrationTable(blockIn('general'), [...blockIn('general').words, { ...row, meaningTarget: refreshed }]).ok, false);
+  assert.equal(saveRegistrationTable(blockIn('general'), [...blockIn('general').words, { ...row, meaningTarget: 'separate' }]).ok, true);
+});
+
+test('registering from a different block in the same area cannot relocate or overwrite a duplicate', () => {
+  const rc = blockIn('RC');
+  registerEntries(Array.from({ length: 21 }, (_, i) => word('term' + i)), rc.id);
+  const tail = loadRegisteredBlocks().filter((b) => b.category === 'RC')[1];
+  const original = blockIn('RC').words[0];
+  const target = registeredWordLocations(loadRegisteredBlocks()).get(original.word)[0];
+  const row = { word: original.word, meaning: '추가 뜻' };
+  assert.equal(saveRegistrationTable(tail, [...tail.words, row]).ok, false);
+  assert.equal(saveRegistrationTable(tail, [...tail.words, { ...row, meaningTarget: 'separate' }]).ok, false);
+  assert.deepEqual(blockIn('RC').words[0], original);
+  const saved = saveRegistrationTable(tail, [...tail.words, { ...row, meaningTarget: target }]);
+  assert.equal(saved.ok, true);
+  assert.equal(saved.block.id, rc.id);
+  assert.deepEqual(loadRegisteredBlocks().filter((b) => b.category === 'RC').map((b) => b.words.length), [20,1]);
+  assert.deepEqual(blockIn('RC').words[0], { ...original, meaning: '뜻 / 추가 뜻' });
 });
