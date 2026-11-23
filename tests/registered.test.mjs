@@ -112,6 +112,24 @@ test('calls without a block ID continue registering in the general group', () =>
   assert.equal(blockIn('RC').words.length, 0);
 });
 
+test('card deletion requires the confirmed RC entry and preserves other copies', () => {
+  const original = word('draft', '초안');
+  const other = word('draft', '외풍');
+  const blocks = loadRegisteredBlocks();
+  const rc = blocks.find((b) => b.category === 'RC');
+  const lc = blocks.find((b) => b.category === 'LC');
+  rc.words = [original, other];
+  lc.words = [original];
+  window.localStorage.setItem(REGISTERED_STORAGE_KEY, JSON.stringify({ version: 2, blocks }));
+
+  assert.equal(removeRegisteredWord(rc.id, { ...original, meaning: '이전 뜻' }), null);
+  assert.deepEqual(blockIn('RC').words, [original, other]);
+  removeRegisteredWord(rc.id, original);
+  assert.deepEqual(blockIn('RC').words, [other]);
+  assert.equal(removeRegisteredWord(rc.id, original), null);
+  assert.deepEqual(blockIn('LC').words, [original]);
+});
+
 test('LC sentences and words with the same text keep separate meanings in study, quiz and review', () => {
   const lc = blockIn('LC');
   const text = 'Please hold.';

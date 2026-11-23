@@ -302,6 +302,12 @@ function matchesEntry(entry: RegisteredWord, key: string, isSentence: boolean) {
   return Boolean(entry.isSentence) === isSentence && entry.word.trim().toLowerCase() === key;
 }
 
+function matchesOriginal(entry: RegisteredWord, original: RegisteredWord) {
+  return entry.word === original.word && entry.meaning === original.meaning &&
+    entry.example === original.example && entry.registeredAt === original.registeredAt &&
+    Boolean(entry.isSentence) === Boolean(original.isSentence);
+}
+
 export function editRegisteredWord(
   blockId: string,
   original: RegisteredWord,
@@ -311,11 +317,7 @@ export function editRegisteredWord(
   const blockIndex = blocks.findIndex((b) => b.id === blockId);
   const block = blocks[blockIndex];
   const isSentence = Boolean(original.isSentence);
-  const index = block?.words.findIndex((w) =>
-    Boolean(w.isSentence) === isSentence && w.word === original.word &&
-    w.registeredAt === original.registeredAt && w.meaning === original.meaning &&
-    w.example === original.example
-  ) ?? -1;
+  const index = block?.words.findIndex((w) => matchesOriginal(w, original)) ?? -1;
   if (index < 0) {
     return { ok: false, error: "항목이 변경되었거나 삭제되었습니다. 학습 화면에서 다시 열어 주세요." };
   }
@@ -414,13 +416,20 @@ export function registerWord(
   };
 }
 
-export function removeRegisteredWord(blockId: string, word: string, isSentence = false) {
-  const key = word.trim().toLowerCase();
-  const blocks = loadRegisteredBlocks().map((b) =>
-    b.id === blockId
-      ? { ...b, words: b.words.filter((w) => !matchesEntry(w, key, isSentence)) }
-      : b,
-  );
+export function removeRegisteredWord(blockId: string, word: string, isSentence?: boolean): RegisteredBlock[];
+export function removeRegisteredWord(blockId: string, original: RegisteredWord): RegisteredBlock[] | null;
+export function removeRegisteredWord(blockId: string, target: string | RegisteredWord, isSentence = false) {
+  const blocks = loadRegisteredBlocks();
+  const block = blocks.find((b) => b.id === blockId);
+  if (typeof target === "string") {
+    if (!block) return blocks;
+    const key = target.trim().toLowerCase();
+    block.words = block.words.filter((w) => !matchesEntry(w, key, isSentence));
+  } else {
+    const index = block?.words.findIndex((w) => matchesOriginal(w, target)) ?? -1;
+    if (!block || index < 0) return null;
+    block.words.splice(index, 1);
+  }
   // Keep empty blocks: their IDs, category and quiz Day indices must stay stable.
   saveBlocks(blocks);
   return blocks;

@@ -12,6 +12,7 @@ import {
   loadRegisteredBlocks,
   registerWord,
   registeredBlockLabel,
+  removeRegisteredWord,
   renameRegisteredBlock,
   type RegisteredBlock,
   type RegisteredWord,
@@ -31,7 +32,7 @@ type RegistrationForm = {
 export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
   const [ready, setReady] = useState(false);
   const [form, setForm] = useState<RegistrationForm | null>(null);
-  const [okMessage, setOkMessage] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [block, setBlock] = useState<RegisteredBlock | null>(null);
   const [nameDraft, setNameDraft] = useState("");
   const [index, setIndex] = useState(0);
@@ -78,12 +79,12 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
   function openForm(kind: FormMode, original?: RegisteredWord) {
     if (!block) return;
     setForm({ kind, editing: original ? { blockId: block.id, original } : undefined });
-    setOkMessage(null);
+    setStatusMessage(null);
   }
 
   function closeForm() {
     setForm(null);
-    setOkMessage(null);
+    setStatusMessage(null);
   }
 
   function saveName() {
@@ -110,7 +111,7 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
       setBlock(result.block);
       setIndex(result.index);
       closeForm();
-      setOkMessage("수정 내용을 저장했어요.");
+      setStatusMessage("수정 내용을 저장했어요.");
       return;
     }
 
@@ -122,24 +123,38 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
     setIndex(0);
 
     if (result.createdNewBlock) {
-      setOkMessage(
+      setStatusMessage(
         `「${input.word}」등록 · 블럭이 가득 차서 「${nextBlock?.name ?? "새 등록"}」을 만들었어요.`,
       );
       onBlockChange?.(result.blockId);
     } else {
-      setOkMessage(`「${input.word}」를 등록했어요.`);
+      setStatusMessage(`「${input.word}」를 등록했어요.`);
       if (result.blockId !== block.id) onBlockChange?.(result.blockId);
+    }
+  }
+
+  function deleteEntry() {
+    if (block?.category !== "RC" || !entry) return;
+    if (!window.confirm(`${blockLabel}에서 이 단어를 삭제할까요?\n\n${entry.word}\n${entry.meaning}`)) return;
+
+    try {
+      const result = removeRegisteredWord(block.id, entry);
+      setStatusMessage(result
+        ? `「${entry.word}」 단어를 삭제했어요.`
+        : "단어가 변경되었거나 이미 삭제되었습니다. 현재 카드를 확인해 주세요.");
+    } catch {
+      setStatusMessage("삭제 내용을 저장할 수 없습니다. 다시 시도해 주세요.");
     }
   }
 
   function goPrev() {
     if (index <= 0) return;
     setIndex((i) => i - 1);
-    setOkMessage(null);
+    setStatusMessage(null);
   }
 
   function goNext() {
-    setOkMessage(null);
+    setStatusMessage(null);
     if (index >= total - 1) {
       onBack();
       return;
@@ -253,6 +268,7 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
             : "아직 단어가 없어요. 「단어 등록」으로 추가하면 Day처럼 학습할 수 있습니다."}
           {" "}(블록당 최대 {WORDS_PER_BLOCK}개)
         </p>
+        {statusMessage && <p role="status" className="mt-2 text-sm text-[var(--muted)]">{statusMessage}</p>}
         <div className="mt-8 flex flex-wrap gap-2">{registrationButtons}</div>
       </div>
     );
@@ -320,8 +336,14 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
             className="rounded-md border border-[var(--line)] bg-white px-3 py-1.5 text-sm font-medium text-[var(--fg)] hover:bg-[var(--accent-soft)]">
             {entry.isSentence ? "문장 수정" : "단어 수정"}
           </button>
+          {block?.category === "RC" && (
+            <button type="button" onClick={deleteEntry}
+              className="rounded-md border border-red-200 bg-white px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-50">
+              단어 삭제
+            </button>
+          )}
         </div>
-        {okMessage && <p role="status" className="mt-2 text-sm text-[var(--muted)]">{okMessage}</p>}
+        {statusMessage && <p role="status" className="mt-2 text-sm text-[var(--muted)]">{statusMessage}</p>}
         <div className="mt-8 w-full max-w-lg">
           <p className="whitespace-pre-line wrap-anywhere text-xl font-medium text-[var(--accent)]">
             {entry.meaning}
