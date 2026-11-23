@@ -5,6 +5,7 @@ import {
   REGISTERED_STORAGE_KEY,
   editRegisteredWord,
   loadRegisteredBlocks,
+  registerEntries,
   registerWord,
   removeRegisteredWord,
   renameRegisteredBlock,
@@ -88,6 +89,51 @@ test('overflow stays in its category and keeps other empty blocks and quiz IDs',
   assert.deepEqual(registeredToQuizWords([-3]).map((w) => w.word), ['rc-word']);
   assert.deepEqual(registeredToQuizWords([-4]).map((w) => w.word), ['lc-overflow']);
   assert.equal(registeredLabelForDay(-4), 'LC 등록 2');
+});
+
+test('one batch preserves input order across blocks, existing examples and other categories', () => {
+  const rc = blockIn('RC');
+  registerWord({ ...word('draft'), example: 'A draft.' }, rc.id);
+  registerWord(word('draft', 'LC 뜻'), blockIn('LC').id);
+  for (let i = 0; i < 18; i++) registerWord(word('old-' + i), rc.id);
+  const rows = [{ word: ' DRAFT ', meaning: '초안' }, ...Array.from({ length: 23 }, (_, i) => word('new-' + i))];
+  let writes = 0;
+  const store = window.localStorage;
+  const setItem = store.setItem;
+  store.setItem = (key, value) => { writes++; setItem(key, value); };
+  const result = registerEntries(rows, rc.id);
+  assert.equal(result.ok, true);
+  assert.equal(writes, 1);
+  assert.equal(result.count, 24);
+  assert.equal(result.newBlockCount, 2);
+  assert.equal(result.firstBlock.id, rc.id);
+  const reading = loadRegisteredBlocks().filter((b) => b.category === 'RC');
+  assert.deepEqual(reading.map((b) => b.words.length), [20, 20, 2]);
+  assert.deepEqual(reading.flatMap((b) => b.words).filter((w) => !w.word.startsWith('old-')).map((w) => w.word),
+    rows.map((w) => w.word.trim()));
+  assert.equal(reading[0].words[0].example, 'A draft.');
+  assert.equal(blockIn('LC').words[0].meaning, 'LC 뜻');
+});
+
+test('batch registration skips blank rows, rejects incomplete or duplicate rows and can retry a failed write', () => {
+  const lc = blockIn('LC');
+  registerWord({ ...word('Wait.'), isSentence: true }, lc.id);
+  const before = window.localStorage.getItem(REGISTERED_STORAGE_KEY);
+  const blank = { word: ' ', meaning: '' };
+  for (const rows of [[blank], [word('Wait.'), blank, { word: '', meaning: '뜻' }], [word('Wait.'), word(' WAIT. ')]]) {
+    assert.equal(registerEntries(rows, lc.id).ok, false);
+    assert.equal(window.localStorage.getItem(REGISTERED_STORAGE_KEY), before);
+  }
+  const rows = [blank, word('Wait.'), word('Ready')];
+  const store = window.localStorage;
+  const write = store.setItem;
+  store.setItem = () => { throw new Error('quota'); };
+  assert.equal(registerEntries(rows, lc.id).ok, false);
+  assert.equal(store.getItem(REGISTERED_STORAGE_KEY), before);
+  store.setItem = write;
+  assert.equal(registerEntries(rows, lc.id).count, 2);
+  assert.deepEqual(blockIn('LC').words.map((w) => [w.word, !!w.isSentence]),
+    [['Wait.', false], ['Ready', false], ['Wait.', true]]);
 });
 
 test('renaming and removing the last word retain group identity and quiz indices', () => {

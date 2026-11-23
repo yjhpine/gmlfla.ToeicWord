@@ -355,65 +355,88 @@ export function editRegisteredWord(
   return { ok: true, block: nextBlock, index };
 }
 
-/** 단어 등록. 지정 블럭이 가득 차면 새 블럭을 만들고 그쪽에 추가 */
+export type RegistrationInput = Pick<RegisteredWord, "word" | "meaning"> & { example?: string };
+
+type RegistrationResult =
+  | { ok: true; firstBlock: RegisteredBlock; count: number; newBlockCount: number }
+  | { ok: false; error: string };
+
+function storeEntries(
+  inputs: readonly RegistrationInput[],
+  blocks: RegisteredBlock[],
+  target: RegisteredBlock | undefined,
+  isSentence: boolean,
+): RegistrationResult {
+  if (!target) return { ok: false, error: "등록할 블록을 다시 열어 주세요." };
+  const registeredAt = new Date().toISOString();
+  const entries = new Map<string, RegisteredWord>();
+  const keepExamples = new Set<string>();
+  for (const [index, input] of inputs.entries()) {
+    const word = input.word.trim();
+    const meaning = input.meaning.trim();
+    const example = isSentence ? "" : input.example?.trim() ?? "";
+    if (!word && !meaning && !example) continue;
+    if (!word || !meaning) return { ok: false, error: `${index + 1}행의 영어와 뜻을 모두 입력해 주세요.` };
+    const key = word.toLowerCase();
+    if (entries.has(key)) return { ok: false, error: `${index + 1}행의 「${word}」가 표에 두 번 입력됐어요.` };
+    if (!isSentence && input.example === undefined) keepExamples.add(key);
+    entries.set(key, { word, meaning, example, registeredAt, ...(isSentence && { isSentence: true }) });
+  }
+  if (!entries.size) return { ok: false, error: "등록할 영어와 뜻을 한 줄 이상 입력해 주세요." };
+
+  const category = target.category;
+  for (const block of blocks) {
+    if (block.category !== category) continue;
+    block.words = block.words.filter((previous) => {
+      const key = previous.word.toLowerCase();
+      const replacement = entries.get(key);
+      if (!replacement || Boolean(previous.isSentence) !== isSentence) return true;
+      if (keepExamples.has(key)) replacement.example = previous.example;
+      return false;
+    });
+  }
+
+  const words = Array.from(entries.values());
+  let firstBlock = target;
+  let newBlockCount = 0;
+  let offset = 0;
+  while (offset < words.length) {
+    if (target.words.length === WORDS_PER_BLOCK) {
+      target = { id: createId(), name: nextDefaultName(blocks.filter((b) => b.category === category)), category, words: [] };
+      blocks.push(target);
+      newBlockCount++;
+    }
+    if (offset === 0) firstBlock = target;
+    const chunk = words.slice(offset, offset + WORDS_PER_BLOCK - target.words.length);
+    target.words.unshift(...chunk);
+    offset += chunk.length;
+  }
+
+  try {
+    saveBlocks(blocks);
+  } catch {
+    return { ok: false, error: "등록 내용을 저장할 수 없습니다. 브라우저 저장 공간을 확인하고 다시 시도해 주세요." };
+  }
+  return { ok: true, firstBlock, count: words.length, newBlockCount };
+}
+
+export function registerEntries(inputs: readonly RegistrationInput[], blockId: string, isSentence = false) {
+  const blocks = loadRegisteredBlocks();
+  const target = blocks.find((b) => b.id === blockId && (!isSentence || b.category === "LC"));
+  return storeEntries(inputs, blocks, target, isSentence);
+}
+
 export function registerWord(
   input: Pick<RegisteredWord, "word" | "meaning" | "example" | "isSentence">,
   blockId?: string,
-): { blocks: RegisteredBlock[]; blockId: string; createdNewBlock: boolean } {
-  const word = input.word.trim();
-  const meaning = input.meaning.trim();
+) {
+  const blocks = loadRegisteredBlocks();
   const isSentence = input.isSentence === true;
-  const example = isSentence ? "" : input.example.trim();
-  const key = word.toLowerCase();
-  const current = loadRegisteredBlocks();
-  let targetIndex = current.findIndex(
-    (b) => b.id === blockId && (!isSentence || b.category === "LC"),
-  );
-  if (targetIndex < 0) {
-    targetIndex = current.findLastIndex((b) => b.category === (isSentence ? "LC" : "general"));
-  }
-  const category = current[targetIndex].category;
-  const blocks = current.map((b) => ({
-    ...b,
-    words:
-      b.category === category
-        ? b.words.filter((w) => !matchesEntry(w, key, isSentence))
-        : b.words,
-  }));
-
-  const entry: RegisteredWord = {
-    word,
-    meaning,
-    example,
-    registeredAt: new Date().toISOString(),
-    ...(isSentence && { isSentence: true }),
-  };
-
-  const target = blocks[targetIndex];
-
-  if (!target || target.words.length >= WORDS_PER_BLOCK) {
-    const created: RegisteredBlock = {
-      id: createId(),
-      name: nextDefaultName(blocks.filter((b) => b.category === category)),
-      category,
-      words: [entry],
-    };
-    const next = [...blocks, created];
-    saveBlocks(next);
-    return { blocks: next, blockId: created.id, createdNewBlock: true };
-  }
-
-  const next = blocks.map((b, i) =>
-    i === targetIndex
-      ? { ...b, words: [entry, ...b.words].slice(0, WORDS_PER_BLOCK) }
-      : b,
-  );
-  saveBlocks(next);
-  return {
-    blocks: next,
-    blockId: target.id,
-    createdNewBlock: false,
-  };
+  const target = blocks.find((b) => b.id === blockId && (!isSentence || b.category === "LC"))
+    ?? blocks.findLast((b) => b.category === (isSentence ? "LC" : "general"));
+  const result = storeEntries([input], blocks, target, isSentence);
+  if (!result.ok) throw new Error(result.error);
+  return { blocks, blockId: result.firstBlock.id, createdNewBlock: result.newBlockCount > 0 };
 }
 
 export function removeRegisteredWord(blockId: string, word: string, isSentence?: boolean): RegisteredBlock[];

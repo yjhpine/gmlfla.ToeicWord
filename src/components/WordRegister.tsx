@@ -4,18 +4,20 @@ import { useEffect, useState } from "react";
 import { ExampleWithUnderline } from "@/components/ExampleWithUnderline";
 import { RegisteredEntryForm, type EntryFields, type FormMode } from "@/components/RegisteredEntryForm";
 import { SpeakButton } from "@/components/SpeakButton";
+import { WordRegistrationTable } from "@/components/WordRegistrationTable";
 import {
   REGISTERED_EVENT,
   WORDS_PER_BLOCK,
   editRegisteredWord,
   getRegisteredBlock,
   loadRegisteredBlocks,
-  registerWord,
+  registerEntries,
   registeredBlockLabel,
   removeRegisteredWord,
   renameRegisteredBlock,
   type RegisteredBlock,
   type RegisteredWord,
+  type RegistrationInput,
 } from "@/lib/registered";
 
 type Props = {
@@ -115,22 +117,22 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
       return;
     }
 
-    const result = registerWord({ ...input, isSentence: isSentenceForm }, block.id);
-    const nextBlock = result.blocks.find((b) => b.id === result.blockId) ?? null;
+    return saveEntries([input]);
+  }
+
+  function saveEntries(rows: RegistrationInput[]) {
+    if (!block) return "블록을 다시 열어 주세요.";
+    const result = registerEntries(rows, block.id, isSentenceForm);
+    if (!result.ok) return result.error;
+    const nextBlock = result.firstBlock;
     setBlock(nextBlock);
-    setNameDraft(nextBlock?.name ?? "");
+    setNameDraft(nextBlock.name);
     closeForm();
     setIndex(0);
-
-    if (result.createdNewBlock) {
-      setStatusMessage(
-        `「${input.word}」등록 · 블럭이 가득 차서 「${nextBlock?.name ?? "새 등록"}」을 만들었어요.`,
-      );
-      onBlockChange?.(result.blockId);
-    } else {
-      setStatusMessage(`「${input.word}」를 등록했어요.`);
-      if (result.blockId !== block.id) onBlockChange?.(result.blockId);
-    }
+    const saved = result.count === 1 ? `「${nextBlock.words[0].word}」` : `단어 ${result.count}개`;
+    const overflow = result.newBlockCount ? ` 새 블록 ${result.newBlockCount}개를 만들었어요.` : "";
+    setStatusMessage(`${saved} 등록을 마쳤어요.${overflow}`);
+    if (nextBlock.id !== block.id) onBlockChange?.(nextBlock.id);
   }
 
   function deleteEntry() {
@@ -199,13 +201,17 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
         )}
 
         <div className="mt-6">
-          <RegisteredEntryForm
-            kind={form.kind}
-            original={form.editing?.original}
-            submitLabel={form.editing ? "수정 저장" : isFull ? "새 블럭에 등록하기" : "등록하기"}
-            onSave={saveEntry}
-            onCancel={form.editing ? closeForm : undefined}
-          />
+          {form.kind === "word" && !form.editing ? (
+            <WordRegistrationTable onSave={saveEntries} />
+          ) : (
+            <RegisteredEntryForm
+              kind={form.kind}
+              original={form.editing?.original}
+              submitLabel={form.editing ? "수정 저장" : isFull ? "새 블럭에 등록하기" : "등록하기"}
+              onSave={saveEntry}
+              onCancel={form.editing ? closeForm : undefined}
+            />
+          )}
         </div>
       </div>
     );
