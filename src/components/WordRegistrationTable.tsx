@@ -1,5 +1,5 @@
 import { useState, type ClipboardEvent, type FormEvent } from "react";
-import type { RegisteredWord, RegistrationInput } from "@/lib/registered";
+import { WORDS_PER_BLOCK, type RegisteredWord, type RegistrationInput } from "@/lib/registered";
 
 const columns = [
   { field: "word", label: "영어" },
@@ -14,7 +14,10 @@ export function WordRegistrationTable({ existing, onSave }: {
   existing: readonly RegisteredWord[];
   onSave: (rows: RegistrationInput[]) => string | void;
 }) {
-  const [rows, setRows] = useState(() => Array.from({ length: 5 }, emptyRow));
+  const [rows, setRows] = useState(() => Array.from({ length: WORDS_PER_BLOCK }, (_, i) => {
+    const entry = existing[i];
+    return entry ? { word: entry.word, meaning: entry.meaning, example: entry.example } : emptyRow();
+  }));
   const [showExamples, setShowExamples] = useState(false);
   const [error, setError] = useState("");
   const visibleColumns = showExamples ? columns : columns.slice(0, 2);
@@ -26,7 +29,7 @@ export function WordRegistrationTable({ existing, onSave }: {
 
   function pasteCells(event: ClipboardEvent, rowIndex: number, columnIndex: number) {
     const text = event.clipboardData.getData("text/plain");
-    if (visibleColumns[columnIndex].field === "example" && !text.includes("\t")) return;
+    if ((visibleColumns[columnIndex].field === "example" || existing[rowIndex]?.isSentence) && !text.includes("\t")) return;
     if (!text.includes("\t") && !text.includes("\n")) return;
     event.preventDefault();
     const cells = text.replace(/\r\n?/g, "\n").replace(/\n$/, "").split("\n").map((line) => line.split("\t"));
@@ -48,8 +51,8 @@ export function WordRegistrationTable({ existing, onSave }: {
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError(onSave(rows.map(({ word, meaning, example }) => ({
-      word, meaning, example: example.trim() || undefined,
+    setError(onSave(rows.map(({ word, meaning, example }, i) => ({
+      word, meaning, example: existing[i] ? example.trim() : example.trim() || undefined,
     }))) || "");
   }
 
@@ -58,35 +61,25 @@ export function WordRegistrationTable({ existing, onSave }: {
       <div className="overflow-hidden rounded-lg border border-[var(--line)]">
         <table aria-label="단어 입력표" className="w-full table-fixed border-collapse text-left">
           <thead className="bg-[#436eb2] text-white">
-            <tr>{visibleColumns.map(({ field, label }) => (
+            <tr><th scope="col" className="w-10 border-r border-white/60 text-center text-xs font-medium">번호</th>
+            {visibleColumns.map(({ field, label }) => (
               <th key={field} scope="col" className="border-r border-white/60 px-3 py-2 text-sm font-semibold last:border-0">
                 {label}
               </th>
             ))}</tr>
           </thead>
-          {existing.length > 0 && (
-            <tbody aria-label="등록된 항목" className="border-b-2 border-[var(--line)] bg-white/80">
-              {existing.map((entry, i) => (
-                <tr key={i}>
-                  {visibleColumns.map(({ field }) => (
-                    <td key={field} className="border-r border-t border-[var(--line)] px-3 py-2 align-top whitespace-pre-wrap wrap-anywhere last:border-r-0">
-                      {entry[field]}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          )}
-          <tbody aria-label="새 단어 입력">
+          <tbody>
             {rows.map((row, i) => (
-              <tr key={i} className="odd:bg-[#dce6f4] even:bg-[#eef3fb]">
+              <tr key={i} className={existing[i] ? "bg-white/80" : "odd:bg-[#dce6f4] even:bg-[#eef3fb]"}>
+                <th scope="row" className="border-r border-t border-white text-center text-xs font-normal text-[var(--muted)]">{i + 1}</th>
                 {visibleColumns.map(({ field, label }, j) => {
-                  const Cell = field === "example" ? "textarea" : "input";
+                  if (field === "example" && existing[i]?.isSentence) return <td key={field} aria-label="문장에는 예문 없음" />;
+                  const Cell = field === "example" || existing[i]?.isSentence ? "textarea" : "input";
                   return (
                     <td key={field} className="border-r border-t border-white p-0 last:border-r-0">
-                      <Cell aria-label={`${existing.length + i + 1}행 ${label}`} value={row[field]}
-                        placeholder={existing.length > 0 && i === 0 && field === "word" ? "새 단어" : undefined}
-                        rows={field === "example" ? 1 : undefined} autoCapitalize={field === "word" ? "none" : undefined}
+                      <Cell aria-label={`${i + 1}행 ${label}`} value={row[field]}
+                        placeholder={i === existing.length && field === "word" ? "새 단어" : undefined}
+                        rows={Cell === "textarea" ? 2 : undefined} autoCapitalize={field === "word" ? "none" : undefined}
                         spellCheck={field === "word" ? false : undefined}
                         onChange={(event) => updateCell(i, field, event.target.value)}
                         onPaste={(event) => pasteCells(event, i, j)}

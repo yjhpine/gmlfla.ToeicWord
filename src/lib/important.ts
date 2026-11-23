@@ -49,21 +49,25 @@ function saveImportantWords(words: QuizWord[]) {
   window.dispatchEvent(new Event(IMPORTANT_EVENT));
 }
 
-export function updateImportantWord(previous: QuizWord, updated: QuizWord) {
-  const oldKey = importantKey(previous);
-  const newKey = importantKey(updated);
-  const current = loadImportantWords();
-  const isEdited = (entry: QuizWord) => {
+export type ImportantWordChange = { previous: QuizWord; updated: QuizWord };
+
+export function updateImportantWords(changes: readonly ImportantWordChange[]) {
+  if (!changes.length) return;
+  const originals = new Map(changes.map(({ previous, updated }) => [importantKey(previous), updated]));
+  const destinations = new Map(changes.map(({ updated }) => [importantKey(updated), updated]));
+  const seen = new Set<string>();
+  let changed = false;
+  const next = loadImportantWords().flatMap((entry) => {
     const key = importantKey(entry);
-    return key === oldKey || key === newKey;
-  };
-  const first = current.findIndex(isEdited);
-  if (first < 0) return;
-  const next = current.flatMap((entry, index) => {
-    if (index === first) return [updated];
-    return isEdited(entry) ? [] : [entry];
+    const updated = originals.get(key) ?? destinations.get(key);
+    if (!updated) return [entry];
+    changed = true;
+    const newKey = importantKey(updated);
+    if (seen.has(newKey)) return [];
+    seen.add(newKey);
+    return [updated];
   });
-  saveImportantWords(next);
+  if (changed) saveImportantWords(next);
 }
 
 export function isImportantWord(entry: ImportantIdentity) {

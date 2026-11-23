@@ -11,6 +11,7 @@ import {
   editRegisteredWord,
   loadRegisteredBlocks,
   registerEntries,
+  saveRegistrationTable,
   registeredBlockLabel,
   removeRegisteredWord,
   renameRegisteredBlock,
@@ -27,7 +28,8 @@ type Props = {
 
 type RegistrationForm = {
   kind: FormMode;
-  editing?: { blockId: string; original: RegisteredWord };
+  source: RegisteredBlock;
+  editing?: RegisteredWord;
 };
 
 export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
@@ -76,7 +78,7 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
 
   function openForm(kind: FormMode, original?: RegisteredWord) {
     if (!block) return;
-    setForm({ kind, editing: original ? { blockId: block.id, original } : undefined });
+    setForm({ kind, source: block, editing: original });
     setStatusMessage(null);
   }
 
@@ -103,8 +105,7 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
   function saveEntry(input: EntryFields) {
     if (!block) return "블록을 다시 열어 주세요.";
     if (form?.editing) {
-      const { blockId: originalBlockId, original } = form.editing;
-      const result = editRegisteredWord(originalBlockId, original, input);
+      const result = editRegisteredWord(form.source.id, form.editing, input);
       if (!result.ok) return result.error;
       setBlock(result.block);
       setIndex(result.index);
@@ -113,26 +114,27 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
       return;
     }
 
-    return saveEntries([input]);
+    const result = registerEntries([input], block.id, isSentenceForm);
+    if (!result.ok) return result.error;
+    const overflow = result.newBlockCount ? ` 새 블록 ${result.newBlockCount}개를 만들었어요.` : "";
+    finishRegistration(result.firstBlock, `「${input.word}」 등록을 마쳤어요.${overflow}`);
   }
 
-  function saveEntries(rows: RegistrationInput[]) {
-    if (!block) return "블록을 다시 열어 주세요.";
-    const result = registerEntries(rows, block.id, isSentenceForm);
-    if (!result.ok) {
-      if (result.rowIndex === undefined) return result.error;
-      const rowNumber = (isSentenceForm ? 0 : registered.length) + result.rowIndex + 1;
-      return `${rowNumber}행 · ${result.error}`;
-    }
-    const nextBlock = result.firstBlock;
+  function saveTable(rows: RegistrationInput[]) {
+    if (!form) return "블록을 다시 열어 주세요.";
+    const result = saveRegistrationTable(form.source, rows);
+    if (!result.ok) return result.rowIndex === undefined ? result.error : `${result.rowIndex + 1}행 · ${result.error}`;
+    const changes = [result.edited && `수정 ${result.edited}개`, result.added && `추가 ${result.added}개`].filter(Boolean);
+    finishRegistration(result.block, `${changes.join(" · ")} 저장했어요.`, result.index);
+  }
+
+  function finishRegistration(nextBlock: RegisteredBlock, message: string, nextIndex = 0) {
     setBlock(nextBlock);
     setNameDraft(nextBlock.name);
     closeForm();
-    setIndex(0);
-    const saved = result.count === 1 ? `「${nextBlock.words[0].word}」` : `단어 ${result.count}개`;
-    const overflow = result.newBlockCount ? ` 새 블록 ${result.newBlockCount}개를 만들었어요.` : "";
-    setStatusMessage(`${saved} 등록을 마쳤어요.${overflow}`);
-    if (nextBlock.id !== block.id) onBlockChange?.(nextBlock.id);
+    setIndex(nextIndex);
+    setStatusMessage(message);
+    if (nextBlock.id !== blockId) onBlockChange?.(nextBlock.id);
   }
 
   function deleteEntry() {
@@ -199,11 +201,11 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
 
         <div className="mt-6">
           {form.kind === "word" && !form.editing ? (
-            <WordRegistrationTable existing={registered} onSave={saveEntries} />
+            <WordRegistrationTable existing={form.source.words} onSave={saveTable} />
           ) : (
             <RegisteredEntryForm
               kind={form.kind}
-              original={form.editing?.original}
+              original={form.editing}
               submitLabel={form.editing ? "수정 저장" : "등록하기"}
               onSave={saveEntry}
               onCancel={form.editing ? closeForm : undefined}

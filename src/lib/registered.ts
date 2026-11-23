@@ -1,7 +1,7 @@
 /** 사용자가 직접 등록한 단어 블럭 (브라우저 로컬, 블럭당 최대 20개) */
 
 import type { QuizWord } from "@/lib/words/types";
-import { importantKey, updateImportantWord } from "./important.ts";
+import { importantKey, updateImportantWords, type ImportantWordChange } from "./important.ts";
 
 export const REGISTERED_STORAGE_KEY = "heelim-toeic-registered-v2";
 const LEGACY_STORAGE_KEY = "heelim-toeic-registered-v1";
@@ -375,33 +375,39 @@ export function editRegisteredWord(
   const nextBlocks = [...blocks];
   nextBlocks[blockIndex] = nextBlock;
   const day = registeredBlockDay(blockIndex);
+  const error = commitEdits(blocks, nextBlocks, [{ previous: toQuizWord(original, day), updated: toQuizWord(updated, day) }]);
+  return error ? { ok: false, error } : { ok: true, block: nextBlock, index };
+}
+
+function commitEdits(previous: RegisteredBlock[], next: RegisteredBlock[], changes: ImportantWordChange[]) {
   const storageError = "변경 내용을 저장할 수 없습니다. 브라우저 저장 공간을 확인하고 다시 시도해 주세요.";
   try {
-    writeBlocks(nextBlocks);
+    writeBlocks(next);
   } catch {
-    return { ok: false, error: storageError };
+    return storageError;
   }
   try {
-    updateImportantWord(toQuizWord(original, day), toQuizWord(updated, day));
+    updateImportantWords(changes);
   } catch {
-    writeBlocks(blocks);
-    return { ok: false, error: storageError };
+    writeBlocks(previous);
+    return storageError;
   }
   emitUpdate();
-  return { ok: true, block: nextBlock, index };
 }
 
 export type RegistrationInput = Pick<RegisteredWord, "word" | "meaning"> & { example?: string };
 
+type RegistrationError = { ok: false; error: string; rowIndex?: number };
 type RegistrationResult =
   | { ok: true; firstBlock: RegisteredBlock; count: number; newBlockCount: number }
-  | { ok: false; error: string; rowIndex?: number };
+  | RegistrationError;
 
-function storeEntries(
+function placeEntries(
   inputs: readonly RegistrationInput[],
   blocks: RegisteredBlock[],
   target: RegisteredBlock | undefined,
   isSentence: boolean,
+  append: boolean,
 ): RegistrationResult {
   if (!target) return { ok: false, error: "등록할 블록을 다시 열어 주세요." };
   const registeredAt = new Date().toISOString();
@@ -448,23 +454,96 @@ function storeEntries(
     }
     if (offset === 0) firstBlock = target;
     const chunk = words.slice(offset, offset + WORDS_PER_BLOCK - target.words.length);
-    target.words.unshift(...chunk);
+    if (append) target.words.push(...chunk);
+    else target.words.unshift(...chunk);
     offset += chunk.length;
   }
 
+  packCategory(blocks, category);
+  return { ok: true, firstBlock, count: words.length, newBlockCount };
+}
+
+function storeEntries(
+  inputs: readonly RegistrationInput[], blocks: RegisteredBlock[],
+  target: RegisteredBlock | undefined, isSentence: boolean,
+): RegistrationResult {
+  const result = placeEntries(inputs, blocks, target, isSentence, false);
+  if (!result.ok) return result;
   try {
-    packCategory(blocks, category);
     saveBlocks(blocks);
   } catch {
     return { ok: false, error: "등록 내용을 저장할 수 없습니다. 브라우저 저장 공간을 확인하고 다시 시도해 주세요." };
   }
-  return { ok: true, firstBlock, count: words.length, newBlockCount };
+  return result;
 }
 
 export function registerEntries(inputs: readonly RegistrationInput[], blockId: string, isSentence = false) {
   const blocks = loadRegisteredBlocks();
   const target = blocks.find((b) => b.id === blockId && (!isSentence || b.category === "LC"));
   return storeEntries(inputs, blocks, target, isSentence);
+}
+
+export function saveRegistrationTable(
+  original: RegisteredBlock,
+  rows: readonly RegistrationInput[],
+): RegistrationError | { ok: true; block: RegisteredBlock; index: number; added: number; edited: number } {
+  const before = loadRegisteredBlocks();
+  const blockIndex = before.findIndex((b) => b.id === original.id);
+  const current = before[blockIndex];
+  if (!current || current.category !== original.category || current.words.length !== original.words.length ||
+      current.words.some((word, i) => !matchesOriginal(word, original.words[i]) || word.bookmarkDay !== original.words[i].bookmarkDay)) {
+    return { ok: false, error: "이 블록의 내용이 바뀌었습니다. 등록 화면을 다시 열어 주세요." };
+  }
+
+  const blocks = before.map((b) => ({ ...b, words: [...b.words] }));
+  const block = blocks[blockIndex];
+  const day = registeredBlockDay(blockIndex);
+  const changes: ImportantWordChange[] = [];
+  for (const [i, previous] of current.words.entries()) {
+    const input = rows[i];
+    if (!input) continue;
+    const word = input.word.trim();
+    const meaning = input.meaning.trim();
+    if (!word && !meaning) continue;
+    if (!word || !meaning) return { ok: false, rowIndex: i, error: "영어와 뜻을 모두 입력해 주세요." };
+    const example = previous.isSentence ? "" : (input.example ?? previous.example).trim();
+    if (word === previous.word && meaning === previous.meaning && example === previous.example) continue;
+    const updated = { ...previous, word, meaning, example };
+    block.words[i] = updated;
+    changes.push({ previous: toQuizWord(previous, day), updated: toQuizWord(updated, day) });
+  }
+
+  // Check the final spellings together so two edited rows can exchange names.
+  for (const [i, entry] of block.words.entries()) {
+    if (entry.word === current.words[i].word) continue;
+    const duplicate = blocks.some((b) => b.category === block.category && b.words.some((other) =>
+      other !== entry && matchesEntry(other, entry.word.toLowerCase(), Boolean(entry.isSentence))));
+    if (duplicate) return { ok: false, rowIndex: i, error: `이 영역에 「${entry.word}」가 이미 있습니다.` };
+  }
+
+  const additions = rows.slice(current.words.length);
+  const existingWords = new Set(block.words.filter((w) => !w.isSentence).map((w) => w.word.toLowerCase()));
+  const duplicate = additions.findIndex((row) => row.word.trim() && existingWords.has(row.word.trim().toLowerCase()));
+  if (duplicate >= 0) {
+    return { ok: false, rowIndex: current.words.length + duplicate, error: "위에 등록된 단어입니다. 기존 행에서 수정해 주세요." };
+  }
+  let added = 0;
+  let destination = block;
+  if (additions.some((row) => row.word.trim() || row.meaning.trim() || row.example?.trim())) {
+    const result = placeEntries(additions, blocks, block, false, true);
+    if (!result.ok) {
+      return { ...result, rowIndex: result.rowIndex === undefined ? undefined : current.words.length + result.rowIndex };
+    }
+    added = result.count;
+    destination = result.firstBlock;
+  }
+  if (!added && !changes.length) return { ok: false, error: "새 단어를 입력하거나 기존 내용을 수정해 주세요." };
+  const error = commitEdits(before, blocks, changes);
+  if (error) return { ok: false, error };
+  const focusWord = added ? additions.find((row) => row.word.trim())?.word.trim() : changes[0].updated.word;
+  const isSentence = !added && Boolean(changes[0].updated.isSentence);
+  const index = destination.words.findIndex((w) => w.word === focusWord && Boolean(w.isSentence) === isSentence);
+  return { ok: true, block: destination, index: Math.max(0, index), added, edited: changes.length };
 }
 
 export function registerWord(

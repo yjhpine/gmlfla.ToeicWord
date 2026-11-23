@@ -6,6 +6,7 @@ import {
   editRegisteredWord,
   loadRegisteredBlocks,
   registerEntries,
+  saveRegistrationTable,
   registerWord,
   removeRegisteredWord,
   renameRegisteredBlock,
@@ -316,4 +317,44 @@ test('a failed bookmark write leaves the word and its bookmark available for ret
   store.setItem = setItem;
   assert.equal(editRegisteredWord(block.id, original, word('banquet', '연회')).ok, true);
   assert.equal(loadImportantWords()[0].meaning, '연회');
+});
+
+test('table edits and additions commit together, preserving dates, order, sentence types and swapped bookmarks', () => {
+  const id = blockIn('LC').id;
+  registerEntries([word('first'), word('second')], id);
+  registerWord({ ...word('Please wait.'), isSentence: true }, id);
+  const original = blockIn('LC');
+  for (const entry of registeredToQuizWords([-2])) toggleImportantWord(entry);
+  const rows = [word('Hold on.', '기다리세요'), word('second', '두 번째'), word('first', '첫 번째'), word('', ''), word('new')];
+  const saved = saveRegistrationTable(original, rows);
+  assert.equal(saved.ok, true);
+  assert.deepEqual([saved.edited, saved.added], [3, 1]);
+  const after = blockIn('LC').words;
+  assert.deepEqual(after.map((w) => w.word), ['Hold on.', 'second', 'first', 'new']);
+  assert.deepEqual(after.slice(0, 3).map((w) => w.registeredAt), original.words.map((w) => w.registeredAt));
+  assert.equal(after[0].isSentence, true);
+  assert.deepEqual(loadImportantWords(), registeredToQuizWords([-2]).slice(0, 3));
+  assert.equal(saveRegistrationTable(original, rows).ok, false);
+});
+
+test('invalid, empty and failed table saves preserve the original records and allow a retry', () => {
+  const id = blockIn('RC').id;
+  registerEntries([word('keep'), word('change')], id);
+  const original = blockIn('RC');
+  toggleImportantWord(registeredToQuizWords([-3])[1]);
+  const blank = word('', '');
+  const rows = [blank, word('changed', '수정'), word('added')];
+  assert.equal(saveRegistrationTable(original, [blank, blank]).ok, false);
+  assert.equal(saveRegistrationTable(original, [...rows, word('bad','')]).rowIndex, 3);
+  assert.equal(saveRegistrationTable(original, [...rows, word('changed')]).rowIndex, 3);
+  assert.equal(saveRegistrationTable(original, [blank, word('keep')]).rowIndex, 1);
+  const store = window.localStorage;
+  const write = store.setItem;
+  store.setItem = (key, value) => { if (key === IMPORTANT_STORAGE_KEY) throw Error('quota'); write(key, value); };
+  assert.equal(saveRegistrationTable(original, rows).ok, false);
+  assert.deepEqual(blockIn('RC'), original);
+  assert.equal(loadImportantWords()[0].word, 'change');
+  store.setItem = write;
+  assert.equal(saveRegistrationTable(original, rows).ok, true);
+  assert.deepEqual(blockIn('RC').words.map((w) => w.word), ['keep', 'changed', 'added']);
 });
