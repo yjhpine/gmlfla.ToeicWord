@@ -1,5 +1,5 @@
 import { useState, type ClipboardEvent, type FormEvent } from "react";
-import type { RegistrationInput } from "@/lib/registered";
+import type { RegisteredWord, RegistrationInput } from "@/lib/registered";
 
 const columns = [
   { field: "word", label: "영어" },
@@ -10,7 +10,8 @@ const columns = [
 type Field = (typeof columns)[number]["field"];
 const emptyRow = () => ({ word: "", meaning: "", example: "" });
 
-export function WordRegistrationTable({ onSave }: {
+export function WordRegistrationTable({ existing, onSave }: {
+  existing: readonly RegisteredWord[];
   onSave: (rows: RegistrationInput[]) => string | void;
 }) {
   const [rows, setRows] = useState(() => Array.from({ length: 5 }, emptyRow));
@@ -63,14 +64,28 @@ export function WordRegistrationTable({ onSave }: {
               </th>
             ))}</tr>
           </thead>
-          <tbody>
+          {existing.length > 0 && (
+            <tbody aria-label="등록된 항목" className="border-b-2 border-[var(--line)] bg-white/80">
+              {existing.map((entry, i) => (
+                <tr key={i}>
+                  {visibleColumns.map(({ field }) => (
+                    <td key={field} className="border-r border-t border-[var(--line)] px-3 py-2 align-top whitespace-pre-wrap wrap-anywhere last:border-r-0">
+                      {entry[field]}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          )}
+          <tbody aria-label="새 단어 입력">
             {rows.map((row, i) => (
               <tr key={i} className="odd:bg-[#dce6f4] even:bg-[#eef3fb]">
                 {visibleColumns.map(({ field, label }, j) => {
                   const Cell = field === "example" ? "textarea" : "input";
                   return (
                     <td key={field} className="border-r border-t border-white p-0 last:border-r-0">
-                      <Cell aria-label={`${i + 1}행 ${label}`} value={row[field]}
+                      <Cell aria-label={`${existing.length + i + 1}행 ${label}`} value={row[field]}
+                        placeholder={existing.length > 0 && i === 0 && field === "word" ? "새 단어" : undefined}
                         rows={field === "example" ? 1 : undefined} autoCapitalize={field === "word" ? "none" : undefined}
                         spellCheck={field === "word" ? false : undefined}
                         onChange={(event) => updateCell(i, field, event.target.value)}

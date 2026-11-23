@@ -395,7 +395,7 @@ export type RegistrationInput = Pick<RegisteredWord, "word" | "meaning"> & { exa
 
 type RegistrationResult =
   | { ok: true; firstBlock: RegisteredBlock; count: number; newBlockCount: number }
-  | { ok: false; error: string };
+  | { ok: false; error: string; rowIndex?: number };
 
 function storeEntries(
   inputs: readonly RegistrationInput[],
@@ -412,9 +412,9 @@ function storeEntries(
     const meaning = input.meaning.trim();
     const example = isSentence ? "" : input.example?.trim() ?? "";
     if (!word && !meaning && !example) continue;
-    if (!word || !meaning) return { ok: false, error: `${index + 1}행의 영어와 뜻을 모두 입력해 주세요.` };
+    if (!word || !meaning) return { ok: false, rowIndex: index, error: "영어와 뜻을 모두 입력해 주세요." };
     const key = word.toLowerCase();
-    if (entries.has(key)) return { ok: false, error: `${index + 1}행의 「${word}」가 표에 두 번 입력됐어요.` };
+    if (entries.has(key)) return { ok: false, rowIndex: index, error: `「${word}」가 표에 두 번 입력됐어요.` };
     if (!isSentence && input.example === undefined) keepExamples.add(key);
     entries.set(key, { word, meaning, example, registeredAt, ...(isSentence && { isSentence: true }) });
   }

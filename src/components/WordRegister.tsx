@@ -119,7 +119,11 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
   function saveEntries(rows: RegistrationInput[]) {
     if (!block) return "블록을 다시 열어 주세요.";
     const result = registerEntries(rows, block.id, isSentenceForm);
-    if (!result.ok) return result.error;
+    if (!result.ok) {
+      if (result.rowIndex === undefined) return result.error;
+      const rowNumber = (isSentenceForm ? 0 : registered.length) + result.rowIndex + 1;
+      return `${rowNumber}행 · ${result.error}`;
+    }
     const nextBlock = result.firstBlock;
     setBlock(nextBlock);
     setNameDraft(nextBlock.name);
@@ -195,7 +199,7 @@ export function WordRegister({ blockId, onBack, onBlockChange }: Props) {
 
         <div className="mt-6">
           {form.kind === "word" && !form.editing ? (
-            <WordRegistrationTable onSave={saveEntries} />
+            <WordRegistrationTable existing={registered} onSave={saveEntries} />
           ) : (
             <RegisteredEntryForm
               kind={form.kind}
