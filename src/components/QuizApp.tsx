@@ -46,12 +46,14 @@ function shuffle<T>(items: T[]): T[] {
   return next;
 }
 
-function MeaningSticker({
-  meaning,
+function AnswerSticker({
+  answer,
+  label,
   revealed,
   onReveal,
 }: {
-  meaning: string;
+  answer: string;
+  label: string;
   revealed: boolean;
   onReveal: () => void;
 }) {
@@ -60,7 +62,7 @@ function MeaningSticker({
   if (revealed) {
     return (
       <span className="min-w-0 text-sm text-[var(--fg)] animate-[fade-up_180ms_ease-out]">
-        {meaning}
+        {answer}
       </span>
     );
   }
@@ -82,7 +84,7 @@ function MeaningSticker({
           ? "pointer-events-none animate-[sticker-peel_180ms_ease-in_forwards]"
           : "rotate-[-1.5deg]"
       }`}
-      aria-label="스티커를 눌러 뜻 보기"
+      aria-label={label}
     >
       탭해서 보기
     </button>
@@ -127,10 +129,12 @@ function WordResultList({
   title,
   words,
   emptyText,
+  koreanFirst,
 }: {
   title: string;
   words: QuizWord[];
   emptyText: string;
+  koreanFirst: boolean;
 }) {
   const [revealed, setRevealed] = useState<Set<string>>(() => new Set());
 
@@ -167,11 +171,12 @@ function WordResultList({
                   <p className={entry.isSentence
                     ? "w-full whitespace-pre-line wrap-anywhere text-base font-semibold text-[var(--accent)]"
                     : "w-[38%] min-w-0 shrink-0 truncate text-base font-semibold text-[var(--accent)] sm:w-44 sm:text-lg"}>
-                    {entry.word}
+                    {koreanFirst ? entry.meaning : entry.word}
                   </p>
                   <div className={entry.isSentence ? "w-full whitespace-pre-line wrap-anywhere" : "min-w-0 flex-1 [&>span]:truncate"}>
-                    <MeaningSticker
-                      meaning={entry.meaning}
+                    <AnswerSticker
+                      answer={koreanFirst ? entry.word : entry.meaning}
+                      label={koreanFirst ? "스티커를 눌러 영어 문장 보기" : "스티커를 눌러 뜻 보기"}
                       revealed={revealed.has(key)}
                       onReveal={() => reveal(key)}
                     />
@@ -188,6 +193,7 @@ function WordResultList({
 
 function ResultScreen({
   selectedLabel,
+  koreanFirst,
   totalCount,
   knownWords,
   retriedWords,
@@ -198,6 +204,7 @@ function ResultScreen({
   returnLabel,
 }: {
   selectedLabel: string;
+  koreanFirst: boolean;
   totalCount: number;
   knownWords: QuizWord[];
   retriedWords: QuizWord[];
@@ -218,18 +225,20 @@ function ResultScreen({
       </p>
       <p className="mt-3 text-sm text-[var(--muted)]">
         왼쪽 「중요」를 누르면 중요 목록에 저장되고, 나중에 그 목록만으로 시험볼
-        수 있어요. 노란 스티커를 누르면 뜻이 나타납니다.
+        수 있어요. 노란 스티커를 누르면 {koreanFirst ? "영어 문장이" : "뜻이"} 나타납니다.
       </p>
 
       <WordResultList
-        title="모르겠어요 했던 단어"
+        title={koreanFirst ? "모르겠어요 했던 문장" : "모르겠어요 했던 단어"}
+        koreanFirst={koreanFirst}
         words={retriedWords}
         emptyText="한 번도 모르겠어요를 누르지 않았어요."
       />
       <WordResultList
-        title="바로 맞춘 단어"
+        title={koreanFirst ? "바로 맞춘 문장" : "바로 맞춘 단어"}
+        koreanFirst={koreanFirst}
         words={knownWords}
-        emptyText="바로 맞춘 단어가 없어요."
+        emptyText={koreanFirst ? "바로 맞춘 문장이 없어요." : "바로 맞춘 단어가 없어요."}
       />
 
       <div className="mt-10 flex flex-wrap gap-3">
@@ -239,7 +248,7 @@ function ResultScreen({
             onClick={onUndo}
             className="rounded-md border border-[var(--line)] bg-white px-5 py-2.5 text-sm font-medium transition hover:bg-white"
           >
-            마지막 단어로 돌아가기
+            마지막 {koreanFirst ? "문장으로" : "단어로"} 돌아가기
           </button>
         ) : null}
         <button
@@ -263,6 +272,7 @@ function ResultScreen({
 
 export function QuizApp({ books }: Props) {
   const [area, setArea] = useState<RegisteredCategory | null>(null);
+  const [koreanFirst, setKoreanFirst] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [phase, setPhase] = useState<Phase>("select");
   const [session, setSession] = useState<{ words: QuizWord[]; label: string; source: QuizSource }>({
@@ -302,6 +312,7 @@ export function QuizApp({ books }: Props) {
 
   function chooseArea(nextArea: RegisteredCategory | null) {
     setArea(nextArea);
+    setKoreanFirst(false);
     setSelected([]);
   }
 
@@ -419,6 +430,7 @@ export function QuizApp({ books }: Props) {
     return (
       <ResultScreen
         selectedLabel={session.label}
+        koreanFirst={koreanFirst}
         totalCount={totalCount}
         knownWords={knownWords}
         retriedWords={retriedWords}
@@ -432,6 +444,9 @@ export function QuizApp({ books }: Props) {
   }
 
   if (phase === "prompt" || phase === "reveal") {
+    const prompt = koreanFirst ? current?.meaning : current?.word;
+    const revealHint = koreanFirst ? "화면을 터치하면 영어 문장이 나옵니다"
+      : current?.isSentence ? "화면을 터치하면 문장의 뜻이 나옵니다" : "화면을 터치하면 정답과 예문이 나옵니다";
     return (
       <div className="flex flex-1 flex-col">
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3 px-4 pt-4 text-sm text-[var(--muted)]">
@@ -441,7 +456,7 @@ export function QuizApp({ books }: Props) {
             disabled={!canUndo}
             className="rounded-md px-2 py-1 transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-[var(--muted)]"
           >
-            ← 이전 단어
+            ← 이전 {koreanFirst ? "문장" : "단어"}
           </button>
           <span className="text-right">
             {session.label}
@@ -457,31 +472,33 @@ export function QuizApp({ books }: Props) {
           />
         </div>
 
-        <button
-          type="button"
-          onClick={reveal}
-          className="flex flex-1 flex-col items-center justify-center px-6 text-center"
-          aria-label={phase === "prompt" ? "화면을 눌러 정답 보기" : "정답 표시됨"}
-        >
+        <div className="relative flex flex-1 flex-col items-center justify-center px-6 text-center">
+          {phase === "prompt" && (
+            <button type="button" onClick={reveal} className="absolute inset-0 z-10 rounded-md"
+              aria-label={`${prompt} ${koreanFirst ? "영어 문장 보기" : "정답 보기"}`} />
+          )}
           <p className={current?.isSentence
             ? "max-w-full whitespace-pre-line wrap-anywhere text-2xl leading-relaxed text-[var(--fg)] sm:text-3xl"
             : "font-[family-name:var(--font-display)] text-4xl tracking-tight text-[var(--fg)] sm:text-5xl"}>
-            {current?.word}
+            {prompt}
           </p>
-          {current?.word ? (
-            <div className="mt-4">
+          {!koreanFirst && current?.word && (
+            <div className="pointer-events-none relative z-20 [&>button]:pointer-events-auto">
               <SpeakButton text={current.word} label={current.isSentence ? "문장 듣기" : undefined} />
             </div>
-          ) : null}
+          )}
           {phase === "prompt" ? (
             <p className="mt-8 animate-pulse text-sm text-[var(--muted)]">
-              {current?.isSentence ? "화면을 터치하면 문장의 뜻이 나옵니다" : "화면을 터치하면 정답과 예문이 나옵니다"}
+              {revealHint}
             </p>
           ) : (
             <div className="mt-10 w-full max-w-lg animate-[fade-up_240ms_ease-out]">
               <p className="whitespace-pre-line wrap-anywhere text-xl font-medium text-[var(--accent)]">
-                {current?.meaning}
+                {koreanFirst ? current?.word : current?.meaning}
               </p>
+              {koreanFirst && current?.word && (
+                <SpeakButton text={current.word} label="문장 듣기" />
+              )}
               {current?.example && (
                 <p className="mt-3 text-base leading-relaxed text-[var(--fg)]">
                   <ExampleWithUnderline
@@ -497,7 +514,7 @@ export function QuizApp({ books }: Props) {
               ) : null}
             </div>
           )}
-        </button>
+        </div>
 
         {phase === "reveal" ? (
           <div className="mx-auto grid w-full max-w-3xl grid-cols-2 gap-3 px-4 pb-8 animate-[fade-up_240ms_ease-out]">
@@ -530,6 +547,8 @@ export function QuizApp({ books }: Props) {
         books={books}
         blocks={regBlocks}
         selected={selected}
+        koreanFirst={koreanFirst}
+        onKoreanFirstChange={setKoreanFirst}
         onSelect={setSelected}
         onBack={() => chooseArea(null)}
         onStart={(words, label) => beginQuiz(words, label, "days")}

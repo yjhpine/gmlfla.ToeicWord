@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { canSpeak, speakEnglish, warmUpVoices } from "@/lib/speech";
 
 type Props = {
@@ -9,17 +9,17 @@ type Props = {
   className?: string;
 };
 
+// Speech API support is fixed for the lifetime of the page.
+const subscribeToSupport = () => () => {};
+const serverSupport = () => false;
+
 export function SpeakButton({
   text,
   label = "발음 듣기",
   className = "",
 }: Props) {
-  const [supported, setSupported] = useState(false);
-
-  useEffect(() => {
-    setSupported(canSpeak());
-    warmUpVoices();
-  }, []);
+  const supported = useSyncExternalStore(subscribeToSupport, canSpeak, serverSupport);
+  useEffect(warmUpVoices, []);
 
   if (!supported) return null;
 

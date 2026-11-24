@@ -285,13 +285,14 @@ const registrationDate = new Intl.DateTimeFormat("sv-SE", {
   timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit",
 });
 
-export function registeredQuizDates(blocks: RegisteredBlock[], category: RegisteredCategory) {
+export function registeredQuizDates(blocks: RegisteredBlock[], category: RegisteredCategory, sentencesOnly = false) {
   const dates = new Map<string, DatedQuizBlock[]>();
   blocks.forEach((block, blockIndex) => {
     if (block.category !== category) return;
     const byDate = new Map<string, QuizWord[]>();
     const quizWords = registeredBlockToQuizWords(block, blockIndex);
     block.words.forEach((word, index) => {
+      if (sentencesOnly && !word.isSentence) return;
       const timestamp = Date.parse(word.registeredAt);
       const date = Number.isFinite(timestamp) ? registrationDate.format(timestamp) : "";
       const words = byDate.get(date);

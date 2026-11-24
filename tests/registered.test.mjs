@@ -256,6 +256,7 @@ test('quiz dates group only the chosen area by Korean date and preserve block re
   ]);
   assert.equal(dates[0][1][1].words[0].isSentence, true);
   assert.notEqual(dates[0][1][0].id, dates[1][1][0].id);
+  assert.deepEqual(registeredQuizDates(blocks, 'LC', true), [['2026-11-18', [dates[0][1][1]]]]);
   assert.deepEqual(registeredQuizDates([], 'RC'), []);
 });
 

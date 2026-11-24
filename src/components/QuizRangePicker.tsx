@@ -20,14 +20,16 @@ type Props = {
   books: DayWordbook[];
   blocks: RegisteredBlock[];
   selected: string[];
+  koreanFirst: boolean;
+  onKoreanFirstChange: (value: boolean) => void;
   onSelect: (ids: string[]) => void;
   onBack: () => void;
   onStart: (words: QuizWord[], label: string) => void;
 };
 
-export function QuizRangePicker({ area, books, blocks, selected, onSelect, onBack, onStart }: Props) {
+export function QuizRangePicker({ area, books, blocks, selected, koreanFirst, onKoreanFirstChange, onSelect, onBack, onStart }: Props) {
   const days = area === "general" ? books : [];
-  const dates = useMemo(() => registeredQuizDates(blocks, area), [blocks, area]);
+  const dates = useMemo(() => registeredQuizDates(blocks, area, koreanFirst), [blocks, area, koreanFirst]);
   const selectedDays = days.filter((book) => selected.includes(`day-${book.day}`));
   const selectedDates = dates.map(([date, ranges]) => ({
     date,
@@ -56,7 +58,8 @@ export function QuizRangePicker({ area, books, blocks, selected, onSelect, onBac
       ...selectedDays.map((book) => `Day ${book.day}`),
       ...selectedDates.map(({ date, ranges }) => `${dateLabel(date)} (${ranges.map((r) => r.name).join(", ")})`),
     ];
-    onStart(words, `${quizAreaNames[area]} · ${labels.join(", ")}`);
+    const areaLabel = koreanFirst ? "LC 문장 · 한국어 뜻 먼저" : quizAreaNames[area];
+    onStart(words, `${areaLabel} · ${labels.join(", ")}`);
   }
 
   return (
@@ -65,11 +68,24 @@ export function QuizRangePicker({ area, books, blocks, selected, onSelect, onBac
         ← 영역 선택
       </button>
       <h1 className="mt-4 text-3xl text-[var(--accent)]">{quizAreaNames[area]} 시험</h1>
+      {area === "LC" && (
+        <fieldset className="mt-6">
+          <legend className="font-semibold text-[var(--fg)]">시험 모드</legend>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <button type="button" aria-pressed={!koreanFirst} onClick={() => onKoreanFirstChange(false)} className={choiceStyle}>
+              영어 먼저 (단어·문장)
+            </button>
+            <button type="button" aria-pressed={koreanFirst} onClick={() => onKoreanFirstChange(true)} className={choiceStyle}>
+              한국어 뜻 → 영어 문장
+            </button>
+          </div>
+        </fieldset>
+      )}
       {days.length > 0 || dates.length > 0 ? (
         <p className="mt-2 text-[var(--muted)]">시험을 볼 날짜를 선택하세요. 여러 개를 함께 고를 수 있습니다.</p>
       ) : (
         <p className="mt-4 text-[var(--muted)]">
-          아직 등록한 내용이 없습니다.{" "}
+          {koreanFirst ? "아직 LC에 등록한 문장이 없습니다." : "아직 등록한 내용이 없습니다."}{" "}
           <Link href="/words" className="text-[var(--accent)] underline">단어 학습에서 등록하기</Link>
         </p>
       )}
