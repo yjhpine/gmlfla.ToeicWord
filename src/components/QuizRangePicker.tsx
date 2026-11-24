@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { registeredQuizDates, type RegisteredBlock, type RegisteredCategory } from "@/lib/registered";
-import type { DayWordbook, QuizWord } from "@/lib/words/types";
+import type { DayWordbook, QuizMode, QuizWord } from "@/lib/words/types";
 
 export const quizAreaNames: Record<RegisteredCategory, string> = {
   general: "해커스", LC: "LC", RC: "RC",
@@ -20,16 +20,17 @@ type Props = {
   books: DayWordbook[];
   blocks: RegisteredBlock[];
   selected: string[];
-  koreanFirst: boolean;
-  onKoreanFirstChange: (value: boolean) => void;
+  mode: QuizMode;
+  onModeChange: (mode: QuizMode) => void;
   onSelect: (ids: string[]) => void;
   onBack: () => void;
   onStart: (words: QuizWord[], label: string) => void;
 };
 
-export function QuizRangePicker({ area, books, blocks, selected, koreanFirst, onKoreanFirstChange, onSelect, onBack, onStart }: Props) {
-  const days = area === "general" ? books : [];
-  const dates = useMemo(() => registeredQuizDates(blocks, area, koreanFirst), [blocks, area, koreanFirst]);
+export function QuizRangePicker({ area, books, blocks, selected, mode, onModeChange, onSelect, onBack, onStart }: Props) {
+  const days = area === "general" && mode === "english-first" ? books : [];
+  const dates = useMemo(() => registeredQuizDates(blocks, area, mode), [blocks, area, mode]);
+  const itemLabel = mode === "korean-first-sentence" ? "문장" : "단어";
   const selectedDays = days.filter((book) => selected.includes(`day-${book.day}`));
   const selectedDates = dates.map(([date, ranges]) => ({
     date,
@@ -58,7 +59,7 @@ export function QuizRangePicker({ area, books, blocks, selected, koreanFirst, on
       ...selectedDays.map((book) => `Day ${book.day}`),
       ...selectedDates.map(({ date, ranges }) => `${dateLabel(date)} (${ranges.map((r) => r.name).join(", ")})`),
     ];
-    const areaLabel = koreanFirst ? "LC 문장 · 한국어 뜻 먼저" : quizAreaNames[area];
+    const areaLabel = mode === "english-first" ? quizAreaNames[area] : `${quizAreaNames[area]} ${itemLabel} · 한국어 뜻 먼저`;
     onStart(words, `${areaLabel} · ${labels.join(", ")}`);
   }
 
@@ -68,24 +69,28 @@ export function QuizRangePicker({ area, books, blocks, selected, koreanFirst, on
         ← 영역 선택
       </button>
       <h1 className="mt-4 text-3xl text-[var(--accent)]">{quizAreaNames[area]} 시험</h1>
-      {area === "LC" && (
-        <fieldset className="mt-6">
-          <legend className="font-semibold text-[var(--fg)]">시험 모드</legend>
-          <div className="mt-2 flex flex-wrap gap-2">
-            <button type="button" aria-pressed={!koreanFirst} onClick={() => onKoreanFirstChange(false)} className={choiceStyle}>
-              영어 먼저 (단어·문장)
-            </button>
-            <button type="button" aria-pressed={koreanFirst} onClick={() => onKoreanFirstChange(true)} className={choiceStyle}>
+      <fieldset className="mt-6">
+        <legend className="font-semibold text-[var(--fg)]">시험 모드</legend>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <button type="button" aria-pressed={mode === "english-first"} onClick={() => onModeChange("english-first")} className={choiceStyle}>
+            {area === "LC" ? "영어 먼저 (단어·문장)" : "영어 먼저"}
+          </button>
+          <button type="button" aria-pressed={mode === "korean-first-word"} onClick={() => onModeChange("korean-first-word")} className={choiceStyle}>
+            한국어 뜻 → 영어 단어
+          </button>
+          {area === "LC" && (
+            <button type="button" aria-pressed={mode === "korean-first-sentence"} onClick={() => onModeChange("korean-first-sentence")} className={choiceStyle}>
               한국어 뜻 → 영어 문장
             </button>
-          </div>
-        </fieldset>
-      )}
+          )}
+        </div>
+      </fieldset>
       {days.length > 0 || dates.length > 0 ? (
         <p className="mt-2 text-[var(--muted)]">시험을 볼 날짜를 선택하세요. 여러 개를 함께 고를 수 있습니다.</p>
       ) : (
         <p className="mt-4 text-[var(--muted)]">
-          {koreanFirst ? "아직 LC에 등록한 문장이 없습니다." : "아직 등록한 내용이 없습니다."}{" "}
+          {mode === "english-first" ? "아직 등록한 내용이 없습니다."
+            : `아직 ${quizAreaNames[area]}에 등록한 ${itemLabel}${itemLabel === "문장" ? "이" : "가"} 없습니다.`}{" "}
           <Link href="/words" className="text-[var(--accent)] underline">단어 학습에서 등록하기</Link>
         </p>
       )}

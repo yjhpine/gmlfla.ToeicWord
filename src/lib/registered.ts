@@ -1,6 +1,6 @@
 /** 사용자가 직접 등록한 단어 블럭 (브라우저 로컬, 블럭당 최대 20개) */
 
-import type { QuizWord } from "@/lib/words/types";
+import type { QuizMode, QuizWord } from "@/lib/words/types";
 import { importantKey, updateImportantWords, type ImportantWordChange } from "./important.ts";
 
 export const REGISTERED_STORAGE_KEY = "heelim-toeic-registered-v2";
@@ -285,14 +285,15 @@ const registrationDate = new Intl.DateTimeFormat("sv-SE", {
   timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit",
 });
 
-export function registeredQuizDates(blocks: RegisteredBlock[], category: RegisteredCategory, sentencesOnly = false) {
+export function registeredQuizDates(blocks: RegisteredBlock[], category: RegisteredCategory, mode: QuizMode = "english-first") {
   const dates = new Map<string, DatedQuizBlock[]>();
   blocks.forEach((block, blockIndex) => {
     if (block.category !== category) return;
     const byDate = new Map<string, QuizWord[]>();
     const quizWords = registeredBlockToQuizWords(block, blockIndex);
     block.words.forEach((word, index) => {
-      if (sentencesOnly && !word.isSentence) return;
+      if (mode === "korean-first-word" && word.isSentence) return;
+      if (mode === "korean-first-sentence" && !word.isSentence) return;
       const timestamp = Date.parse(word.registeredAt);
       const date = Number.isFinite(timestamp) ? registrationDate.format(timestamp) : "";
       const words = byDate.get(date);
