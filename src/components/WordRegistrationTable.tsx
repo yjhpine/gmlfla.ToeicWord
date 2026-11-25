@@ -1,5 +1,5 @@
 import { Fragment, useMemo, useState, type ClipboardEvent, type FormEvent } from "react";
-import { WORDS_PER_BLOCK, registeredWordLocations, sameWordLocation, type RegisteredBlock, type TableInput } from "@/lib/registered";
+import { WORDS_PER_BLOCK, entriesForKind, registeredWordLocations, sameWordLocation, type RegisteredBlock, type TableInput } from "@/lib/registered";
 
 const columns = [
   { field: "word", label: "영어" },
@@ -16,7 +16,7 @@ export function WordRegistrationTable({ source, blocks, onSave }: {
   blocks: readonly RegisteredBlock[];
   onSave: (rows: TableInput[]) => string | void;
 }) {
-  const existing = source.words;
+  const existing = entriesForKind(source, "word");
   const locations = useMemo(() => registeredWordLocations(blocks), [blocks]);
   const [rows, setRows] = useState<DraftRow[]>(() => Array.from({ length: WORDS_PER_BLOCK }, (_, i) => {
     const entry = existing[i];
@@ -39,7 +39,7 @@ export function WordRegistrationTable({ source, blocks, onSave }: {
 
   function pasteCells(event: ClipboardEvent, rowIndex: number, columnIndex: number) {
     const text = event.clipboardData.getData("text/plain");
-    if ((visibleColumns[columnIndex].field === "example" || existing[rowIndex]?.isSentence) && !text.includes("\t")) return;
+    if (visibleColumns[columnIndex].field === "example" && !text.includes("\t")) return;
     if (!text.includes("\t") && !text.includes("\n")) return;
     event.preventDefault();
     const cells = text.replace(/\r\n?/g, "\n").replace(/\n$/, "").split("\n").map((line) => line.split("\t"));
@@ -83,7 +83,7 @@ export function WordRegistrationTable({ source, blocks, onSave }: {
             {rows.map((row, i) => {
               const key = row.word.trim().toLowerCase();
               const matches = i < existing.length ? [] : (locations.get(key) ?? []).filter((m) => {
-                const draft = m.blockId === source.id ? rows[m.rowIndex]?.word.trim().toLowerCase() : undefined;
+                const draft = m.blockId === source.id ? rows[m.wordRowIndex]?.word.trim().toLowerCase() : undefined;
                 return !draft || draft === key;
               });
               return (
@@ -91,8 +91,7 @@ export function WordRegistrationTable({ source, blocks, onSave }: {
                   <tr className={existing[i] ? "bg-white/80" : "odd:bg-[#dce6f4] even:bg-[#eef3fb]"}>
                     <th scope="row" className="border-r border-t border-white text-center text-xs font-normal text-[var(--muted)]">{i + 1}</th>
                     {visibleColumns.map(({ field, label }, j) => {
-                      if (field === "example" && existing[i]?.isSentence) return <td key={field} aria-label="문장에는 예문 없음" />;
-                      const Cell = field === "example" || existing[i]?.isSentence ? "textarea" : "input";
+                      const Cell = field === "example" ? "textarea" : "input";
                       return (
                         <td key={field} className="border-r border-t border-white p-0 last:border-r-0">
                           <Cell aria-label={`${i + 1}행 ${label}`} value={row[field]}

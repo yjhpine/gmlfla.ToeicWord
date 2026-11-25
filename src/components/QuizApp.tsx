@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ExampleWithUnderline } from "@/components/ExampleWithUnderline";
-import { QuizRangePicker, quizAreaNames } from "@/components/QuizRangePicker";
+import { QuizRangePicker } from "@/components/QuizRangePicker";
 import { SpeakButton } from "@/components/SpeakButton";
 import {
   IMPORTANT_EVENT,
@@ -13,13 +13,13 @@ import {
 } from "@/lib/important";
 import { markDaysQuizzed } from "@/lib/progress";
 import {
-  REGISTERED_CATEGORIES,
+  STUDY_AREAS,
   REGISTERED_EVENT,
   isRegisteredDay,
   loadRegisteredBlocks,
   registeredLabelForDay,
   type RegisteredBlock,
-  type RegisteredCategory,
+  type StudyArea,
 } from "@/lib/registered";
 import type { DayWordbook, QuizMode, QuizWord } from "@/lib/words/types";
 
@@ -199,6 +199,7 @@ function WordResultList({
 function ResultScreen({
   selectedLabel,
   mode,
+  sentenceQuiz,
   totalCount,
   knownWords,
   retriedWords,
@@ -210,6 +211,7 @@ function ResultScreen({
 }: {
   selectedLabel: string;
   mode: QuizMode;
+  sentenceQuiz: boolean;
   totalCount: number;
   knownWords: QuizWord[];
   retriedWords: QuizWord[];
@@ -220,7 +222,6 @@ function ResultScreen({
   returnLabel: string;
 }) {
   const koreanFirst = mode !== "english-first";
-  const sentenceQuiz = mode === "korean-first-sentence";
   const itemLabel = sentenceQuiz ? "문장" : "단어";
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 py-8">
@@ -279,7 +280,7 @@ function ResultScreen({
 }
 
 export function QuizApp({ books }: Props) {
-  const [area, setArea] = useState<RegisteredCategory | null>(null);
+  const [area, setArea] = useState<StudyArea | null>(null);
   const [mode, setMode] = useState<QuizMode>("english-first");
   const [selected, setSelected] = useState<string[]>([]);
   const [phase, setPhase] = useState<Phase>("select");
@@ -318,7 +319,7 @@ export function QuizApp({ books }: Props) {
     };
   }, []);
 
-  function chooseArea(nextArea: RegisteredCategory | null) {
+  function chooseArea(nextArea: StudyArea | null) {
     setArea(nextArea);
     setMode("english-first");
     setSelected([]);
@@ -439,6 +440,7 @@ export function QuizApp({ books }: Props) {
       <ResultScreen
         selectedLabel={session.label}
         mode={mode}
+        sentenceQuiz={area?.kind === "sentence"}
         totalCount={totalCount}
         knownWords={knownWords}
         retriedWords={retriedWords}
@@ -467,7 +469,7 @@ export function QuizApp({ books }: Props) {
             disabled={!canUndo}
             className="rounded-md px-2 py-1 transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-[var(--muted)]"
           >
-            ← 이전 {mode === "korean-first-sentence" ? "문장" : "단어"}
+            ← 이전 {area?.kind === "sentence" ? "문장" : "단어"}
           </button>
           <span className="text-right">
             {session.label}
@@ -572,17 +574,17 @@ export function QuizApp({ books }: Props) {
       <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--accent)]">시험</h1>
       <p className="mt-2 text-[var(--muted)]">시험을 볼 영역을 선택하세요.</p>
       <ul aria-label="시험 영역" className="mt-8 space-y-3">
-        {REGISTERED_CATEGORIES.map((category) => (
-          <li key={category}>
+        {STUDY_AREAS.map((choice) => (
+          <li key={choice.id}>
             <button
               type="button"
-              onClick={() => chooseArea(category)}
+              onClick={() => chooseArea(choice)}
               className="flex w-full items-center justify-between gap-3 rounded-xl border border-[var(--line)] bg-white/60 px-5 py-4 text-left transition hover:border-[var(--accent)] hover:bg-white"
             >
               <span>
-                <span className="block text-lg font-semibold text-[var(--accent)]">{quizAreaNames[category]}</span>
+                <span className="block text-lg font-semibold text-[var(--accent)]">{choice.title}</span>
                 <span className="mt-1 block text-sm text-[var(--muted)]">
-                  {category === "general" ? "Day 단어 · 등록 단어" : category === "LC" ? "듣기 단어·문장" : "읽기 단어"}
+                  {choice.description}
                 </span>
               </span>
               <span aria-hidden="true" className="text-xl text-[var(--accent)]">›</span>

@@ -1,6 +1,6 @@
 /** 사용자가 직접 등록한 단어 블럭 (브라우저 로컬, 블럭당 최대 20개) */
 
-import type { QuizMode, QuizWord } from "@/lib/words/types";
+import type { QuizWord } from "@/lib/words/types";
 import { importantKey, updateImportantWords, type ImportantWordChange } from "./important.ts";
 
 export const REGISTERED_STORAGE_KEY = "heelim-toeic-registered-v2";
@@ -9,6 +9,15 @@ export const REGISTERED_EVENT = "heelim-registered-updated";
 export const WORDS_PER_BLOCK = 20;
 export const REGISTERED_CATEGORIES = ["general", "LC", "RC"] as const;
 export type RegisteredCategory = (typeof REGISTERED_CATEGORIES)[number];
+export type EntryKind = "word" | "sentence";
+
+export const STUDY_AREAS = [
+  { id: "general", category: "general", kind: "word", title: "해커스", description: "Day 단어 · 등록 단어" },
+  { id: "LC-word", category: "LC", kind: "word", title: "LC 단어", description: "듣기 단어" },
+  { id: "LC-sentence", category: "LC", kind: "sentence", title: "LC 문장", description: "듣기 문장" },
+  { id: "RC", category: "RC", kind: "word", title: "RC", description: "읽기 단어" },
+] as const;
+export type StudyArea = (typeof STUDY_AREAS)[number];
 
 export type RegisteredWord = {
   word: string;
@@ -30,6 +39,10 @@ type StoreV2 = {
   version: 2;
   blocks: RegisteredBlock[];
 };
+
+export function entriesForKind(block: RegisteredBlock, kind?: EntryKind) {
+  return kind ? block.words.filter((word) => Boolean(word.isSentence) === (kind === "sentence")) : block.words;
+}
 
 function createId() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -285,20 +298,18 @@ const registrationDate = new Intl.DateTimeFormat("sv-SE", {
   timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit",
 });
 
-export function registeredQuizDates(blocks: RegisteredBlock[], category: RegisteredCategory, mode: QuizMode = "english-first") {
+export function registeredQuizDates(blocks: RegisteredBlock[], category: RegisteredCategory, kind?: EntryKind) {
   const dates = new Map<string, DatedQuizBlock[]>();
   blocks.forEach((block, blockIndex) => {
     if (block.category !== category) return;
     const byDate = new Map<string, QuizWord[]>();
-    const quizWords = registeredBlockToQuizWords(block, blockIndex);
-    block.words.forEach((word, index) => {
-      if (mode === "korean-first-word" && word.isSentence) return;
-      if (mode === "korean-first-sentence" && !word.isSentence) return;
+    entriesForKind(block, kind).forEach((word) => {
       const timestamp = Date.parse(word.registeredAt);
       const date = Number.isFinite(timestamp) ? registrationDate.format(timestamp) : "";
       const words = byDate.get(date);
-      if (words) words.push(quizWords[index]);
-      else byDate.set(date, [quizWords[index]]);
+      const entry = toQuizWord(word, registeredBlockDay(blockIndex));
+      if (words) words.push(entry);
+      else byDate.set(date, [entry]);
     });
     for (const [date, words] of byDate) {
       const range = { id: `${date}/${block.id}`, name: block.name, words };
@@ -404,6 +415,7 @@ export type RegisteredWordLocation = {
   category: RegisteredCategory;
   label: string;
   rowIndex: number;
+  wordRowIndex: number;
   entry: RegisteredWord;
 };
 
@@ -413,11 +425,13 @@ export function registeredWordLocations(blocks: readonly RegisteredBlock[]) {
   const locations = new Map<string, RegisteredWordLocation[]>();
   for (const block of blocks) {
     const area = block.category === "general" ? "해커스" : block.category;
+    let wordRowIndex = 0;
     block.words.forEach((entry, rowIndex) => {
       if (entry.isSentence) return;
       const key = entry.word.trim().toLowerCase();
-      const match = { blockId: block.id, category: block.category, rowIndex, entry,
-        label: `${area} · ${block.name} · ${rowIndex + 1}행` };
+      const match = { blockId: block.id, category: block.category, rowIndex, wordRowIndex, entry,
+        label: `${area === "LC" ? "LC 단어" : area} · ${block.name} · ${wordRowIndex + 1}행` };
+      wordRowIndex++;
       const matches = locations.get(key);
       if (matches) matches.push(match);
       else locations.set(key, [match]);
@@ -523,12 +537,13 @@ function resolveTableAdditions(
   blocks: RegisteredBlock[],
   block: RegisteredBlock,
   changes: Map<RegisteredWord, ImportantWordChange>,
+  existingRowCount: number,
 ): RegistrationError | { ok: true; additions: RegistrationInput[]; meaningsAdded: number } {
   let meaningsAdded = 0;
   const locations = registeredWordLocations(before);
   const additions: RegistrationInput[] = [];
   for (const [i, row] of inputs.entries()) {
-    const rowIndex = block.words.length + i;
+    const rowIndex = existingRowCount + i;
     const key = row.word.trim().toLowerCase();
     const matches = (locations.get(key) ?? []).filter((m) =>
       m.blockId !== block.id || matchesEntry(block.words[m.rowIndex], key, false));
@@ -566,6 +581,7 @@ function resolveTableAdditions(
 export function saveRegistrationTable(
   original: RegisteredBlock,
   rows: readonly TableInput[],
+  kind?: "word",
 ): RegistrationError | { ok: true; block: RegisteredBlock; index: number; added: number; edited: number; meaningsAdded: number } {
   const before = loadRegisteredBlocks();
   const blockIndex = before.findIndex((b) => b.id === original.id);
@@ -579,7 +595,8 @@ export function saveRegistrationTable(
   const block = blocks[blockIndex];
   const day = registeredBlockDay(blockIndex);
   const changes = new Map<RegisteredWord, ImportantWordChange>();
-  for (const [i, previous] of current.words.entries()) {
+  const existing = entriesForKind(current, kind);
+  for (const [i, previous] of existing.entries()) {
     const input = rows[i];
     if (!input) continue;
     const word = input.word.trim();
@@ -589,20 +606,21 @@ export function saveRegistrationTable(
     const example = previous.isSentence ? "" : (input.example ?? previous.example).trim();
     if (word === previous.word && meaning === previous.meaning && example === previous.example) continue;
     const updated = { ...previous, word, meaning, example };
-    block.words[i] = updated;
+    block.words[current.words.indexOf(previous)] = updated;
     changes.set(previous, { previous: toQuizWord(previous, day), updated: toQuizWord(updated, day) });
   }
 
   // Check the final spellings together so two edited rows can exchange names.
-  for (const [i, entry] of block.words.entries()) {
-    if (entry.word === current.words[i].word) continue;
+  for (const [i, previous] of existing.entries()) {
+    const entry = block.words[current.words.indexOf(previous)];
+    if (entry.word === previous.word) continue;
     const duplicate = blocks.some((b) => b.category === block.category && b.words.some((other) =>
       other !== entry && matchesEntry(other, entry.word.toLowerCase(), Boolean(entry.isSentence))));
     if (duplicate) return { ok: false, rowIndex: i, error: `이 영역에 「${entry.word}」가 이미 있습니다.` };
   }
 
   const edited = changes.size;
-  const resolved = resolveTableAdditions(rows.slice(current.words.length), before, blocks, block, changes);
+  const resolved = resolveTableAdditions(rows.slice(existing.length), before, blocks, block, changes, existing.length);
   if (!resolved.ok) return resolved;
   const { additions, meaningsAdded } = resolved;
   let added = 0;
@@ -611,7 +629,7 @@ export function saveRegistrationTable(
   if (additions.some((row) => row.word.trim() || row.meaning.trim() || row.example?.trim())) {
     const result = placeEntries(additions, blocks, block, false, true);
     if (!result.ok) {
-      return { ...result, rowIndex: result.rowIndex === undefined ? undefined : current.words.length + result.rowIndex };
+      return { ...result, rowIndex: result.rowIndex === undefined ? undefined : existing.length + result.rowIndex };
     }
     added = result.count;
     destination = result.firstBlock;

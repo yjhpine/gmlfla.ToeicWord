@@ -256,12 +256,12 @@ test('quiz dates group only the chosen area by Korean date and preserve block re
   ]);
   assert.equal(dates[0][1][1].words[0].isSentence, true);
   assert.notEqual(dates[0][1][0].id, dates[1][1][0].id);
-  assert.deepEqual(registeredQuizDates(blocks, 'LC', 'korean-first-sentence'), [['2026-11-18', [dates[0][1][1]]]]);
-  assert.deepEqual(registeredQuizDates(blocks, 'LC', 'korean-first-word'), [
+  assert.deepEqual(registeredQuizDates(blocks, 'LC', 'sentence'), [['2026-11-18', [dates[0][1][1]]]]);
+  assert.deepEqual(registeredQuizDates(blocks, 'LC', 'word'), [
     ['2026-11-18', [dates[0][1][0]]], dates[1], dates[2],
   ]);
   for (const area of ['general', 'RC']) {
-    assert.deepEqual(registeredQuizDates(blocks, area, 'korean-first-word'), registeredQuizDates(blocks, area));
+    assert.deepEqual(registeredQuizDates(blocks, area, 'word'), registeredQuizDates(blocks, area));
   }
   assert.deepEqual(registeredQuizDates([], 'RC'), []);
 });
@@ -367,6 +367,28 @@ test('invalid, empty and failed table saves preserve the original records and al
   assert.deepEqual(blockIn('RC').words.map((w) => w.word), ['keep', 'changed', 'added']);
 });
 
+test('LC word table uses visible word rows and preserves interleaved sentences and bookmarks', () => {
+  const id = blockIn('LC').id;
+  registerWord(word('wait'), id);
+  registerWord({ ...word('Please wait.'), isSentence: true }, id);
+  registerWord(word('stop'), id);
+  const original = blockIn('LC');
+  const sentence = original.words[1];
+  toggleImportantWord(registeredToQuizWords([-2])[1]);
+  const rows = [word('stop'), word('wait', '기다리다')];
+  const duplicate = registeredWordLocations([original]).get('wait')[0];
+  assert.equal(duplicate.wordRowIndex, 1);
+  assert.equal(duplicate.rowIndex, 2);
+  assert.equal(saveRegistrationTable(original, [...rows, word('incomplete', '')], 'word').rowIndex, 2);
+  assert.deepEqual(blockIn('LC'), original);
+  const result = saveRegistrationTable(original, [...rows, word('queue')], 'word');
+  assert.equal(result.ok, true);
+  assert.equal(result.block.words[result.index].word, 'queue');
+  assert.deepEqual(blockIn('LC').words[1], sentence);
+  assert.equal(blockIn('LC').words[2].meaning, '기다리다');
+  assert.deepEqual(loadImportantWords(), [registeredToQuizWords([-2])[1]]);
+});
+
 test('duplicate lookup lists exact word locations and appends a typed meaning only to the selected entry', () => {
   const lc = blockIn('LC');
   const rc = blockIn('RC');
@@ -376,7 +398,7 @@ test('duplicate lookup lists exact word locations and appends a typed meaning on
   registerWord(word('charge', '요금'), lc.id);
   registerWord({ ...word('charge', '문장 뜻'), isSentence: true }, lc.id);
   const matches = registeredWordLocations(loadRegisteredBlocks()).get('charge');
-  assert.deepEqual(matches.map((m) => m.label), ['LC · 등록 1 · 2행', 'RC · 요금 · 1행']);
+  assert.deepEqual(matches.map((m) => m.label), ['LC 단어 · 등록 1 · 1행', 'RC · 요금 · 1행']);
   const target = matches[1];
   toggleImportantWord(registeredToQuizWords([-3])[0]);
   const row = { word: '  CHARGE  ', meaning: '청구하다' };

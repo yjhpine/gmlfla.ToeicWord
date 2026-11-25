@@ -1,11 +1,10 @@
 import { useId, useState, type FormEvent } from "react";
-import type { RegisteredWord } from "@/lib/registered";
+import type { EntryKind, RegisteredWord } from "@/lib/registered";
 
 export type EntryFields = Pick<RegisteredWord, "word" | "meaning" | "example">;
-export type FormMode = "word" | "sentence";
 
 type Props = {
-  kind: FormMode;
+  kind: EntryKind;
   original?: RegisteredWord;
   submitLabel: string;
   onSave: (fields: EntryFields) => string | void;

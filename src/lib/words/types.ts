@@ -23,7 +23,7 @@ export type QuizWord = WordEntry & {
   bookmarkDay?: number;
 };
 
-export type QuizMode = "english-first" | "korean-first-word" | "korean-first-sentence";
+export type QuizMode = "english-first" | "korean-first";
 
 export type WordbookIndex = {
   totalDays: number;

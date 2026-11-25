@@ -2,19 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { ExampleWithUnderline } from "@/components/ExampleWithUnderline";
-import { RegisteredEntryForm, type EntryFields, type FormMode } from "@/components/RegisteredEntryForm";
+import { RegisteredEntryForm, type EntryFields } from "@/components/RegisteredEntryForm";
 import { SpeakButton } from "@/components/SpeakButton";
 import { WordRegistrationTable } from "@/components/WordRegistrationTable";
 import {
   REGISTERED_EVENT,
   WORDS_PER_BLOCK,
   editRegisteredWord,
+  entriesForKind,
   loadRegisteredBlocks,
   registerEntries,
   saveRegistrationTable,
   registeredBlockLabel,
   removeRegisteredWord,
   renameRegisteredBlock,
+  type EntryKind,
   type RegisteredBlock,
   type RegisteredWord,
   type TableInput,
@@ -22,18 +24,18 @@ import {
 
 type Props = {
   blockId: string;
+  kind: EntryKind;
   blocks: RegisteredBlock[];
   onBack: () => void;
   onBlockChange?: (blockId: string) => void;
 };
 
 type RegistrationForm = {
-  kind: FormMode;
   source: RegisteredBlock;
   editing?: RegisteredWord;
 };
 
-export function WordRegister({ blockId, blocks, onBack, onBlockChange }: Props) {
+export function WordRegister({ blockId, kind, blocks, onBack, onBlockChange }: Props) {
   const [ready, setReady] = useState(false);
   const [form, setForm] = useState<RegistrationForm | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
@@ -47,7 +49,7 @@ export function WordRegister({ blockId, blocks, onBack, onBlockChange }: Props) 
       let current: RegisteredBlock | undefined = blocks.find((b) => b.id === blockId) ?? blocks[0];
       if (current && current.words.length === 0) {
         const category = current.category;
-        current = blocks.findLast((b) => b.category === category && b.words.length > 0)
+        current = blocks.findLast((b) => b.category === category && entriesForKind(b, kind).length > 0)
           ?? blocks.find((b) => b.category === category);
       }
       setBlock(current ?? null);
@@ -55,7 +57,7 @@ export function WordRegister({ blockId, blocks, onBack, onBlockChange }: Props) 
       if (current && current.id !== blockId) onBlockChange?.(current.id);
       setReady(true);
       setIndex((i) => {
-        const len = current?.words.length ?? 0;
+        const len = current ? entriesForKind(current, kind).length : 0;
         if (len === 0) return 0;
         return Math.min(i, len - 1);
       });
@@ -67,19 +69,18 @@ export function WordRegister({ blockId, blocks, onBack, onBlockChange }: Props) 
       window.removeEventListener(REGISTERED_EVENT, sync);
       window.removeEventListener("storage", sync);
     };
-  }, [blockId, onBlockChange]);
+  }, [blockId, kind, onBlockChange]);
 
-  const registered: RegisteredWord[] = block?.words ?? [];
+  const registered = block ? entriesForKind(block, kind) : [];
   const entry = registered[index];
   const total = registered.length;
   const progressRatio = total ? (index + 1) / total : 0;
-  const blockLabel = block ? registeredBlockLabel(block) : "등록";
+  const itemLabel = kind === "sentence" ? "문장" : "단어";
+  const blockLabel = block?.category === "LC" ? `LC ${itemLabel} · ${block.name}` : block ? registeredBlockLabel(block) : "등록";
 
-  const isSentenceForm = form?.kind === "sentence";
-
-  function openForm(kind: FormMode, original?: RegisteredWord) {
+  function openForm(original?: RegisteredWord) {
     if (!block) return;
-    setForm({ kind, source: block, editing: original });
+    setForm({ source: block, editing: original });
     setStatusMessage(null);
   }
 
@@ -108,14 +109,11 @@ export function WordRegister({ blockId, blocks, onBack, onBlockChange }: Props) 
     if (form?.editing) {
       const result = editRegisteredWord(form.source.id, form.editing, input);
       if (!result.ok) return result.error;
-      setBlock(result.block);
-      setIndex(result.index);
-      closeForm();
-      setStatusMessage("수정 내용을 저장했어요.");
+      finishRegistration(result.block, "수정 내용을 저장했어요.", result.index);
       return;
     }
 
-    const result = registerEntries([input], block.id, isSentenceForm);
+    const result = registerEntries([input], block.id, kind === "sentence");
     if (!result.ok) return result.error;
     const overflow = result.newBlockCount ? ` 새 블록 ${result.newBlockCount}개를 만들었어요.` : "";
     finishRegistration(result.firstBlock, `「${input.word}」 등록을 마쳤어요.${overflow}`);
@@ -123,7 +121,7 @@ export function WordRegister({ blockId, blocks, onBack, onBlockChange }: Props) 
 
   function saveTable(rows: TableInput[]) {
     if (!form) return "블록을 다시 열어 주세요.";
-    const result = saveRegistrationTable(form.source, rows);
+    const result = saveRegistrationTable(form.source, rows, "word");
     if (!result.ok) return result.rowIndex === undefined ? result.error : `${result.rowIndex + 1}행 · ${result.error}`;
     const changes = [result.edited && `수정 ${result.edited}개`, result.added && `추가 ${result.added}개`,
       result.meaningsAdded && `뜻 추가 ${result.meaningsAdded}개`].filter(Boolean);
@@ -134,7 +132,7 @@ export function WordRegister({ blockId, blocks, onBack, onBlockChange }: Props) 
     setBlock(nextBlock);
     setNameDraft(nextBlock.name);
     closeForm();
-    setIndex(nextIndex);
+    setIndex(Math.max(0, entriesForKind(nextBlock, kind).indexOf(nextBlock.words[nextIndex])));
     setStatusMessage(message);
     if (nextBlock.id !== blockId) onBlockChange?.(nextBlock.id);
   }
@@ -188,12 +186,12 @@ export function WordRegister({ blockId, blocks, onBack, onBlockChange }: Props) 
             {total === 0 ? "← 블록 목록" : "← 학습으로"}
           </button>
           <span>
-            {blockLabel} · {total}/{WORDS_PER_BLOCK}
+            {blockLabel} · {total}개
           </span>
         </div>
 
         <h1 className="mt-6 font-[family-name:var(--font-display)] text-3xl text-[var(--accent)]">
-          {isSentenceForm ? "문장" : "단어"} {form.editing ? "수정" : "등록"}
+          {itemLabel} {form.editing ? "수정" : "등록"}
         </h1>
         {!form.editing && (
           <p className="mt-2 text-sm text-[var(--muted)]">
@@ -202,11 +200,11 @@ export function WordRegister({ blockId, blocks, onBack, onBlockChange }: Props) 
         )}
 
         <div className="mt-6">
-          {form.kind === "word" && !form.editing ? (
+          {kind === "word" && !form.editing ? (
             <WordRegistrationTable source={form.source} blocks={blocks} onSave={saveTable} />
           ) : (
             <RegisteredEntryForm
-              kind={form.kind}
+              kind={kind}
               original={form.editing}
               submitLabel={form.editing ? "수정 저장" : "등록하기"}
               onSave={saveEntry}
@@ -218,21 +216,19 @@ export function WordRegister({ blockId, blocks, onBack, onBlockChange }: Props) 
     );
   }
 
-  const formModes: FormMode[] = block?.category === "LC" ? ["sentence", "word"] : ["word"];
-  const registrationButtons = formModes.map((formMode) => (
+  const registrationButton = (
     <button
-      key={formMode}
       type="button"
-      onClick={() => openForm(formMode)}
+      onClick={() => openForm()}
       className={
         total === 0
           ? "rounded-md border border-[var(--line)] bg-white px-5 py-2.5 text-sm font-medium text-[var(--fg)] first:border-[var(--accent)] first:bg-[var(--accent)] first:text-white hover:opacity-90"
           : "shrink-0 rounded-md border border-[var(--line)] bg-white px-3 py-1 text-xs font-medium text-[var(--fg)] hover:bg-[var(--accent-soft)]"
       }
     >
-      {formMode === "sentence" ? "문장 등록" : "단어 등록"}
+      {itemLabel} 등록
     </button>
-  ));
+  );
 
   if (total === 0 || !entry) {
     return (
@@ -246,7 +242,7 @@ export function WordRegister({ blockId, blocks, onBack, onBlockChange }: Props) 
             ← 블럭 선택
           </button>
           <span>
-            {blockLabel} · 0/{WORDS_PER_BLOCK}
+            {blockLabel} · 0개
           </span>
         </div>
 
@@ -270,13 +266,10 @@ export function WordRegister({ blockId, blocks, onBack, onBlockChange }: Props) 
         </label>
 
         <p className="mt-3 text-sm text-[var(--muted)]">
-          {block?.category === "LC"
-            ? "영어 문장이나 단어를 뜻과 함께 등록해 보세요."
-            : "아직 단어가 없어요. 「단어 등록」으로 추가하면 Day처럼 학습할 수 있습니다."}
-          {" "}(블록당 최대 {WORDS_PER_BLOCK}개)
+          {itemLabel} 등록을 눌러 영어와 뜻을 추가하세요.
         </p>
         {statusMessage && <p role="status" className="mt-2 text-sm text-[var(--muted)]">{statusMessage}</p>}
-        <div className="mt-8 flex flex-wrap gap-2">{registrationButtons}</div>
+        <div className="mt-8 flex flex-wrap gap-2">{registrationButton}</div>
       </div>
     );
   }
@@ -292,7 +285,7 @@ export function WordRegister({ blockId, blocks, onBack, onBlockChange }: Props) 
           ← 블럭 선택
         </button>
         <div className="flex min-w-0 items-center gap-2">
-          {registrationButtons}
+          {registrationButton}
           <span className="truncate">
             {blockLabel} · {index + 1} / {total}
           </span>
@@ -329,7 +322,7 @@ export function WordRegister({ blockId, blocks, onBack, onBlockChange }: Props) 
         className="flex flex-1 flex-col items-center justify-center px-6 text-center animate-[fade-up_240ms_ease-out]"
       >
         <p className="text-xs text-[var(--muted)]">
-          {blockLabel} · {total}/{WORDS_PER_BLOCK}
+          {blockLabel} · {total}개
         </p>
         <p className={entry.isSentence
           ? "mt-4 max-w-full whitespace-pre-line wrap-anywhere text-2xl leading-relaxed text-[var(--fg)] sm:text-3xl"
@@ -339,7 +332,7 @@ export function WordRegister({ blockId, blocks, onBack, onBlockChange }: Props) 
         <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
           <SpeakButton text={entry.word} label={entry.isSentence ? "문장 듣기" : undefined}
             className="inline-flex items-center gap-1.5 rounded-md border border-[var(--line)] bg-white px-3 py-1.5 text-sm font-medium text-[var(--accent)] hover:bg-[var(--accent-soft)]" />
-          <button type="button" onClick={() => openForm(entry.isSentence ? "sentence" : "word", entry)}
+          <button type="button" onClick={() => openForm(entry)}
             className="rounded-md border border-[var(--line)] bg-white px-3 py-1.5 text-sm font-medium text-[var(--fg)] hover:bg-[var(--accent-soft)]">
             {entry.isSentence ? "문장 수정" : "단어 수정"}
           </button>

@@ -6,8 +6,11 @@ import { SpeakButton } from "@/components/SpeakButton";
 import { WordRegister } from "@/components/WordRegister";
 import {
   REGISTERED_EVENT,
+  STUDY_AREAS,
   WORDS_PER_BLOCK,
+  entriesForKind,
   loadRegisteredBlocks,
+  type EntryKind,
   type RegisteredBlock,
 } from "@/lib/registered";
 import { markDayStudied } from "@/lib/progress";
@@ -78,7 +81,8 @@ export function WordsStudy({ books }: Props) {
   const [index, setIndex] = useState(0);
   const [blocks, setBlocks] = useState<RegisteredBlock[]>([]);
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
-  const [expanded, setExpanded] = useState({ hackers: true, LC: true, RC: true });
+  const [activeKind, setActiveKind] = useState<EntryKind>("word");
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [daysOpen, setDaysOpen] = useState(false);
 
   const current = useMemo(
@@ -111,8 +115,9 @@ export function WordsStudy({ books }: Props) {
     setPhase("study");
   }
 
-  function openRegister(blockId: string) {
+  function openRegister(blockId: string, kind: EntryKind) {
     setActiveBlockId(blockId);
+    setActiveKind(kind);
     setPhase("register");
   }
 
@@ -135,6 +140,7 @@ export function WordsStudy({ books }: Props) {
     return (
       <WordRegister
         blockId={activeBlockId}
+        kind={activeKind}
         blocks={blocks}
         onBlockChange={setActiveBlockId}
         onBack={() => {
@@ -212,19 +218,25 @@ export function WordsStudy({ books }: Props) {
     );
   }
 
-  function renderBlocks(items: RegisteredBlock[]) {
+  function renderBlocks(items: RegisteredBlock[], kind: EntryKind = "word") {
+    const visible = items.map((block) => ({ block, count: entriesForKind(block, kind).length }))
+      .filter(({ count }) => count > 0);
+    if (!visible.length && items.length) {
+      const block = items.find((item) => item.words.length < WORDS_PER_BLOCK) ?? items[0];
+      visible.push({ block, count: 0 });
+    }
     return (
       <ul className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        {items.filter((block, i) => i === 0 || block.words.length > 0).map((block) => (
+        {visible.map(({ block, count }) => (
           <li key={block.id}>
             <button
               type="button"
-              onClick={() => openRegister(block.id)}
-              title={`${block.name} · ${block.words.length}/${WORDS_PER_BLOCK}`}
+              onClick={() => openRegister(block.id, kind)}
+              title={`${block.name} · ${kind === "sentence" ? "문장" : "단어"} ${count}개`}
               className="flex min-h-14 w-full items-center justify-center rounded-md border border-[var(--accent)] bg-[var(--accent-soft)] px-3 py-2 text-sm font-medium text-[var(--accent)] transition hover:bg-[var(--accent)] hover:text-white"
             >
               <span className="truncate">{block.name}</span>
-              <span className="ml-1 shrink-0 text-xs opacity-80">({block.words.length})</span>
+              <span className="ml-1 shrink-0 text-xs opacity-80">({count})</span>
             </button>
           </li>
         ))}
@@ -246,8 +258,8 @@ export function WordsStudy({ books }: Props) {
           id="study-hackers"
           title="해커스"
           description={`Day 단어 ${books.length}일차 · 등록 단어`}
-          expanded={expanded.hackers}
-          onToggle={() => setExpanded((prev) => ({ ...prev, hackers: !prev.hackers }))}
+          expanded={expanded.hackers ?? true}
+          onToggle={() => setExpanded((prev) => ({ ...prev, hackers: !(prev.hackers ?? true) }))}
         >
           <h3>
             <button
@@ -284,26 +296,26 @@ export function WordsStudy({ books }: Props) {
           {renderBlocks(blocks.filter((block) => block.category === "general"))}
         </StudyGroup>
 
-        {(["LC", "RC"] as const).map((category) => {
+        {STUDY_AREAS.filter((area) => area.category !== "general").map((area) => {
           const categoryBlocks = blocks.filter(
-            (block) => block.category === category,
+            (block) => block.category === area.category,
           );
           const wordCount = categoryBlocks.reduce(
-            (count, block) => count + block.words.length,
+            (count, block) => count + entriesForKind(block, area.kind).length,
             0,
           );
           return (
             <StudyGroup
-              key={category}
-              id={`study-${category}`}
-              title={category}
-              description={`${category === "LC" ? "듣기 단어·문장" : "읽기 단어"} · ${wordCount}개 등록`}
-              expanded={expanded[category]}
+              key={area.id}
+              id={`study-${area.id}`}
+              title={area.title}
+              description={`${wordCount}개 등록`}
+              expanded={expanded[area.id] ?? true}
               onToggle={() =>
-                setExpanded((prev) => ({ ...prev, [category]: !prev[category] }))
+                setExpanded((prev) => ({ ...prev, [area.id]: !(prev[area.id] ?? true) }))
               }
             >
-              {renderBlocks(categoryBlocks)}
+              {renderBlocks(categoryBlocks, area.kind)}
             </StudyGroup>
           );
         })}
